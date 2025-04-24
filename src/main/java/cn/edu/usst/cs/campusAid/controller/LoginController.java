@@ -1,19 +1,15 @@
 package cn.edu.usst.cs.campusAid.controller;
 
-import cn.edu.usst.cs.campusAid.CampusAidRuntimeException;
+import cn.edu.usst.cs.campusAid.CampusAidException;
 import cn.edu.usst.cs.campusAid.service.ExceptionService;
 import cn.edu.usst.cs.campusAid.service.LoginService;
 import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalTime;
-import java.util.Objects;
 
 @RestController
 @RequestMapping("/api/login")
@@ -48,7 +44,7 @@ public class LoginController {
         try {
             loginService.ask(request, id_raw);
             return ResponseEntity.ok("请查收邮箱\n邮件发送时间：" + LocalTime.now());
-        } catch (CampusAidRuntimeException e) {
+        } catch (CampusAidException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body(
@@ -68,7 +64,7 @@ public class LoginController {
         try {
             loginService.verify(request.getSession(false), code);
             return ResponseEntity.ok("验证成功");
-        } catch (CampusAidRuntimeException e) {
+        } catch (CampusAidException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         } catch (Exception e) {
             long id = exceptionService.reportException(e);

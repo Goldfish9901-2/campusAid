@@ -1,20 +1,15 @@
 package cn.edu.usst.cs.campusAid.service.impl;
 
-import cn.edu.usst.cs.campusAid.CampusAidRuntimeException;
+import cn.edu.usst.cs.campusAid.CampusAidException;
 import cn.edu.usst.cs.campusAid.service.MailService;
 import jakarta.mail.MessagingException;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.*;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Objects;
 import java.util.Properties;
 
 @Service
@@ -24,6 +19,8 @@ public class MailServiceImpl implements MailService {
 
     private static final Logger logger = org.apache.logging.log4j.LogManager.getLogger(MailServiceImpl.class);
 
+    @Value("${spring.mail.username}")
+    private String sender_addr;
 
     public MailServiceImpl(JavaMailSender javaMailSender, TemplateEngine templateEngine) {
         this.javaMailSender = javaMailSender;
@@ -42,11 +39,16 @@ public class MailServiceImpl implements MailService {
     public void sendVerificationMail(
             String id,
             String code
-    ) {
+    )
+            throws CampusAidException
+    {
+        if (sender_addr == null)
+            throw new CampusAidException("无法加载发件地址");
         try {
             String receiver_addr = String.format("%s@st.usst.edu.cn", id);
             MimeMessageHelper helper = new MimeMessageHelper(javaMailSender.createMimeMessage(), true);
             helper.setTo(receiver_addr);
+            helper.setFrom(sender_addr);
             helper.setSubject("Campus Aid: Verification Message");
             String content;
 
@@ -58,7 +60,7 @@ public class MailServiceImpl implements MailService {
 
             javaMailSender.send(helper.getMimeMessage());
         } catch (MessagingException e) {
-            throw new CampusAidRuntimeException(e);
+            throw new CampusAidException(e);
         }
     }
 }

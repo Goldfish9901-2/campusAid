@@ -1,6 +1,6 @@
 package cn.edu.usst.cs.campusAid.service.impl;
 
-import cn.edu.usst.cs.campusAid.CampusAidRuntimeException;
+import cn.edu.usst.cs.campusAid.CampusAidException;
 import cn.edu.usst.cs.campusAid.mapper.UserMapper;
 import cn.edu.usst.cs.campusAid.model.User;
 import cn.edu.usst.cs.campusAid.service.MailService;
@@ -26,7 +26,14 @@ public class RegisterServiceImpl implements RegisterService {
     UserMapper userMapper;
 
     @Override
-    public void requestAdd(HttpServletRequest request, long id, String name, long phone) {
+    public void requestAdd(
+            HttpServletRequest request,
+            long id,
+            String name,
+            long phone
+    )
+            throws CampusAidException
+    {
         long code = (long) (Math.random() * System.currentTimeMillis());
         mailService.sendVerificationMail(String.valueOf(id), String.valueOf(code));
 
@@ -39,10 +46,10 @@ public class RegisterServiceImpl implements RegisterService {
     }
 
     @Override
-    public void verifyAndAdd(HttpServletRequest request, long code) {
+    public void verifyAndAdd(HttpServletRequest request, long code) throws CampusAidException {
         try {
             if (code != (long) (request.getSession().getAttribute("code")))
-                throw new CampusAidRuntimeException("验证码错误，请重新输入！");
+                throw new CampusAidException("验证码错误，请重新输入！");
             request.getSession().removeAttribute("code");
             User user = new User();
             user.setId((long) request.getSession().getAttribute("id"));
@@ -57,9 +64,9 @@ public class RegisterServiceImpl implements RegisterService {
             request.getSession().invalidate();
 
         } catch (NullPointerException e) {
-            throw new CampusAidRuntimeException("请先提交个人信息");
+            throw new CampusAidException("请先提交个人信息");
         } catch (ClassCastException e) {
-            throw new CampusAidRuntimeException("内部错误：个人信息验证失败");
+            throw new CampusAidException("内部错误：个人信息验证失败");
         }
 
 
