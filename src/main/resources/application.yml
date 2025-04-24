@@ -1,0 +1,57 @@
+spring:
+  config:
+    import: optional:file:.env[.properties]
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://misaka52065.a1.luyouxia.net:28600/campus_aid?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC
+    password: ${DB_PASSWORD}
+    username: campus_aid
+  #    url: jdbc:mysql://10.100.164.51:3306/campus_aid?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC
+  thymeleaf:
+    mode: HTML
+    prefix: classpath:/templates/
+    suffix: .html
+    enabled: true
+    cache: false
+  session:
+    jdbc:
+      initialize-schema: always
+      table-name: SPRING_SESSION
+  mail:
+    host: ${MAIL_SERVER}           # QQ 邮箱 SMTP 服务器地址
+    port: 465                     # QQ 邮箱 SMTP 服务端口（465 - SSL 加密端口）
+    protocol: smtp
+    default-encoding: UTF-8
+    properties:
+      mail:
+        smtp:
+          auth: true              # 需要验证身份
+          starttls:
+            enable: true
+            required: true
+          ssl:
+            enable: true          # 启用 SSL 加密
+    username: 3940526659@qq.com
+    test-connection: true
+    password: ${MAIL_PASSWORD}
+  profiles:
+    active: prod
+server:
+  port: 8090
+  servlet:
+    session:
+      persistent: on
+logging:
+  file:
+    name: logs/main.log
+  level:
+    root: info
+    org:
+      springframework:
+        mail:
+          javamail:
+            smtp: debug
+      thymeleaf:
+        template: debug
+mybatis:
+  mapper-locations: classpath:mapper/*.xml

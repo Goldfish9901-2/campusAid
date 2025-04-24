@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>出错了</title>
+</head>
+<body>
+<h1>??</h1>
+<p id="main-para" th:text="${message}"></p>
+</body>
+<script th:inline="javascript">
+    let message = document.getElementById("main-para").innerText;
+    if (message === '') {
+        message = '出错了';
+    }
+    alert(message);
+</script>
+</html>
