@@ -1,0 +1,36 @@
+#  提交用户注册信息，请求验证码
+#  name 用户真实姓名 字符串
+#  phone 手机号码 1打头的11位
+#  id 学号 10位整数
+POST http://localhost:8090/api/register/
+Content-Type: application/json
+
+{
+    "name": "goldfish",
+    "phone": "18321729901",
+    "id": 2235062316
+}
+
+###
+# 核对验证码
+# code 验证码
+POST http://localhost:8090/api/register/verify
+Content-Type: application/json
+
+{
+    "code": "77539408334"
+}
+
+###
+
+# 用户登录 获取验证码
+# id 学号 10位整数
+GET http://localhost:8090/api/login?id=2235062316
+
+###
+
+
+# 核对验证码
+# code 验证码
+GET http://localhost:8090/api/login/verify?code=123456
+###

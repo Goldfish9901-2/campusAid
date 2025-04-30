@@ -1,6 +1,6 @@
 package cn.edu.usst.cs.campusAid.service.impl;
 
-import cn.edu.usst.cs.campusAid.CampusAidException;
+import cn.edu.usst.cs.campusAid.service.CampusAidException;
 import cn.edu.usst.cs.campusAid.service.MailService;
 import jakarta.mail.MessagingException;
 import org.apache.logging.log4j.Logger;

@@ -1,0 +1,33 @@
+{
+    "readerID": 2235062316,
+    "messages": [
+        {
+            "host": 2235062121,
+            "time": "2025-01-01-16-00-00",
+            "content": [
+                "hello",
+                "#shop-01"
+            ],
+            "replies": [
+                1,
+                2
+            ],
+            "likes": 10,
+            "liked": true
+        },
+        {
+            "host": 2235062128,
+            "time": "2025-01-02-09-00-00",
+            "content": [
+                "hello",
+                "#blog-02"
+            ],
+            "replies": [
+                3,
+                4
+            ],
+            "likes": 0,
+            "liked": false
+        }
+    ]
+}

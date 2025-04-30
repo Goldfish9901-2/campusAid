@@ -1,6 +1,6 @@
-package cn.edu.usst.cs.campusAid;
+package cn.edu.usst.cs.campusAid.service;
 
-/***
+/**
  * 整个校园互助平台中所有可预知的异常捕获后，都转为这个类
  * @author USST-CS
  */
@@ -14,6 +14,7 @@ public class CampusAidException extends Exception {
      */
     public CampusAidException(String message) {
         super(message);
+
     }
 
     /**

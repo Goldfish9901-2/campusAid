@@ -1,12 +1,12 @@
 package cn.edu.usst.cs.campusAid.controller;
 
-import cn.edu.usst.cs.campusAid.CampusAidException;
-import cn.edu.usst.cs.campusAid.service.ExceptionService;
+import cn.edu.usst.cs.campusAid.dto.LoginRequest;
+import cn.edu.usst.cs.campusAid.dto.VerifyRequest;
+import cn.edu.usst.cs.campusAid.model.ApiResponse;
+import cn.edu.usst.cs.campusAid.service.CampusAidException;
 import cn.edu.usst.cs.campusAid.service.LoginService;
-import jakarta.annotation.Nonnull;
-import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.http.ResponseEntity;
-import org.springframework.lang.NonNull;
+import jakarta.servlet.http.HttpSession;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalTime;
@@ -15,60 +15,31 @@ import java.time.LocalTime;
 @RequestMapping("/api/login")
 public class LoginController {
 
-    LoginService loginService;
+    @Autowired
+    private LoginService loginService;
 
-    ExceptionService exceptionService;
+    @PostMapping
+    public ApiResponse<String> sendLoginCode(
+            HttpSession session,
+            @RequestBody LoginRequest request
+            ) throws CampusAidException {
+        String code = loginService.generateAndSendCode(request.getId());
+        session.setAttribute(SessionKeys.LOGIN_CODE, code);
+        session.setAttribute(SessionKeys.LOGIN_ID, request.getId());
 
-    public LoginController(
-            @NonNull
-            LoginService loginService,
-            @NonNull
-            ExceptionService exceptionService
-    ) {
-        this.loginService = loginService;
-        this.exceptionService = exceptionService;
+        return ApiResponse.success("验证码已发送");
     }
 
-
-    @GetMapping
-    public ResponseEntity<String> submitInfoForVerification(
-            HttpServletRequest request,
-            @RequestParam(name = "id")
-            String id_raw
-    ) {
-        try {
-            Long.parseLong(id_raw);
-        } catch (NumberFormatException e) {
-            return ResponseEntity.badRequest().body(id_raw + " 不是一个有效学号");
-        }
-        try {
-            loginService.ask(request, id_raw);
-            return ResponseEntity.ok("请查收邮箱\n邮件发送时间：" + LocalTime.now());
-        } catch (CampusAidException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError().body(
-                    "未知错误，代码： " + exceptionService.reportException(e)
-            );
-        }
-    }
-
-    @GetMapping("/verify")
-    public ResponseEntity<String> verify(
-            @Nonnull
-            HttpServletRequest request,
-            @RequestParam(name = "code")
-            String code
-    ) {
-
-        try {
-            loginService.verify(request.getSession(false), code);
-            return ResponseEntity.ok("验证成功");
-        } catch (CampusAidException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        } catch (Exception e) {
-            long id = exceptionService.reportException(e);
-            return ResponseEntity.internalServerError().body("未知错误，代码：" + id);
-        }
+    @PostMapping("/verify")
+    public ApiResponse<String> verifyLogin(
+            @SessionAttribute(SessionKeys.LOGIN_CODE) String sessionCode,
+            @SessionAttribute(SessionKeys.LOGIN_ID) Long id,
+            @RequestBody VerifyRequest request,
+            HttpSession session
+    ) throws CampusAidException {
+        loginService.verifyCode(id, request.getCode(), sessionCode);
+        session.setAttribute(SessionKeys.LOGIN_TIME, LocalTime.now());
+        return ApiResponse.success("登录成功");
     }
 }
+

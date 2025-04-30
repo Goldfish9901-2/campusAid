@@ -3,7 +3,7 @@
 <mapper namespace="cn.edu.usst.cs.campusAid.mapper.UserMapper">
     <insert id="insertUser" parameterType="cn.edu.usst.cs.campusAid.model.User">
         INSERT INTO user (id, name, phone_number)
-        VALUES (#{id}, #{name}, #{phone_number});
+        VALUES (#{id}, #{name}, #{phoneNumber});
     </insert>
     <select id="getUserById" parameterType="java.lang.Long" resultType="cn.edu.usst.cs.campusAid.model.User">
         SELECT *
