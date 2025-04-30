@@ -6,6 +6,13 @@
 * 错误界面： src/main/resources/templates/error.html
 ### 静态页面可在 cn.edu.usst.cs.campusAid.config.WebConfig 类的 addViewControllers 方法中添加
 
+## 后端接口
+### 认证板块（注册和登录） 均只返还一个字符串，仅在状态码为200时标志返回的时成功信息
+### 其他板块的返还如为json 结构均可在顶部jsonInterfaces文件夹中查到
+* 仅在状态码为200时标志返回的时成功信息
+* 其余时候仅返回一个字符串，标志返回的时失败信息
+
+### 项目依赖包版本信息如下：
 
 
 # Getting Started

@@ -1,0 +1,12 @@
+GET http://localhost:8090/api/register?name=goldfish&phone=18321729901&id=235062316
+
+###
+GET http://localhost:8090/api/register/verify?code=123456
+
+###
+GET http://localhost:8090/api/login?id=2235062316
+
+###
+
+GET http://localhost:8090/api/login/verify?code=123456
+###
