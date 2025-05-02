@@ -1,4 +1,4 @@
-package cn.edu.usst.cs.campusAid.dto;
+package cn.edu.usst.cs.campusAid.dto.auth;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;

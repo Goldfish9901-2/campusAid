@@ -1,4 +1,4 @@
-package cn.edu.usst.cs.campusAid.dto;
+package cn.edu.usst.cs.campusAid.dto.auth;
 
 // src/main/java/cn/edu/usst/cs/campusAid/dto/RegisterRequest.java
 import jakarta.validation.constraints.*;

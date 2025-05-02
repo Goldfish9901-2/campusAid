@@ -55,3 +55,6 @@ logging:
         template: debug
 mybatis:
   mapper-locations: classpath:mapper/*.xml
+  configuration:
+    map-underscore-to-camel-case: true
+  type-aliases-package: cn.edu.usst.campusAid.model
