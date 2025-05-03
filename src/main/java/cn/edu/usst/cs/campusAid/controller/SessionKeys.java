@@ -9,4 +9,7 @@ public interface SessionKeys {
     String LOGIN_ID = "login_id";
     String LOGIN_CODE = "login_code";
     String LOGIN_TIME = "login_time";
+
+
+    String SHOP_ID="shop_id";
 }

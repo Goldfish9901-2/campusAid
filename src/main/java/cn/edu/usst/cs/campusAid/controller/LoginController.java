@@ -2,7 +2,7 @@ package cn.edu.usst.cs.campusAid.controller;
 
 import cn.edu.usst.cs.campusAid.dto.auth.LoginRequest;
 import cn.edu.usst.cs.campusAid.dto.auth.VerifyRequest;
-import cn.edu.usst.cs.campusAid.model.ApiResponse;
+import cn.edu.usst.cs.campusAid.dto.auth.ApiResponse;
 import cn.edu.usst.cs.campusAid.service.CampusAidException;
 import cn.edu.usst.cs.campusAid.service.LoginService;
 import jakarta.servlet.http.HttpSession;

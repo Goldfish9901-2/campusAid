@@ -3,11 +3,14 @@ package cn.edu.usst.cs.campusAid.controller;
 import cn.edu.usst.cs.campusAid.dto.forum.ForumPostPreview;
 import cn.edu.usst.cs.campusAid.dto.forum.ReplyView;
 
+import cn.edu.usst.cs.campusAid.dto.forum.ReportRequest;
 import cn.edu.usst.cs.campusAid.service.ForumPostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import cn.edu.usst.cs.campusAid.dto.forum.PostSortOrder;
+import org.springframework.web.multipart.MultipartFile;
+
 import java.util.List;
 
 @RestController
@@ -18,14 +21,16 @@ public class ForumController {
 
     /**
      * 获取论坛帖子列表，支持排序与关键词搜索
+     *
      * @param keyword 关键词搜索
      */
     @GetMapping("/posts")
     public ResponseEntity<List<ForumPostPreview>> listPosts(
+            @SessionAttribute(SessionKeys.LOGIN_ID) Long userId,
             @RequestParam(required = false) String keyword,
             @RequestParam(defaultValue = "TIME") PostSortOrder sortBy
     ) {
-        List<ForumPostPreview> posts = forumPostService.getPostsSorted(keyword, sortBy);
+        List<ForumPostPreview> posts = forumPostService.getPostsSorted(userId, keyword, sortBy);
         return ResponseEntity.ok().body(posts);
     }
 
@@ -35,18 +40,33 @@ public class ForumController {
      */
     @GetMapping("/post/{postId}")
     public ResponseEntity<ForumPostPreview> getPostDetail(
-            @PathVariable Long postId
+            @PathVariable Long postId,
+            @SessionAttribute(SessionKeys.LOGIN_ID) Long userId
     ) {
-        return ResponseEntity.ok(forumPostService.getPostDetail(postId));
+        return ResponseEntity.ok(forumPostService.getPostDetail(userId, postId));
     }
 
     /**
      * 用户发帖
      */
     @PostMapping("/post")
-    public ResponseEntity<String> createPost(@RequestBody ForumPostPreview blogView) {
-        forumPostService.createPost(blogView);
+    public ResponseEntity<String> createPost(
+            @RequestBody ForumPostPreview blogView
+            ,
+            @SessionAttribute(SessionKeys.LOGIN_ID) Long userId
+    ) {
+        forumPostService.createPost(userId, blogView);
         return ResponseEntity.ok("发帖成功"); // 待实现
+    }
+
+    @PostMapping("/post/upload")
+    public ResponseEntity<String> uploadPost(
+            @RequestParam("file") MultipartFile file,
+            @RequestParam("postId") Long postId,
+            @SessionAttribute(SessionKeys.LOGIN_ID) Long userId
+    ) {
+        forumPostService.uploadImage(userId, postId, file);
+        return ResponseEntity.ok("上传成功");
     }
 
     /**
@@ -57,7 +77,7 @@ public class ForumController {
             @PathVariable Long postId,
             @SessionAttribute(SessionKeys.LOGIN_ID) Long userId
     ) {
-        forumPostService.deletePost(postId,userId);
+        forumPostService.deletePost(postId, userId);
         return ResponseEntity.ok("删除成功"); // 待实现
     }
 
@@ -69,7 +89,7 @@ public class ForumController {
             @PathVariable Long postId,
             @SessionAttribute(SessionKeys.LOGIN_ID) Long userId
     ) {
-        forumPostService.likePost(postId,userId);
+        forumPostService.likePost(postId, userId);
         return ResponseEntity.ok("点赞成功"); // 待实现
     }
 
@@ -82,16 +102,19 @@ public class ForumController {
             @RequestBody ReplyView reply,
             @SessionAttribute(SessionKeys.LOGIN_ID) Long userId
     ) {
-        forumPostService.replyPost(userId,postId,reply);
+        forumPostService.replyPost(userId, postId, reply);
         return ResponseEntity.ok("回复成功"); // 待实现
     }
 
     /**
      * 举报帖子
      */
-    //TODO: 论坛举报要不要匿名
-    @PostMapping("/post/{postId}/report")
-    public ResponseEntity<String> reportPost(@PathVariable Long postId, @RequestParam String reason) {
+    @PostMapping("/post/report")
+    public ResponseEntity<String> reportPost(
+            @SessionAttribute(SessionKeys.LOGIN_ID) Long userId,
+            @RequestBody ReportRequest report
+    ) {
+        forumPostService.reportPost(userId, report);
         return ResponseEntity.ok("举报成功"); // 待实现
     }
 }

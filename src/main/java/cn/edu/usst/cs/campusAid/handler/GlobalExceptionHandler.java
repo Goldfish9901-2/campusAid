@@ -1,13 +1,11 @@
 package cn.edu.usst.cs.campusAid.handler;
 
-import cn.edu.usst.cs.campusAid.model.ApiResponse;
+import cn.edu.usst.cs.campusAid.dto.auth.ApiResponse;
 import cn.edu.usst.cs.campusAid.service.ExceptionService;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import cn.edu.usst.cs.campusAid.service.CampusAidException;
-
-import static io.netty.handler.codec.http.HttpResponseStatus.BAD_REQUEST;
-import static io.netty.handler.codec.http.HttpResponseStatus.INTERNAL_SERVER_ERROR;
+import org.springframework.web.bind.MissingRequestValueException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -23,7 +21,13 @@ public class GlobalExceptionHandler {
         return ApiResponse.badRequest(e.getMessage());
     }
 
-    @ExceptionHandler(Exception.class)
+    @ExceptionHandler(MissingRequestValueException.class)
+    public ApiResponse<?> handleMissingSessionAttribute(MissingRequestValueException e) {
+        return ApiResponse.unauthorized("请先登录");
+    }
+
+
+    @ExceptionHandler({Exception.class})
     public ApiResponse<?> handleOtherExceptions(Exception e) {
         var reportID =
                 exceptionService.reportException(e);
