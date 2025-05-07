@@ -1,13 +1,9 @@
 package cn.edu.usst.cs.campusAid.service;
 
-import cn.edu.usst.cs.campusAid.dto.forum.ForumPostPreview;
-import cn.edu.usst.cs.campusAid.dto.forum.ReplyView;
-import cn.edu.usst.cs.campusAid.dto.forum.PostSortOrder;
-import cn.edu.usst.cs.campusAid.dto.forum.ReportRequest;
+import cn.edu.usst.cs.campusAid.dto.forum.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.IOException;
+
 import java.util.List;
 
 public interface ForumPostService {
@@ -19,7 +15,7 @@ public interface ForumPostService {
      * @param sortBy  排序方式
      * @return 排序后的帖子列表
      */
-    List<ForumPostPreview> getPostsSorted(Long userId, String keyword, PostSortOrder sortBy);
+    List<ForumPostPreview> getPostsSorted(Long userId, KeywordType type, String keyword, PostSortOrder sortBy);
 
     /**
      * 获取指定帖子的详细信息，包括回复

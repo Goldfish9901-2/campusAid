@@ -1,14 +1,11 @@
 package cn.edu.usst.cs.campusAid.controller;
 
-import cn.edu.usst.cs.campusAid.dto.forum.ForumPostPreview;
-import cn.edu.usst.cs.campusAid.dto.forum.ReplyView;
+import cn.edu.usst.cs.campusAid.dto.forum.*;
 
-import cn.edu.usst.cs.campusAid.dto.forum.ReportRequest;
 import cn.edu.usst.cs.campusAid.service.ForumPostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import cn.edu.usst.cs.campusAid.dto.forum.PostSortOrder;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -27,10 +24,11 @@ public class ForumController {
     @GetMapping("/posts")
     public ResponseEntity<List<ForumPostPreview>> listPosts(
             @SessionAttribute(SessionKeys.LOGIN_ID) Long userId,
-            @RequestParam(required = false) String keyword,
+            @RequestParam(defaultValue = "TITLE") KeywordType type,
+            @RequestParam String keyword,
             @RequestParam(defaultValue = "TIME") PostSortOrder sortBy
     ) {
-        List<ForumPostPreview> posts = forumPostService.getPostsSorted(userId, keyword, sortBy);
+        List<ForumPostPreview> posts = forumPostService.getPostsSorted(userId, type, keyword, sortBy);
         return ResponseEntity.ok().body(posts);
     }
 
@@ -65,8 +63,8 @@ public class ForumController {
             @RequestParam("file") MultipartFile file,
             @SessionAttribute(SessionKeys.LOGIN_ID) Long userId
     ) {
-        forumPostService.uploadImage(userId, postId, file);
-        return ResponseEntity.ok("上传成功");
+        String uri = forumPostService.uploadImage(userId, postId, file);
+        return ResponseEntity.ok("上传成功 可在 " + uri + " 查看");
     }
 
     /**

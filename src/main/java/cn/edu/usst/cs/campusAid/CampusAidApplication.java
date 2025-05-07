@@ -1,10 +1,7 @@
 package cn.edu.usst.cs.campusAid;
 
 import cn.edu.usst.cs.campusAid.config.SecurityProperties;
-import cn.edu.usst.cs.campusAid.dto.forum.ForumPostPreview;
-import cn.edu.usst.cs.campusAid.dto.forum.PostSortOrder;
-import cn.edu.usst.cs.campusAid.dto.forum.ReplyView;
-import cn.edu.usst.cs.campusAid.dto.forum.ReportRequest;
+import cn.edu.usst.cs.campusAid.dto.forum.*;
 import cn.edu.usst.cs.campusAid.service.CampusAidException;
 import cn.edu.usst.cs.campusAid.service.ForumPostService;
 import cn.edu.usst.cs.campusAid.service.UploadFileSystemService;
@@ -70,7 +67,7 @@ public class CampusAidApplication {
             private UploadFileSystemService uploadFileSystemService;
 
             @Override
-            public List<ForumPostPreview> getPostsSorted(Long userId, String keyword, PostSortOrder sortBy) {
+            public List<ForumPostPreview> getPostsSorted(Long userId, KeywordType type, String keyword, PostSortOrder sortBy) {
                 return List.of();
             }
 
