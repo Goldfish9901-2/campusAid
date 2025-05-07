@@ -3,8 +3,10 @@ package cn.edu.usst.cs.campusAid;
 import cn.edu.usst.cs.campusAid.config.SecurityProperties;
 import cn.edu.usst.cs.campusAid.dto.forum.*;
 import cn.edu.usst.cs.campusAid.service.CampusAidException;
+import cn.edu.usst.cs.campusAid.service.ErrandService;
 import cn.edu.usst.cs.campusAid.service.ForumPostService;
 import cn.edu.usst.cs.campusAid.service.UploadFileSystemService;
+import cn.edu.usst.cs.campusAid.service.shop.ShopService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -50,10 +52,9 @@ public class CampusAidApplication {
             @Override
             public File getUploadRootDir() {
                 File dir = new File(uploadRootDir);
-                if (!dir.exists()) {
-                    if (!dir.mkdirs())
-                        throw new CampusAidException("Failed to create upload directory");
-                }
+                if (!dir.exists() && !dir.mkdirs())
+                    throw new CampusAidException("Failed to create upload directory");
+
                 return dir;
             }
 

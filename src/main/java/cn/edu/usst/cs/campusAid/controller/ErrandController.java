@@ -15,6 +15,7 @@ public class ErrandController {
     private ErrandService errandService;
 
     /**
+     * 给想要别的用户跑腿的用户：
      * 用户发布跑腿订单（功能点 1 / 5）
      */
     @PostMapping("/order")
@@ -27,6 +28,7 @@ public class ErrandController {
     }
 
     /**
+     * 给有意愿接单的用户：
      * 获取跑腿订单列表（功能点 4），默认按时间排序
      */
     @GetMapping("/orders")
@@ -51,6 +53,8 @@ public class ErrandController {
 
     /**
      * 跑腿员接单（功能点 7）
+     * @param runnerId  接单用户id 接单前需验证
+     * @param id 订单id
      */
     @PostMapping("/order/{id}/accept")
     public ResponseEntity<String> acceptOrder(
