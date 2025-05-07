@@ -6,9 +6,9 @@ POST http://localhost:8090/api/register/
 Content-Type: application/json
 
 {
-    "name": "goldfish",
-    "phone": "18321729901",
-    "id": 2235062316
+    "name": "misaka52065",
+    "phoneNumber": 15821815128,
+    "id": 2235062121
 }
 
 ###
@@ -18,19 +18,28 @@ POST http://localhost:8090/api/register/verify
 Content-Type: application/json
 
 {
-    "code": "77539408334"
+    "code": "170158577094"
 }
 
 ###
 
 # 用户登录 获取验证码
 # id 学号 10位整数
-GET http://localhost:8090/api/login?id=2235062316
+POST http://localhost:8090/api/login
+Content-Type: application/json
 
+{
+    "id": 2235062121
+}
 ###
 
 
 # 核对验证码
 # code 验证码
-GET http://localhost:8090/api/login/verify?code=123456
+POST http://localhost:8090/api/login/verify
+Content-Type: application/json
+
+{
+    "code": "382253750908"
+}
 ###

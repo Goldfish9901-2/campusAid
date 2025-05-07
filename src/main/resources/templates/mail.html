@@ -2,16 +2,78 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>邮件信息</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            background-color: #ffffff;
+            padding: 30px 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        h1 {
+            color: #333;
+            font-size: 24px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .info {
+            font-size: 16px;
+            color: #555;
+            line-height: 1.6;
+        }
+
+        .code-box {
+            background-color: #e8f4ff;
+            border: 1px solid #cce0ff;
+            padding: 10px 15px;
+            border-radius: 6px;
+            margin-top: 10px;
+            font-weight: bold;
+            color: #0078ff;
+            font-size: 18px;
+            text-align: center;
+        }
+
+        .footer {
+            margin-top: 25px;
+            font-size: 14px;
+            color: #999;
+            text-align: center;
+        }
+    </style>
+
 </head>
 <body>
-<div>
-    <h1>code for mail</h1>
-    <p th:text="${id}"></p>
+<div class="container">
+    <h1>邮箱验证码</h1>
+    <div class="info">
+        学号：
+        <span th:text="${id}"></span>
+    </div>
+    <div class="info">
+        <div class="code-box" th:text="${code}"></div>
+    </div>
+    <div class="footer">
+        验证码仅用于身份验证，请勿泄露给他人。
+    </div>
 </div>
-<div>
-    <p th:text="${code}"></p>
-</div>
-
 </body>
+
 </html>
