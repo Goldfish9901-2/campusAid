@@ -261,7 +261,10 @@
                 .then(data => {
                     alert(data.message || '验证成功');
 
-                    window.location.href = "/forum";
+                    // 仅当 data.message 为 "success" 时跳转页面
+                    if (data.message === 'success') {
+                        window.location.href = "/forum";
+                    }
                 })
                 .catch(error => {
                     console.error('Error:', error);
