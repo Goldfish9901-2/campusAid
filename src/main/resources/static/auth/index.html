@@ -49,11 +49,11 @@
             white-space: nowrap;
             margin-bottom: 2rem;
             text-shadow:
-                    0px 1px 0px rgba(192, 192, 192, 0.4),
-                    0px 2px 0px rgba(176, 176, 176, 0.35),
-                    0px 3px 0px rgba(160, 160, 160, 0.3),
-                    0px 4px 0px rgba(144, 144, 144, 0.25),
-                    0px 5px 8px rgba(0, 0, 0, 0.25);
+                    0 1px 0 rgba(192, 192, 192, 0.4),
+                    0 2px 0 rgba(176, 176, 176, 0.35),
+                    0 3px 0 rgba(160, 160, 160, 0.3),
+                    0 4px 0 rgba(144, 144, 144, 0.25),
+                    0 5px 8px rgba(0, 0, 0, 0.25);
         }
 
         .char {
@@ -80,6 +80,17 @@
         .char:nth-child(16) { animation: charFadeIn 0.5s ease forwards 1.5s; }
 
         @keyframes charFadeIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes formFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -120,6 +131,8 @@
             flex: 1;
             padding: 2rem;
             font-family: 'Pacifico', cursive;
+            opacity: 0;
+            animation: formFadeIn 1s ease 0.5s forwards;
         }
 
         .form-container h1 {
