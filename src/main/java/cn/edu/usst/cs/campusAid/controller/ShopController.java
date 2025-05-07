@@ -12,15 +12,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-@RestController
-@RequestMapping("/api/shop")
-public abstract class ShopController {
-    @Autowired
+//@RestController
+//@RequestMapping("/api/shop")
+public  class ShopController {
+//    @Autowired
     private ShopService shopService;
 
-    @Autowired
+//    @Autowired
     private OrderService orderService;
-    @Autowired
+//    @Autowired
     private ProductService productService;
     /**
      * 商户登录

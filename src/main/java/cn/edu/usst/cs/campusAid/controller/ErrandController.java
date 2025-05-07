@@ -8,11 +8,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController
-@RequestMapping("/api/errand")
-@SessionAttributes(SessionKeys.LOGIN_ID) // 声明 session 属性
+//@RestController
+//@RequestMapping("/api/errand")
 public class ErrandController {
-    @Autowired
+//    @Autowired
     private ErrandService errandService;
 
     /**
