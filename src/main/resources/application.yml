@@ -36,6 +36,10 @@ spring:
     password: ${MAIL_PASSWORD}
   profiles:
     active: prod
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 10MB
 server:
   port: 8090
   servlet:

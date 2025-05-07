@@ -6,6 +6,8 @@ import cn.edu.usst.cs.campusAid.dto.forum.PostSortOrder;
 import cn.edu.usst.cs.campusAid.dto.forum.ReportRequest;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 public interface ForumPostService {
@@ -39,18 +41,16 @@ public interface ForumPostService {
      *
      * @param postId 帖子ID
      * @param userId 当前用户ID
-     * @return 是否成功删除
      */
-    boolean deletePost(Long postId, Long userId);
+    void deletePost(Long postId, Long userId);
 
     /**
      * 点赞帖子
      *
      * @param postId 帖子ID
      * @param userId 当前用户ID
-     * @return 是否成功点赞
      */
-    boolean likePost(Long postId, Long userId);
+    void likePost(Long postId, Long userId);
 
     /**
      * 回复指定帖子
@@ -62,6 +62,7 @@ public interface ForumPostService {
 
     /**
      * 举报帖子
+     *
      * @param userID        举报的用户ID
      * @param reportRequest 举报信息
      */
@@ -72,7 +73,7 @@ public interface ForumPostService {
      *
      * @param userId 帖子的发布者，验证修改权限用
      * @param postId 帖子ID
-     * @param extra  图片文件
+     * @param file   图片文件
      */
-    void uploadImage(Long userId, Long postId, MultipartFile extra);
+    String uploadImage(Long userId, Long postId, MultipartFile file);
 }

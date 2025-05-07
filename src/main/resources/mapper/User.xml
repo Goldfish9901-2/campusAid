@@ -9,7 +9,6 @@
         SELECT *
         FROM user
         WHERE id = #{id}
-        AND name like concat('%#',#{name},' %')
         ;
     </select>
 </mapper>

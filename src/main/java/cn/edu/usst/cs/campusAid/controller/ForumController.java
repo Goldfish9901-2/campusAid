@@ -61,8 +61,8 @@ public class ForumController {
 
     @PostMapping("/post/upload")
     public ResponseEntity<String> uploadPost(
-            @RequestParam("file") MultipartFile file,
             @RequestParam("postId") Long postId,
+            @RequestParam("file") MultipartFile file,
             @SessionAttribute(SessionKeys.LOGIN_ID) Long userId
     ) {
         forumPostService.uploadImage(userId, postId, file);
