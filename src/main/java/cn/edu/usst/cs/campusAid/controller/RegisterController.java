@@ -24,7 +24,7 @@ public class RegisterController {
             @RequestBody User user
     ) throws CampusAidException {
         String code = registerService.generateVerificationCode(user.getId());
-        session.setAttribute(SessionKeys.REG_ID, code);
+        session.setAttribute(SessionKeys.REG_ID, user.getId());
         session.setAttribute(SessionKeys.REG_NAME, user.getName());
         session.setAttribute(SessionKeys.REG_PHONE, user.getPhoneNumber());
 
