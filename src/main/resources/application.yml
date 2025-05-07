@@ -58,3 +58,10 @@ mybatis:
   configuration:
     map-underscore-to-camel-case: true
   type-aliases-package: cn.edu.usst.campusAid.model
+alipay:
+  appId: ${ALIPAY_APP_ID}
+  privateKey: ${ALIPAY_PRIVATE_KEY}
+  publicKey: ${ALIPAY_PUBLIC_KEY}
+
+  gatewayUrl: a
+  notifyUrl: http://m6626a.natappfree.cc

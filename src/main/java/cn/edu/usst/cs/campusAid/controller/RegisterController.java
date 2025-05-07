@@ -9,6 +9,8 @@ import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import static cn.edu.usst.cs.campusAid.controller.SessionKeys.REG_CODE;
+
 @RestController
 @RequestMapping("/api/register")
 public class RegisterController {
@@ -22,16 +24,17 @@ public class RegisterController {
             @RequestBody User user
     ) throws CampusAidException {
         String code = registerService.generateVerificationCode(user.getId());
-        session.setAttribute(SessionKeys.REG_CODE, code);
+        session.setAttribute(SessionKeys.REG_ID, user.getId());
         session.setAttribute(SessionKeys.REG_NAME, user.getName());
         session.setAttribute(SessionKeys.REG_PHONE, user.getPhoneNumber());
 
+        session.setAttribute(REG_CODE, code);
         return ApiResponse.success("验证码已发送");
     }
 
     @PostMapping("/verify")
     public ApiResponse<String> verifyRegister(
-            @SessionAttribute(SessionKeys.REG_CODE) String sessionCode,
+            @SessionAttribute(REG_CODE) String sessionCode,
             @SessionAttribute(SessionKeys.REG_NAME) String name,
             @SessionAttribute(SessionKeys.REG_ID) Long id,
             @SessionAttribute(SessionKeys.REG_PHONE) Long phone,

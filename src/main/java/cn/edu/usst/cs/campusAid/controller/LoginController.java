@@ -22,11 +22,11 @@ public class LoginController {
     public ApiResponse<String> sendLoginCode(
             HttpSession session,
             @RequestBody LoginRequest request
-            ) throws CampusAidException {
+    ) throws CampusAidException {
         String code = loginService.generateAndSendCode(request.getId());
         session.setAttribute(SessionKeys.LOGIN_CODE, code);
         session.setAttribute(SessionKeys.LOGIN_ID, request.getId());
-
+        session.setAttribute(SessionKeys.LOGIN_TIME, LocalTime.now());
         return ApiResponse.success("验证码已发送");
     }
 
