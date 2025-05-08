@@ -61,61 +61,61 @@ public class CampusAidApplication {
         };
     }
 
-    @Bean
-    public ForumPostService getForumPostService() {
-        return new ForumPostService() {
-            @Autowired
-            private UploadFileSystemService uploadFileSystemService;
-
-            @Override
-            public List<ForumPostPreview> getPostsSorted(Long userId, KeywordType type, String keyword, PostSortOrder sortBy) {
-                return List.of();
-            }
-
-            @Override
-            public ForumPostPreview getPostDetail(Long userId, Long postId) {
-                return null;
-            }
-
-            @Override
-            public void createPost(Long userId, ForumPostPreview post) {
-
-            }
-
-            @Override
-            public void deletePost(Long postId, Long userId) {
-
-            }
-
-            @Override
-            public void likePost(Long postId, Long userId) {
-
-            }
-
-            @Override
-            public void replyPost(Long userId, Long postId, ReplyView reply) {
-
-            }
-
-            @Override
-            public void reportPost(Long userID, ReportRequest reportRequest) {
-
-            }
-
-            @Override
-            public String uploadImage(Long userId, Long postId, MultipartFile file) {
-                File dir = uploadFileSystemService.getBlogsUploadDir(postId);
-                String newFileName = file.getOriginalFilename();
-                if (newFileName == null)
-                    newFileName = LocalDateTime.now() + ".bin";
-                File dest = new File(dir, newFileName);
-                try {
-                    file.transferTo(dest);
-                } catch (Exception e) {
-                    throw new CampusAidException(e);
-                }
-                return dest.getAbsolutePath();
-            }
-        };
-    }
+//    @Bean
+//    public ForumPostService getForumPostService() {
+//        return new ForumPostService() {
+//            @Autowired
+//            private UploadFileSystemService uploadFileSystemService;
+//
+//            @Override
+//            public List<ForumPostPreview> getPostsSorted(Long userId, KeywordType type, String keyword, PostSortOrder sortBy) {
+//                return List.of();
+//            }
+//
+//            @Override
+//            public ForumPostPreview getPostDetail(Long userId, Long postId) {
+//                return null;
+//            }
+//
+//            @Override
+//            public void createPost(Long userId, ForumPostPreview post) {
+//
+//            }
+//
+//            @Override
+//            public void deletePost(Long postId, Long userId) {
+//
+//            }
+//
+//            @Override
+//            public void likePost(Long postId, Long userId) {
+//
+//            }
+//
+//            @Override
+//            public void replyPost(Long userId, Long postId, ReplyView reply) {
+//
+//            }
+//
+//            @Override
+//            public void reportPost(Long userID, ReportRequest reportRequest) {
+//
+//            }
+//
+//            @Override
+//            public String uploadImage(Long userId, Long postId, MultipartFile file) {
+//                File dir = uploadFileSystemService.getBlogsUploadDir(postId);
+//                String newFileName = file.getOriginalFilename();
+//                if (newFileName == null)
+//                    newFileName = LocalDateTime.now() + ".bin";
+//                File dest = new File(dir, newFileName);
+//                try {
+//                    file.transferTo(dest);
+//                } catch (Exception e) {
+//                    throw new CampusAidException(e);
+//                }
+//                return dest.getAbsolutePath();
+//            }
+//        };
+//    }
 }

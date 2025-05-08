@@ -1,6 +1,8 @@
 package cn.edu.usst.cs.campusAid.service;
 
 import cn.edu.usst.cs.campusAid.dto.forum.*;
+import cn.edu.usst.cs.campusAid.model.forum.Reply;
+import cn.edu.usst.cs.campusAid.model.forum.ReplyTreeNode;
 import org.springframework.web.multipart.MultipartFile;
 
 
@@ -17,13 +19,6 @@ public interface ForumPostService {
      */
     List<ForumPostPreview> getPostsSorted(Long userId, KeywordType type, String keyword, PostSortOrder sortBy);
 
-    /**
-     * 获取指定帖子的详细信息，包括回复
-     *
-     * @param postId 帖子ID
-     * @return 帖子详情
-     */
-    ForumPostPreview getPostDetail(Long userId, Long postId);
 
     /**
      * 创建一个新的帖子
@@ -47,6 +42,30 @@ public interface ForumPostService {
      * @param userId 当前用户ID
      */
     void likePost(Long postId, Long userId);
+    /**
+     * 取消点赞帖子
+     *
+     * @param postId 帖子ID
+     * @param userId 当前用户ID
+     */
+    void unlikePost(Long postId, Long userId);
+
+    /**
+     * 检查用户是否已点赞该帖子
+     *
+     * @param postId 帖子ID
+     * @param userId 用户ID
+     * @return 是否已点赞
+     */
+    boolean isLikedByUser(Long postId, Long userId);
+
+    /**
+     * 获取帖子的点赞数量
+     *
+     * @param postId 帖子ID
+     * @return 点赞数量
+     */
+    int getPostLikeCount(Long postId);
 
     /**
      * 回复指定帖子
@@ -55,6 +74,28 @@ public interface ForumPostService {
      * @param reply  回复内容
      */
     void replyPost(Long userId, Long postId, ReplyView reply);
+    /**
+     * 获取帖子的所有回复
+     * 适合简单展示或后台管理
+     * @param postId 帖子ID
+     * @return 回复列表
+     */
+    List<Reply> getRepliesByPostId(Long postId);
+    /**
+     * 获取帖子的回复树
+     * 适合前端递归渲染多级评论
+     * 注意：已经不需要使用了，因为配合工具类已经可以将帖子处理成树形结构
+     * @param postId 帖子ID
+     * @return 回复树
+     */
+    List<ReplyTreeNode> getRepliesTreeByPostId(Long postId);
+
+    /**
+     * 删除回复
+     * @param replyId       回复ID
+     * @param userId        用户ID
+     */
+    void deleteReply(Long replyId, Long userId) ;
 
     /**
      * 举报帖子

@@ -16,4 +16,11 @@ public interface UserService {
      * @return 用户信息
      */
     User getUserById(Long userId);
+    /**
+     * 判断用户是否为管理员。
+     *
+     * @param userId 用户ID
+     * @return 是否为管理员
+     */
+    boolean isAdmin(Long userId);
 }

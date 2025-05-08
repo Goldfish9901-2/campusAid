@@ -3,6 +3,7 @@ package cn.edu.usst.cs.campusAid.controller;
 import cn.edu.usst.cs.campusAid.dto.forum.*;
 
 import cn.edu.usst.cs.campusAid.service.ForumPostService;
+import cn.edu.usst.cs.campusAid.util.ReplyTreeConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -34,14 +35,14 @@ public class ForumController {
 
 
     /**
-     * 获取指定帖子详情（包括回复）
+     * 获取回复列表
      */
-    @GetMapping("/post/{postId}")
-    public ResponseEntity<ForumPostPreview> getPostDetail(
-            @PathVariable Long postId,
-            @SessionAttribute(SessionKeys.LOGIN_ID) Long userId
-    ) {
-        return ResponseEntity.ok(forumPostService.getPostDetail(userId, postId));
+    @GetMapping("/post/{postId}/replies")
+    public ResponseEntity<List<ReplyView>> getReplies(@PathVariable Long postId) {
+        List<ReplyView> replyTree = ReplyTreeConverter.buildTree(
+                forumPostService.getRepliesByPostId(postId)
+        );
+        return ResponseEntity.ok(replyTree);
     }
 
     /**

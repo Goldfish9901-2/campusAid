@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.edu.usst.cs.campusAid.mapper.ReplyMapper">
+
+    <!-- 插入回复 -->
+    <insert id="insertReply">
+        INSERT INTO reply (blog_id, sender, content, send_time)
+        VALUES (#{reply.blogId}, #{reply.sender}, #{reply.content}, NOW())
+    </insert>
+
+    <!-- 根据博客ID删除所有回复 -->
+    <delete id="deleteByBlogId">
+        DELETE FROM reply
+        WHERE blog_id = #{blogId}
+    </delete>
+    <!--    获取某篇帖子的所有回复-->
+    <select id="selectByBlogId" resultType="cn.edu.usst.cs.campusAid.model.forum.Reply">
+        SELECT * FROM reply
+        WHERE blog_id = #{blogId}
+    </select>
+    <!--    删除指定回复-->
+    <delete id="deleteById">
+        DELETE FROM reply
+        WHERE id = #{id}
+    </delete>
+    <!--  根据回复ID获取回复  -->
+    <select id="selectById" resultType="cn.edu.usst.cs.campusAid.model.forum.Reply">
+        SELECT * FROM reply WHERE id = #{id}
+    </select>
+</mapper>
