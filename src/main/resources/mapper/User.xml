@@ -8,6 +8,7 @@
     <select id="getUserById" parameterType="java.lang.Long" resultType="cn.edu.usst.cs.campusAid.model.User">
         SELECT *
         FROM user
-        WHERE id = #{id};
+        WHERE id = #{id}
+        ;
     </select>
 </mapper>

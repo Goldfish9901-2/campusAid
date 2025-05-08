@@ -36,6 +36,10 @@ spring:
     password: ${MAIL_PASSWORD}
   profiles:
     active: prod
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 10MB
 server:
   port: 8090
   servlet:
@@ -55,6 +59,9 @@ logging:
         template: debug
 mybatis:
   mapper-locations: classpath:mapper/*.xml
+  configuration:
+    map-underscore-to-camel-case: true
+  type-aliases-package: cn.edu.usst.campusAid.model
 alipay:
   appId: ${ALIPAY_APP_ID}
   privateKey: ${ALIPAY_PRIVATE_KEY}
