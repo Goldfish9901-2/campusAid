@@ -1,7 +1,7 @@
 package cn.edu.usst.cs.campusAid.service.impl;
 
 import cn.edu.usst.cs.campusAid.service.CampusAidException;
-import cn.edu.usst.cs.campusAid.mapper.UserMapper;
+import cn.edu.usst.cs.campusAid.mapper.db.UserMapper;
 import cn.edu.usst.cs.campusAid.model.User;
 import cn.edu.usst.cs.campusAid.service.RegisterService;
 import org.springframework.beans.factory.annotation.Autowired;

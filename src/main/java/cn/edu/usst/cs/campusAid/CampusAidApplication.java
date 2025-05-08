@@ -7,6 +7,7 @@ import cn.edu.usst.cs.campusAid.service.ErrandService;
 import cn.edu.usst.cs.campusAid.service.ForumPostService;
 import cn.edu.usst.cs.campusAid.service.UploadFileSystemService;
 import cn.edu.usst.cs.campusAid.service.shop.ShopService;
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -19,7 +20,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.ExecutorService;
-
+@MapperScan("cn.edu.usst.cs.campusAid.mapper.db") // 只扫描真正的数据库 Mapper
 @SpringBootApplication
 @EnableConfigurationProperties(
         {

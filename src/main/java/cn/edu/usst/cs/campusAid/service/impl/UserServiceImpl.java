@@ -1,9 +1,8 @@
 package cn.edu.usst.cs.campusAid.service.impl;
 
-import cn.edu.usst.cs.campusAid.mapper.UserMapper;
+import cn.edu.usst.cs.campusAid.mapper.db.UserMapper;
 import cn.edu.usst.cs.campusAid.model.User;
 import cn.edu.usst.cs.campusAid.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service

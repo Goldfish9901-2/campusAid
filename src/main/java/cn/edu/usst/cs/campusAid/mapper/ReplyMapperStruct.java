@@ -8,7 +8,7 @@ import org.mapstruct.factory.Mappers;
 
 import java.util.List;
 
-@Mapper
+@Mapper  // 这是 MapStruct 的注解
 public interface ReplyMapperStruct {
     ReplyMapperStruct INSTANCE = Mappers.getMapper(ReplyMapperStruct.class);
 

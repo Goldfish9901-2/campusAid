@@ -1,7 +1,6 @@
-package cn.edu.usst.cs.campusAid.mapper;
+package cn.edu.usst.cs.campusAid.mapper.db;
 
 import cn.edu.usst.cs.campusAid.model.User;
-import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 
 @Mapper

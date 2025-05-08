@@ -1,8 +1,8 @@
 package cn.edu.usst.cs.campusAid.service.impl;
 
 import cn.edu.usst.cs.campusAid.dto.forum.*;
-import cn.edu.usst.cs.campusAid.mapper.LikeBlogMapper;
-import cn.edu.usst.cs.campusAid.mapper.ReplyMapper;
+import cn.edu.usst.cs.campusAid.mapper.db.LikeBlogMapper;
+import cn.edu.usst.cs.campusAid.mapper.db.ReplyMapper;
 import cn.edu.usst.cs.campusAid.model.forum.LikeBlog;
 import cn.edu.usst.cs.campusAid.model.forum.Reply;
 import cn.edu.usst.cs.campusAid.model.forum.ReplyTreeNode;
@@ -39,11 +39,7 @@ public class ForumPostServiceImpl implements ForumPostService {
         return List.of();
     }
 
-    @Override
-    public ForumPostPreview getPostDetail(Long userId, Long postId) {
-        // TODO: 实现获取帖子详情逻辑
-        return null;
-    }
+
 
     @Override
     public void createPost(Long userId, ForumPostPreview post) {
