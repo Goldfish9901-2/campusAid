@@ -6,12 +6,8 @@ package cn.edu.usst.cs.campusAid.controller;
 //import lombok.extern.slf4j.Slf4j;
 //import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.web.bind.annotation.*;
-//
-///**
-// * @author:xianyu
-// * @createDate:2022/7/30
-// * @description:
-// */
+
+
 //@CrossOrigin
 //@RestController
 //@RequestMapping("/yun")

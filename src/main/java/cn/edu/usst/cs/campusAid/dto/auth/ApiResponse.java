@@ -1,4 +1,4 @@
-package cn.edu.usst.cs.campusAid.model;
+package cn.edu.usst.cs.campusAid.dto.auth;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -28,5 +28,9 @@ public class ApiResponse<T> {
 
     public static ApiResponse<String> interServerError(String message) {
         return ApiResponse.of(500, message, null);
+    }
+
+    public static ApiResponse<?> unauthorized(String message) {
+        return ApiResponse.of(401, message, null);
     }
 }
