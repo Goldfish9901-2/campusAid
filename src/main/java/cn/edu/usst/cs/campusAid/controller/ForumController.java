@@ -2,8 +2,10 @@ package cn.edu.usst.cs.campusAid.controller;
 
 import cn.edu.usst.cs.campusAid.dto.forum.*;
 
+import cn.edu.usst.cs.campusAid.model.forum.Reply;
 import cn.edu.usst.cs.campusAid.service.ForumPostService;
 import cn.edu.usst.cs.campusAid.util.ReplyTreeConverter;
+import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,10 +29,16 @@ public class ForumController {
             @SessionAttribute(SessionKeys.LOGIN_ID) Long userId,
             @RequestParam(defaultValue = "TITLE") KeywordType type,
             @RequestParam String keyword,
-            @RequestParam(defaultValue = "TIME") PostSortOrder sortBy
+            @RequestParam(defaultValue = "TIME") PostSortOrder sortBy,
+            @RequestParam(defaultValue = "0") int page
     ) {
-        List<ForumPostPreview> posts = forumPostService.getPostsSorted(userId, type, keyword, sortBy);
-        return ResponseEntity.ok().body(posts);
+        int pageSize = 10;
+        int offset = page * pageSize;
+        RowBounds rowBounds = new RowBounds(offset, pageSize);
+
+        // 调用 service 并返回
+        List<ForumPostPreview> posts = forumPostService.getPostsSorted(userId, type, keyword, sortBy, rowBounds);
+        return ResponseEntity.ok(posts);
     }
 
 
@@ -39,10 +47,12 @@ public class ForumController {
      */
     @GetMapping("/post/{postId}/replies")
     public ResponseEntity<List<ReplyView>> getReplies(@PathVariable Long postId) {
-        List<ReplyView> replyTree = ReplyTreeConverter.buildTree(
-                forumPostService.getRepliesByPostId(postId)
-        );
-        return ResponseEntity.ok(replyTree);
+//        List<ReplyView> replyTree = ReplyTreeConverter.buildTree(
+//                forumPostService.getRepliesByPostId(postId)
+//        );
+//        return ResponseEntity.ok(replyTree);
+        List<ReplyView> replies = forumPostService.getRepliesByPostId(postId);
+        return ResponseEntity.ok(replies);
     }
 
     /**

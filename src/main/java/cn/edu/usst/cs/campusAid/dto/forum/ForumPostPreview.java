@@ -9,6 +9,7 @@ public class ForumPostPreview {
     private Long postId;
     private String title;
     private String authorName;
+    private String content;
     private Long authorId;
     private String publishTime;
     private int likeCount;

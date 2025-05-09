@@ -39,4 +39,12 @@ public class Reply {
      * 父回复ID，为空表示一级回复
      */
     private Long parentId;
+
+    public Long getSender() {
+        return sender;
+    }
+
+    public void setSender(Long sender) {
+        this.sender = sender;
+    }
 }

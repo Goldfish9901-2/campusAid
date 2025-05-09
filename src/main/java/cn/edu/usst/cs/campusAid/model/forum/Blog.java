@@ -41,4 +41,5 @@ public class Blog {
      * 默认为 'visible'
      */
     private String visibility;
+
 }

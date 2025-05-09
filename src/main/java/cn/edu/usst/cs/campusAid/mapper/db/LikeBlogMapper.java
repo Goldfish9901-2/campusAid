@@ -1,8 +1,10 @@
 package cn.edu.usst.cs.campusAid.mapper.db;
 
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.*;
 import cn.edu.usst.cs.campusAid.model.forum.LikeBlog;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * 博客点赞数据访问接口
@@ -45,4 +47,14 @@ public interface LikeBlogMapper {
      * @return 影响行数
      */
     int deleteByBlogId(Long blogId);
+    /**
+     * 批量统计多篇博客的点赞总数
+     * @param blogIds 博客ID列表
+     * @return 查询结果列表，每行包含 blogId 和 likeCount
+     */
+    @Results({
+            @Result(property = "blogId", column = "blog_id"),
+            @Result(property = "likeCount", column = "like_count")
+    })
+    List<Map<String, Object>> countLikesByBlogIds(@Param("blogIds") List<Long> blogIds);
 }

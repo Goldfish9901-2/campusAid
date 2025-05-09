@@ -1,8 +1,12 @@
 package cn.edu.usst.cs.campusAid.service.impl;
 
 import cn.edu.usst.cs.campusAid.dto.forum.*;
+import cn.edu.usst.cs.campusAid.mapper.BlogToForumPostPreview;
+import cn.edu.usst.cs.campusAid.mapper.ReplyMapperStruct;
+import cn.edu.usst.cs.campusAid.mapper.db.BlogMapper;
 import cn.edu.usst.cs.campusAid.mapper.db.LikeBlogMapper;
 import cn.edu.usst.cs.campusAid.mapper.db.ReplyMapper;
+import cn.edu.usst.cs.campusAid.model.forum.Blog;
 import cn.edu.usst.cs.campusAid.model.forum.LikeBlog;
 import cn.edu.usst.cs.campusAid.model.forum.Reply;
 import cn.edu.usst.cs.campusAid.model.forum.ReplyTreeNode;
@@ -10,6 +14,7 @@ import cn.edu.usst.cs.campusAid.service.CampusAidException;
 import cn.edu.usst.cs.campusAid.service.ForumPostService;
 import cn.edu.usst.cs.campusAid.service.UploadFileSystemService;
 import cn.edu.usst.cs.campusAid.service.UserService;
+import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,10 +22,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static cn.edu.usst.cs.campusAid.service.impl.MailServiceImpl.logger;
 
 @Service
 public class ForumPostServiceImpl implements ForumPostService {
@@ -32,23 +37,88 @@ public class ForumPostServiceImpl implements ForumPostService {
     private LikeBlogMapper likeBlogMapper;
     @Autowired
     private ReplyMapper replyMapper;
+    @Autowired
+    private BlogMapper blogMapper;
 
+    /**
+     * 获取排序后的帖子列表，并附带每个帖子的点赞数、回复数及是否已点赞状态。
+     *
+     * <p>该方法支持以下功能：</p>
+     * <ul>
+     *     <li>按关键词类型（标题/发帖人/标签）进行过滤</li>
+     *     <li>按时间/点赞量/回复量排序</li>
+     *     <li>分页加载数据</li>
+     *     <li>批量查询点赞数和回复数，避免N+1查询问题</li>
+     *     <li>判断当前用户是否已经对每篇帖子点赞</li>
+     * </ul>
+     *
+     * @param userId 当前登录用户ID，用于判断点赞状态
+     * @param type 关键词匹配类型（TITLE: 标题, TAG: 内容中的标签, CREATOR: 发帖人）
+     * @param keyword 搜索关键词
+     * @param sortBy 排序方式（TIME: 时间, LIKE_COUNT: 点赞量, REPLY_COUNT: 回复量）
+     * @param rowBounds 分页参数，控制偏移量和每页条目数
+     * @return 返回经过筛选、排序和补充信息后的帖子预览列表
+     */
     @Override
-    public List<ForumPostPreview> getPostsSorted(Long userId, KeywordType type, String keyword, PostSortOrder sortBy) {
-        // TODO: 实现获取排序后的帖子列表逻辑
-        return List.of();
-    }
+    public List<ForumPostPreview> getPostsSorted(Long userId, KeywordType type, String keyword, PostSortOrder sortBy, RowBounds rowBounds) {
+        // Step 1：调用统一SQL方法进行搜索与排序
+        List<Blog> blogs = blogMapper.selectBlogs(
+                type.name(),       // 枚举转字符串传给 MyBatis
+                keyword,
+                sortBy.name(),     // 枚举转字符串传给 MyBatis
+                rowBounds
+        );
 
+        if (blogs.isEmpty()) return List.of();
+
+        // Step 2：提取所有博客ID，用于批量查询点赞数和回复数
+        List<Long> blogIds = blogs.stream()
+                .map(Blog::getId)
+                .filter(Objects::nonNull)
+                .toList();
+
+        // Step 3：批量查询点赞数和回复数，并转换为 Map<Long, Integer>
+        Map<Long, Integer> likeCountMap = convertToIdCountMap(likeBlogMapper.countLikesByBlogIds(blogIds), "blogId", "likeCount");
+        Map<Long, Integer> replyCountMap = convertToIdCountMap(replyMapper.countRepliesByBlogIds(blogIds), "blogId", "replyCount");
+
+        // Step 4：转换为 DTO 并填充额外字段
+        return blogs.stream()
+                .map(blog -> {
+                    ForumPostPreview preview = BlogToForumPostPreview.INSTANCE.toView(blog);
+                    preview.setLikeCount(likeCountMap.getOrDefault(preview.getPostId(), 0));
+                    preview.setReplyCount(replyCountMap.getOrDefault(preview.getPostId(), 0));
+                    preview.setLiked(isLikedByUser(blog.getId(), userId));
+                    return preview;
+                })
+                .toList();
+    }
 
 
     @Override
     public void createPost(Long userId, ForumPostPreview post) {
-        // TODO: 实现创建帖子逻辑
+        Blog blog = new Blog();
+        blog.setTitle(post.getTitle());
+        blog.setContent(post.getContent());
+        blog.setCreator(userId);
+        blog.setVisibility(Visibility.VISIBLE.getValue());
+        blog.setSendTime(LocalDateTime.now());
+        blogMapper.insertBlog(blog);
     }
+
+
 
     @Override
     public void deletePost(Long postId, Long userId) {
-        // TODO: 实现删除帖子逻辑
+        Blog blog = blogMapper.selectById(postId);
+        if (blog == null) throw new CampusAidException("帖子不存在");
+        logger.info("👤 当前用户ID={}, 帖子作者={}, 是否是管理员={}", userId, blog.getCreator(), userService.isAdmin(userId));
+
+        //权限控制
+        if (!blog.getCreator().equals(userId) && !userService.isAdmin(userId)) throw new CampusAidException("无权删除此帖子");
+
+        blogMapper.deleteById(postId);
+        likeBlogMapper.deleteByBlogId(postId);
+        replyMapper.deleteByBlogId(postId);
     }
 
     /**
@@ -108,14 +178,23 @@ public class ForumPostServiceImpl implements ForumPostService {
     }
 
     /**
-     * 获取帖子的回复列表
+     * 获取帖子的回复列表并转换为 DTO
      * @param postId 帖子ID
-     * @return
+     * @return 返回 ReplyView 列表
      */
     @Override
-    public List<Reply> getRepliesByPostId(Long postId) {
-        return replyMapper.selectByBlogId(postId);
+    public List<ReplyView> getRepliesByPostId(Long postId) {
+        List<Reply> replies = replyMapper.selectByBlogId(postId);
+        return ReplyMapperStruct.INSTANCE.toViews(replies);
     }
+    /**
+     * 获取帖子的回复数量
+     */
+    @Override
+    public int getReplyCountByPostId(Long postId) {
+        return replyMapper.countRepliesByBlogId(postId);
+    }
+
     /**
      * 获取帖子的回复树结构
      * @param postId 帖子ID
@@ -165,7 +244,15 @@ public class ForumPostServiceImpl implements ForumPostService {
 
         replyMapper.deleteById(replyId);
     }
+    @Override
+    public List<Map<String, Object>> getLikeCountsByPosts(List<Long> blogIds) {
+        return likeBlogMapper.countLikesByBlogIds(blogIds);
+    }
 
+    @Override
+    public List<Map<String, Object>> countRepliesByPosts(List<Long> blogIds) {
+        return replyMapper.countRepliesByBlogIds(blogIds);
+    }
     @Override
     public void reportPost(Long userID, ReportRequest reportRequest) {
         // TODO: 实现举报帖子逻辑
@@ -195,6 +282,25 @@ public class ForumPostServiceImpl implements ForumPostService {
     private boolean isUserOrAdmin(Long userId, Long targetUserId) {
         if (userId.equals(targetUserId)) return true;
         return userService.isAdmin(userId);
+    }
+
+    /**
+     * 用于将 List<Map<String, Object>> 转换为 Map<Long, Integer>：
+     * @param list
+     * @param keyField
+     * @param valueField
+     * @return
+     */
+    private Map<Long, Integer> convertToIdCountMap(List<Map<String, Object>> list, String keyField, String valueField) {
+        if (list == null || list.isEmpty()) {
+            return Map.of(); // 返回不可变空 map，避免 null 异常
+        }
+
+        return list.stream().collect(Collectors.toMap(
+                map -> (Long) map.get(keyField),
+                map -> ((Number) map.get(valueField)).intValue(),
+                (existing, replacement) -> existing // 若有重复 key，保留旧值
+        ));
     }
 
 }

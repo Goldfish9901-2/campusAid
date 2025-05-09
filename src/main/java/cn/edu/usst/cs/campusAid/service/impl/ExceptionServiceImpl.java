@@ -1,6 +1,6 @@
 package cn.edu.usst.cs.campusAid.service.impl;
 
-import cn.edu.usst.cs.campusAid.mapper.ExceptionMapper;
+import cn.edu.usst.cs.campusAid.mapper.db.ExceptionMapper;
 import cn.edu.usst.cs.campusAid.service.ExceptionService;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;

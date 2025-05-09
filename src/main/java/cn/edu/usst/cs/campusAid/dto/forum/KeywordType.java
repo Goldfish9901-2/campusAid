@@ -1,7 +1,7 @@
 package cn.edu.usst.cs.campusAid.dto.forum;
 
 public enum KeywordType {
-    TITLE,
-    TAG,
-    USER
+    TITLE,//标题
+    TAG,//标签
+    CREATOR//发帖人
 }

@@ -3,21 +3,36 @@ package cn.edu.usst.cs.campusAid.service;
 import cn.edu.usst.cs.campusAid.dto.forum.*;
 import cn.edu.usst.cs.campusAid.model.forum.Reply;
 import cn.edu.usst.cs.campusAid.model.forum.ReplyTreeNode;
+import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.session.RowBounds;
 import org.springframework.web.multipart.MultipartFile;
 
 
 import java.util.List;
+import java.util.Map;
 
 public interface ForumPostService {
 
     /**
-     * 获取论坛帖子列表，支持排序与关键词搜索
+     * 获取排序后的帖子列表，并附带每个帖子的点赞数、回复数及是否已点赞状态。
      *
-     * @param keyword 关键词搜索
-     * @param sortBy  排序方式
-     * @return 排序后的帖子列表
+     * <p>该方法支持以下功能：</p>
+     * <ul>
+     *     <li>按关键词类型（标题/发帖人/标签）进行过滤</li>
+     *     <li>按时间/点赞量/回复量排序</li>
+     *     <li>分页加载数据</li>
+     *     <li>批量查询点赞数和回复数，避免N+1查询问题</li>
+     *     <li>判断当前用户是否已经对每篇帖子点赞</li>
+     * </ul>
+     *
+     * @param userId 当前登录用户ID，用于判断点赞状态
+     * @param type 关键词匹配类型（TITLE: 标题, TAG: 内容中的标签, CREATOR: 发帖人）
+     * @param keyword 搜索关键词
+     * @param sortBy 排序方式（TIME: 时间, LIKE_COUNT: 点赞量, REPLY_COUNT: 回复量）
+     * @param rowBounds 分页参数，控制偏移量和每页条目数
+     * @return 返回经过筛选、排序和补充信息后的帖子预览列表
      */
-    List<ForumPostPreview> getPostsSorted(Long userId, KeywordType type, String keyword, PostSortOrder sortBy);
+    List<ForumPostPreview> getPostsSorted(Long userId, KeywordType type, String keyword, PostSortOrder sortBy, RowBounds rowBounds);
 
 
     /**
@@ -80,7 +95,14 @@ public interface ForumPostService {
      * @param postId 帖子ID
      * @return 回复列表
      */
-    List<Reply> getRepliesByPostId(Long postId);
+    List<ReplyView> getRepliesByPostId(Long postId);
+    /**
+     * 获取帖子的回复数量
+     * @param postId 常指 blogId
+     * @return 回复数量
+     */
+    int getReplyCountByPostId(Long postId);
+
     /**
      * 获取帖子的回复树
      * 适合前端递归渲染多级评论
@@ -89,7 +111,19 @@ public interface ForumPostService {
      * @return 回复树
      */
     List<ReplyTreeNode> getRepliesTreeByPostId(Long postId);
+    /**
+     * 批量查询多个博客的点赞数量
+     * @param blogIds 博客ID列表
+     * @return key: blogId, value: likeCount
+     */
+    List<Map<String, Object>> getLikeCountsByPosts(List<Long> blogIds);
 
+    /**
+     * 批量查询多个博客的回复数量
+     * @param blogIds 博客ID列表
+     * @return key: blogId, value: replyCount
+     */
+    List<Map<String, Object>> countRepliesByPosts(@Param("blogIds") List<Long> blogIds);
     /**
      * 删除回复
      * @param replyId       回复ID
