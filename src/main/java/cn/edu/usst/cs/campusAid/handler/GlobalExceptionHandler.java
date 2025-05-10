@@ -25,19 +25,11 @@ public class GlobalExceptionHandler {
         return ApiResponse.badRequest(e.getMessage());
     }
 
-    @ExceptionHandler(MissingRequestValueException.class)
-    public ApiResponse<?> handleMissingSessionAttribute(MissingRequestValueException e) {
-        logger.warn("Session attribute not found: " + e.getMessage());
-        var reportID =
-                exceptionService.reportException(e);
-        return ApiResponse.interServerError("服务器内部错误。编号 " + reportID);
-
-    }
-
-    @ExceptionHandler({HttpMessageConversionException.class})
+    @ExceptionHandler({HttpMessageConversionException.class, MissingRequestValueException.class})
     public ApiResponse<?> handleHttpMessageConversionException(HttpMessageConversionException e) {
-        return ApiResponse.badRequest("参数错误\n"+e.getMessage());
+        return ApiResponse.badRequest("参数错误\n" + e.getMessage());
     }
+
     @ExceptionHandler({Exception.class})
     public ApiResponse<?> handleOtherExceptions(Exception e) {
         var reportID =
