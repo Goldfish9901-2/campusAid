@@ -128,7 +128,7 @@ public class ForumPostServiceImpl implements ForumPostService {
     @Override
     public void likePost(Long postId, Long userId) {
         if (isLikedByUser(postId, userId)) {
-            throw new RuntimeException("您已点赞过该帖子");
+            throw new CampusAidException("您已点赞过该帖子");
         }
         LikeBlog likeBlog = new LikeBlog();
         likeBlog.setBlogId(postId);

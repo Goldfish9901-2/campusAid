@@ -4,6 +4,7 @@ import cn.edu.usst.cs.campusAid.dto.auth.ApiResponse;
 import cn.edu.usst.cs.campusAid.service.ExceptionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.converter.HttpMessageConversionException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import cn.edu.usst.cs.campusAid.service.CampusAidException;
@@ -33,11 +34,16 @@ public class GlobalExceptionHandler {
 
     }
 
-
+    @ExceptionHandler({HttpMessageConversionException.class})
+    public ApiResponse<?> handleHttpMessageConversionException(HttpMessageConversionException e) {
+        return ApiResponse.badRequest("参数错误\n"+e.getMessage());
+    }
     @ExceptionHandler({Exception.class})
     public ApiResponse<?> handleOtherExceptions(Exception e) {
         var reportID =
                 exceptionService.reportException(e);
         return ApiResponse.interServerError("服务器内部错误。编号 " + reportID);
     }
+
+
 }
