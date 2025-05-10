@@ -96,13 +96,13 @@ public interface ForumPostService {
      * @param postId 帖子ID
      * @return 回复列表
      */
-    List<ReplyView> getRepliesByPostId(Long postId);
+    List<ReplyView> getRepliesByPostId(Long userId,Long postId);
     /**
      * 获取帖子的回复数量
      * @param postId 常指 blogId
      * @return 回复数量
      */
-    int getReplyCountByPostId(Long postId);
+    int getReplyCountByPostId(Long userId,Long postId);
 
     /**
      * 获取帖子的回复树
@@ -111,7 +111,7 @@ public interface ForumPostService {
      * @param postId 帖子ID
      * @return 回复树
      */
-    List<ReplyTreeNode> getRepliesTreeByPostId(Long postId);
+    List<ReplyTreeNode> getRepliesTreeByPostId(Long userId,Long postId);
     /**
      * 批量查询多个博客的点赞数量
      * @param blogIds 博客ID列表

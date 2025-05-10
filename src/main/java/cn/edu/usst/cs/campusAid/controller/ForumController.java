@@ -53,12 +53,20 @@ public class ForumController {
      * 获取回复列表
      */
     @GetMapping("/post/{postId}/replies")
-    public ResponseEntity<List<ReplyView>> getReplies(@PathVariable Long postId) {
+    public ResponseEntity<List<ReplyView>> getReplies(
+            @PathVariable Long postId,
+            @SessionAttribute(SessionKeys.LOGIN_ID) Long userId
+    ) {
+        if (!Objects.equals(
+                forumPostService.getAuthorID(postId),
+                userId
+        ))
+            throw new CampusAidException("无权限");
 //        List<ReplyView> replyTree = ReplyTreeConverter.buildTree(
 //                forumPostService.getRepliesByPostId(postId)
 //        );
 //        return ResponseEntity.ok(replyTree);
-        List<ReplyView> replies = forumPostService.getRepliesByPostId(postId);
+        List<ReplyView> replies = forumPostService.getRepliesByPostId(userId, postId);
         return ResponseEntity.ok(replies);
     }
 
@@ -136,6 +144,7 @@ public class ForumController {
 
     /**
      * 获取帖子附件
+     *
      * @param userId 用户ID 校验用
      * @param postId 帖子ID
      * @return 文件列表

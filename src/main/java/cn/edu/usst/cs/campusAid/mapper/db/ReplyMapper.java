@@ -31,7 +31,11 @@ public interface ReplyMapper {
      * @param blogId 帖子ID
      * @return 回复列表
      */
-    List<Reply> selectByBlogId(Long blogId);
+    List<Reply> selectByBlogId(
+            @Param("userId")
+            Long userId,
+            @Param("blogId")
+            Long blogId);
     /**
      * 根据博客ID查询回复数量
      * @param blogId 帖子ID

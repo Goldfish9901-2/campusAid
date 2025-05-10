@@ -207,8 +207,8 @@ public class ForumPostServiceImplTest {
      * @param postId
      * @return
      */
-    private Long getLatestReplyId(Long postId) {
-        List<Reply> replies = replyMapper.selectByBlogId(postId);
+    private Long getLatestReplyId(Long userId,Long postId) {
+        List<Reply> replies = replyMapper.selectByBlogId(userId,postId);
         return replies.stream()
                 .max(Comparator.comparing(Reply::getId))
                 .map(Reply::getId)
@@ -315,7 +315,7 @@ public class ForumPostServiceImplTest {
 
         forumPostService.replyPost(USER_ID_2, postId1, reply);
 
-        List<ReplyView> replies = forumPostService.getRepliesByPostId(postId1);
+        List<ReplyView> replies = forumPostService.getRepliesByPostId(USER_ID_2,postId1);
         boolean found = replies.stream().anyMatch(r -> r.getContent().equals(REPLY_CONTENT_1));
         assertTrue(found, "❌ 未找到指定回复内容");
         logger.info("✅ 成功回复帖子，内容为: {}", REPLY_CONTENT_1);
@@ -396,7 +396,7 @@ public class ForumPostServiceImplTest {
         ReplyView firstLevelReply = new ReplyView();
         firstLevelReply.setContent("这个帖子不错！");
         forumPostService.replyPost(USER_ID_2, postId1, firstLevelReply);
-        Long firstLevelId = getLatestReplyId(postId1);
+        Long firstLevelId = getLatestReplyId(USER_ID_2, postId1);
         assertNotNull(firstLevelId, "❌ 一级回复未成功插入");
         logger.info("✅ 成功创建一级回复 ID={}", firstLevelId);
 
@@ -405,12 +405,12 @@ public class ForumPostServiceImplTest {
         secondLevelReply.setContent("谢谢夸奖！");
         secondLevelReply.setParentId(firstLevelId); // 设置父级ID
         forumPostService.replyPost(USER_ID_1, postId1, secondLevelReply);
-        Long secondLevelId = getLatestReplyId(postId1);
+        Long secondLevelId = getLatestReplyId(USER_ID_1, postId1);
         assertNotNull(secondLevelId, "❌ 二级回复未成功插入");
         logger.info("✅ 成功创建二级回复 ID={}", secondLevelId);
 
         // Step 3: 获取完整回复并用工具类构建树状结构
-        List<Reply> allReplies = replyMapper.selectByBlogId(postId1);
+        List<Reply> allReplies = replyMapper.selectByBlogId(USER_ID_1, postId1);
         ReplyTreeConverter.Tree replyTreeView = ReplyTreeConverter.buildTree(allReplies);
 
         assertNotNull(replyTreeView, "❌ 回复树为 null");
@@ -462,7 +462,7 @@ public class ForumPostServiceImplTest {
         ReplyView firstLevelReply = new ReplyView();
         firstLevelReply.setContent("这个帖子不错！");
         forumPostService.replyPost(USER_ID_2, postId1, firstLevelReply);
-        Long firstLevelId = getLatestReplyId(postId1);
+        Long firstLevelId = getLatestReplyId(USER_ID_2,postId1);
 
         assertNotNull(firstLevelId, "❌ 一级回复未成功插入");
         logger.info("✅ 成功创建一级回复 ID={}", firstLevelId);
@@ -471,13 +471,13 @@ public class ForumPostServiceImplTest {
         ReplyView secondLevelReply = new ReplyView();
         secondLevelReply.setContent("我也想说点什么～");
         forumPostService.replyPost(USER_ID_1, postId1, secondLevelReply);
-        Long secondLevelId = getLatestReplyId(postId1);
+        Long secondLevelId = getLatestReplyId(USER_ID_1,postId1);
 
         assertNotNull(secondLevelId, "❌ 第二条回复未成功插入");
         logger.info("✅ 成功创建第二条回复 ID={}", secondLevelId);
 
         // Step 3: 获取扁平回复列表
-        List<ReplyView> flatReplies = forumPostService.getRepliesByPostId(postId1);
+        List<ReplyView> flatReplies = forumPostService.getRepliesByPostId(USER_ID_1,postId1);
 
         assertNotNull(flatReplies, "❌ 回复列表为 null");
         assertEquals(2, flatReplies.size(), "❌ 回复数量不为2");
