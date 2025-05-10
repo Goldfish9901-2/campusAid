@@ -14,8 +14,8 @@ public interface UploadFileSystemService {
         }
         return blogsDir.getAbsoluteFile();
     }
-    default File getBlogsUploadDir(Long userId) {
-        File blogsDir = new File(getBlogsUploadDir(),String.valueOf(userId));
+    default File getBlogsUploadDir(Long blogId) {
+        File blogsDir = new File(getBlogsUploadDir(),String.valueOf(blogId));
         if (!blogsDir.exists()) {
             if (!blogsDir.mkdir())
                 throw new CampusAidException("创建 " + blogsDir + " 失败");

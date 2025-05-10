@@ -40,6 +40,7 @@ public class ForumPostServiceImpl implements ForumPostService {
     @Autowired
     private BlogMapper blogMapper;
 
+
     /**
      * 获取排序后的帖子列表，并附带每个帖子的点赞数、回复数及是否已点赞状态。
      *
@@ -52,10 +53,10 @@ public class ForumPostServiceImpl implements ForumPostService {
      *     <li>判断当前用户是否已经对每篇帖子点赞</li>
      * </ul>
      *
-     * @param userId 当前登录用户ID，用于判断点赞状态
-     * @param type 关键词匹配类型（TITLE: 标题, TAG: 内容中的标签, CREATOR: 发帖人）
-     * @param keyword 搜索关键词
-     * @param sortBy 排序方式（TIME: 时间, LIKE_COUNT: 点赞量, REPLY_COUNT: 回复量）
+     * @param userId    当前登录用户ID，用于判断点赞状态
+     * @param type      关键词匹配类型（TITLE: 标题, TAG: 内容中的标签, CREATOR: 发帖人）
+     * @param keyword   搜索关键词
+     * @param sortBy    排序方式（TIME: 时间, LIKE_COUNT: 点赞量, REPLY_COUNT: 回复量）
      * @param rowBounds 分页参数，控制偏移量和每页条目数
      * @return 返回经过筛选、排序和补充信息后的帖子预览列表
      */
@@ -106,7 +107,6 @@ public class ForumPostServiceImpl implements ForumPostService {
     }
 
 
-
     @Override
     public void deletePost(Long postId, Long userId) {
         Blog blog = blogMapper.selectById(postId);
@@ -114,7 +114,8 @@ public class ForumPostServiceImpl implements ForumPostService {
         logger.info("👤 当前用户ID={}, 帖子作者={}, 是否是管理员={}", userId, blog.getCreator(), userService.isAdmin(userId));
 
         //权限控制
-        if (!blog.getCreator().equals(userId) && !userService.isAdmin(userId)) throw new CampusAidException("无权删除此帖子");
+        if (!blog.getCreator().equals(userId) && !userService.isAdmin(userId))
+            throw new CampusAidException("无权删除此帖子");
 
         blogMapper.deleteById(postId);
         likeBlogMapper.deleteByBlogId(postId);
@@ -163,6 +164,7 @@ public class ForumPostServiceImpl implements ForumPostService {
 
     /**
      * 回复帖子
+     *
      * @param userId
      * @param postId 帖子ID
      * @param reply  回复内容
@@ -179,6 +181,7 @@ public class ForumPostServiceImpl implements ForumPostService {
 
     /**
      * 获取帖子的回复列表并转换为 DTO
+     *
      * @param postId 帖子ID
      * @return 返回 ReplyView 列表
      */
@@ -187,6 +190,7 @@ public class ForumPostServiceImpl implements ForumPostService {
         List<Reply> replies = replyMapper.selectByBlogId(postId);
         return ReplyMapperStruct.INSTANCE.toViews(replies);
     }
+
     /**
      * 获取帖子的回复数量
      */
@@ -197,6 +201,7 @@ public class ForumPostServiceImpl implements ForumPostService {
 
     /**
      * 获取帖子的回复树结构
+     *
      * @param postId 帖子ID
      * @return
      */
@@ -226,8 +231,10 @@ public class ForumPostServiceImpl implements ForumPostService {
 
         return rootNodes;
     }
+
     /**
      * 删除回复
+     *
      * @param replyId 回复ID
      */
     @Transactional
@@ -244,6 +251,7 @@ public class ForumPostServiceImpl implements ForumPostService {
 
         replyMapper.deleteById(replyId);
     }
+
     @Override
     public List<Map<String, Object>> getLikeCountsByPosts(List<Long> blogIds) {
         return likeBlogMapper.countLikesByBlogIds(blogIds);
@@ -253,6 +261,7 @@ public class ForumPostServiceImpl implements ForumPostService {
     public List<Map<String, Object>> countRepliesByPosts(List<Long> blogIds) {
         return replyMapper.countRepliesByBlogIds(blogIds);
     }
+
     @Override
     public void reportPost(Long userID, ReportRequest reportRequest) {
         // TODO: 实现举报帖子逻辑
@@ -260,6 +269,11 @@ public class ForumPostServiceImpl implements ForumPostService {
 
     @Override
     public String uploadImage(Long userId, Long postId, MultipartFile file) {
+        Blog preview = blogMapper.selectById(postId);
+        if (preview == null)
+            throw new CampusAidException("帖子不存在");
+        if (!Objects.equals(preview.getCreator(), userId))
+            throw new CampusAidException("不是发布者 无权上传图片");
         File dir = uploadFileSystemService.getBlogsUploadDir(postId);
         String newFileName = file.getOriginalFilename();
         if (newFileName == null) {
@@ -273,8 +287,10 @@ public class ForumPostServiceImpl implements ForumPostService {
         }
         return dest.getAbsolutePath();
     }
+
     /**
      * 检查用户是否是帖子的作者或管理员
+     *
      * @param userId
      * @param targetUserId
      * @return
@@ -286,6 +302,7 @@ public class ForumPostServiceImpl implements ForumPostService {
 
     /**
      * 用于将 List<Map<String, Object>> 转换为 Map<Long, Integer>：
+     *
      * @param list
      * @param keyField
      * @param valueField

@@ -10,6 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public interface ForumPostService {
 
@@ -147,4 +148,46 @@ public interface ForumPostService {
      * @param file   图片文件
      */
     String uploadImage(Long userId, Long postId, MultipartFile file);
+
+    default Long submitPost(Long userId, ForumPostPreview post){
+        createPost(userId, post);
+        List<ForumPostPreview> candidates= getPostsSorted(
+                userId,
+                KeywordType.TITLE,
+                post.getTitle(),
+                PostSortOrder.TIME,
+                new RowBounds(0, 10)
+        );
+
+        System.err.println(candidates);
+        for (ForumPostPreview candidate : candidates) {
+            if (
+                    Objects.equals(candidate.getTitle(), post.getTitle())
+//                    && Objects.equals(candidate.getContent(), post.getContent())
+                    && Objects.equals(candidate.getAuthorId(), userId)
+            ) {
+                return candidate.getPostId();
+            }
+        }
+        return null;
+    }
+    default  Long getAuthorID(Long postId){
+        List<ForumPostPreview> candidates= getPostsSorted(
+                null,
+                KeywordType.TITLE,
+                null,
+                PostSortOrder.TIME,
+                new RowBounds(0, 10)
+        );
+        for (ForumPostPreview candidate : candidates) {
+            if (
+                    Objects.equals(candidate.getPostId(), postId)
+            ) {
+                return candidate.getAuthorId();
+            }
+        }
+        throw new CampusAidException("帖子不存在");
+    }
 }
+
+

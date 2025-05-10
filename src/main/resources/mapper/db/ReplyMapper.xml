@@ -5,9 +5,9 @@
 <mapper namespace="cn.edu.usst.cs.campusAid.mapper.db.ReplyMapper">
 
     <!-- 插入回复 -->
-    <insert id="insertReply">
-        INSERT INTO reply (blog_id, sender, content, send_time)
-        VALUES (#{blogId}, #{sender}, #{content}, NOW())
+    <insert id="insertReply" parameterType="cn.edu.usst.cs.campusAid.model.forum.Reply">
+        INSERT INTO reply (blog_id, sender, content, send_time,parent_id)
+        VALUES (#{blogId}, #{sender}, #{content}, NOW(),#{parentId})
     </insert>
 
     <!-- 根据博客ID删除所有回复 -->

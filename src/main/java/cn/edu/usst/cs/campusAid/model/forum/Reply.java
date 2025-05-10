@@ -40,11 +40,4 @@ public class Reply {
      */
     private Long parentId;
 
-    public Long getSender() {
-        return sender;
-    }
-
-    public void setSender(Long sender) {
-        this.sender = sender;
-    }
 }

@@ -58,6 +58,7 @@ logging:
       thymeleaf:
         template: debug
       mybatis: info
+
 mybatis:
   mapper-locations: classpath:mapper/db/*.xml
   configuration:

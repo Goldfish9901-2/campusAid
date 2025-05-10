@@ -3,7 +3,9 @@ package cn.edu.usst.cs.campusAid.controller;
 import cn.edu.usst.cs.campusAid.dto.forum.*;
 
 import cn.edu.usst.cs.campusAid.model.forum.Reply;
+import cn.edu.usst.cs.campusAid.service.CampusAidException;
 import cn.edu.usst.cs.campusAid.service.ForumPostService;
+import cn.edu.usst.cs.campusAid.service.UploadFileSystemService;
 import cn.edu.usst.cs.campusAid.util.ReplyTreeConverter;
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,13 +13,18 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/api/forum")
 public class ForumController {
     @Autowired
     ForumPostService forumPostService;
+    @Autowired
+    private UploadFileSystemService uploadFileSystemService;
 
     /**
      * 获取论坛帖子列表，支持排序与关键词搜索
@@ -58,7 +65,7 @@ public class ForumController {
     /**
      * 用户发帖
      */
-    @PostMapping("/post")
+    @PostMapping("/post/submit")
     public ResponseEntity<String> createPost(
             @RequestBody ForumPostPreview blogView
             ,
@@ -125,5 +132,27 @@ public class ForumController {
     ) {
         forumPostService.reportPost(userId, report);
         return ResponseEntity.ok("举报成功"); // 待实现
+    }
+
+    /**
+     * 获取帖子附件
+     * @param userId 用户ID 校验用
+     * @param postId 帖子ID
+     * @return 文件列表
+     */
+    @GetMapping("/post/contents")
+    public ResponseEntity<List<String>> getPostContents(
+            @SessionAttribute(SessionKeys.LOGIN_ID) Long userId,
+            @RequestParam Long postId
+    ) {
+        if (!Objects.equals(
+                forumPostService.getAuthorID(postId),
+                userId
+        ))
+            throw new CampusAidException("无权限");
+        File contentDir = uploadFileSystemService.getBlogsUploadDir(postId);
+        String[] files = contentDir.list();
+        var contents = Arrays.asList(files == null ? new String[0] : files);
+        return ResponseEntity.ok(contents);
     }
 }
