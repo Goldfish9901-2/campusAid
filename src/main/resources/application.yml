@@ -57,11 +57,13 @@ logging:
             smtp: debug
       thymeleaf:
         template: debug
+      mybatis: info
 mybatis:
   mapper-locations: classpath:mapper/db/*.xml
   configuration:
     map-underscore-to-camel-case: true
   type-aliases-package: cn.edu.usst.campusAid.model
+
 alipay:
   appId: ${ALIPAY_APP_ID}
   privateKey: ${ALIPAY_PRIVATE_KEY}
