@@ -26,10 +26,10 @@ public interface ForumPostService {
      *     <li>判断当前用户是否已经对每篇帖子点赞</li>
      * </ul>
      *
-     * @param userId 当前登录用户ID，用于判断点赞状态
-     * @param type 关键词匹配类型（TITLE: 标题, TAG: 内容中的标签, CREATOR: 发帖人）
-     * @param keyword 搜索关键词
-     * @param sortBy 排序方式（TIME: 时间, LIKE_COUNT: 点赞量, REPLY_COUNT: 回复量）
+     * @param userId    当前登录用户ID，用于判断点赞状态
+     * @param type      关键词匹配类型（TITLE: 标题, TAG: 内容中的标签, CREATOR: 发帖人）
+     * @param keyword   搜索关键词
+     * @param sortBy    排序方式（TIME: 时间, LIKE_COUNT: 点赞量, REPLY_COUNT: 回复量）
      * @param rowBounds 分页参数，控制偏移量和每页条目数
      * @return 返回经过筛选、排序和补充信息后的帖子预览列表
      */
@@ -58,6 +58,7 @@ public interface ForumPostService {
      * @param userId 当前用户ID
      */
     void likePost(Long postId, Long userId);
+
     /**
      * 取消点赞帖子
      *
@@ -90,30 +91,37 @@ public interface ForumPostService {
      * @param reply  回复内容
      */
     void replyPost(Long userId, Long postId, ReplyView reply);
+
     /**
      * 获取帖子的所有回复
      * 适合简单展示或后台管理
+     *
      * @param postId 帖子ID
      * @return 回复列表
      */
-    List<ReplyView> getRepliesByPostId(Long userId,Long postId);
+    List<ReplyView> getRepliesByPostId(Long userId, Long postId);
+
     /**
      * 获取帖子的回复数量
+     *
      * @param postId 常指 blogId
      * @return 回复数量
      */
-    int getReplyCountByPostId(Long userId,Long postId);
+    int getReplyCountByPostId(Long userId, Long postId);
 
     /**
      * 获取帖子的回复树
      * 适合前端递归渲染多级评论
      * 注意：已经不需要使用了，因为配合工具类已经可以将帖子处理成树形结构
+     *
      * @param postId 帖子ID
      * @return 回复树
      */
-    List<ReplyTreeNode> getRepliesTreeByPostId(Long userId,Long postId);
+    List<ReplyTreeNode> getRepliesTreeByPostId(Long userId, Long postId);
+
     /**
      * 批量查询多个博客的点赞数量
+     *
      * @param blogIds 博客ID列表
      * @return key: blogId, value: likeCount
      */
@@ -121,16 +129,19 @@ public interface ForumPostService {
 
     /**
      * 批量查询多个博客的回复数量
+     *
      * @param blogIds 博客ID列表
      * @return key: blogId, value: replyCount
      */
     List<Map<String, Object>> countRepliesByPosts(@Param("blogIds") List<Long> blogIds);
+
     /**
      * 删除回复
-     * @param replyId       回复ID
-     * @param userId        用户ID
+     *
+     * @param replyId 回复ID
+     * @param userId  用户ID
      */
-    void deleteReply(Long replyId, Long userId) ;
+    void deleteReply(Long replyId, Long userId);
 
     /**
      * 举报帖子
@@ -149,9 +160,9 @@ public interface ForumPostService {
      */
     String uploadImage(Long userId, Long postId, MultipartFile file);
 
-    default Long submitPost(Long userId, ForumPostPreview post){
+    default Long submitPost(Long userId, ForumPostPreview post) {
         createPost(userId, post);
-        List<ForumPostPreview> candidates= getPostsSorted(
+        List<ForumPostPreview> candidates = getPostsSorted(
                 userId,
                 KeywordType.TITLE,
                 post.getTitle(),
@@ -164,30 +175,15 @@ public interface ForumPostService {
             if (
                     Objects.equals(candidate.getTitle(), post.getTitle())
 //                    && Objects.equals(candidate.getContent(), post.getContent())
-                    && Objects.equals(candidate.getAuthorId(), userId)
+                            && Objects.equals(candidate.getAuthorId(), userId)
             ) {
                 return candidate.getPostId();
             }
         }
         return null;
     }
-    default  Long getAuthorID(Long postId){
-        List<ForumPostPreview> candidates= getPostsSorted(
-                null,
-                KeywordType.TITLE,
-                null,
-                PostSortOrder.TIME,
-                new RowBounds(0, 10)
-        );
-        for (ForumPostPreview candidate : candidates) {
-            if (
-                    Objects.equals(candidate.getPostId(), postId)
-            ) {
-                return candidate.getAuthorId();
-            }
-        }
-        throw new CampusAidException("帖子不存在");
-    }
+
+    Long getAuthorID(Long postId);
 }
 
 

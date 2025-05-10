@@ -8,6 +8,8 @@ import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;
 
+import java.util.Arrays;
+
 @Mapper
 public interface BlogToForumPostPreview {
 
@@ -26,14 +28,20 @@ public interface BlogToForumPostPreview {
     @Mapping(source = "visibility", target = "visibility", qualifiedByName = "stringToVisibility")
     ForumPostPreview toView(Blog blog);
 
+    @Mapping(source = "postId", target = "id")
+    @Mapping(source = "authorId", target = "creator")
+    @Mapping(source = "title", target = "title")
+    @Mapping(source = "content", target = "content")
+    @Mapping(source = "publishTime", target = "sendTime")
+    @Mapping(source = "visibility", target = "visibility", ignore = true)
+    Blog toModel(ForumPostPreview view);
+
     @Named("stringToVisibility")
     default Visibility stringToVisibility(String value) {
         if (value == null) return null;
-        for (Visibility v : Visibility.values()) {
-            if (v.getValue().equalsIgnoreCase(value)) {
-                return v;
-            }
-        }
-        throw new IllegalArgumentException("No matching Visibility for value: " + value);
+        var optional = Arrays.stream(Visibility.values()).filter(
+                v -> v.name().equalsIgnoreCase(value)
+        ).findAny();
+        return optional.orElse(null);
     }
 }

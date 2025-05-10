@@ -39,6 +39,8 @@ public class ForumPostServiceImpl implements ForumPostService {
     private ReplyMapper replyMapper;
     @Autowired
     private BlogMapper blogMapper;
+    @Autowired
+    private BlogToForumPostPreview blogToForumPostPreview;
 
 
     /**
@@ -186,8 +188,8 @@ public class ForumPostServiceImpl implements ForumPostService {
      * @return 返回 ReplyView 列表
      */
     @Override
-    public List<ReplyView> getRepliesByPostId(Long userId,Long postId) {
-        List<Reply> replies = replyMapper.selectByBlogId(userId,postId);
+    public List<ReplyView> getRepliesByPostId(Long userId, Long postId) {
+        List<Reply> replies = replyMapper.selectByBlogId(userId, postId);
         return ReplyMapperStruct.INSTANCE.toViews(replies);
     }
 
@@ -195,7 +197,7 @@ public class ForumPostServiceImpl implements ForumPostService {
      * 获取帖子的回复数量
      */
     @Override
-    public int getReplyCountByPostId(Long userId,Long postId) {
+    public int getReplyCountByPostId(Long userId, Long postId) {
         return replyMapper.countRepliesByBlogId(postId);
     }
 
@@ -206,8 +208,8 @@ public class ForumPostServiceImpl implements ForumPostService {
      * @return
      */
     @Override
-    public List<ReplyTreeNode> getRepliesTreeByPostId(Long userID,Long postId) {
-        List<Reply> replies = replyMapper.selectByBlogId(userID,postId);
+    public List<ReplyTreeNode> getRepliesTreeByPostId(Long userID, Long postId) {
+        List<Reply> replies = replyMapper.selectByBlogId(userID, postId);
         Map<Long, ReplyTreeNode> nodeMap = new HashMap<>();
         List<ReplyTreeNode> rootNodes = new ArrayList<>();
 
@@ -260,6 +262,24 @@ public class ForumPostServiceImpl implements ForumPostService {
     @Override
     public List<Map<String, Object>> countRepliesByPosts(List<Long> blogIds) {
         return replyMapper.countRepliesByBlogIds(blogIds);
+    }
+
+    @Override
+    public Long getAuthorID(Long postId) {
+        Blog blog = blogMapper.selectById(postId);
+        return blog.getCreator();
+    }
+
+    @Override
+    public Long submitPost(Long userId, ForumPostPreview post) {
+        blogMapper.insertBlog(blogToForumPostPreview.toModel(post));
+        Blog blog = blogMapper.selectBlogs(
+                "TITLE",
+                post.getTitle(),
+                "TIME",
+                new RowBounds(0, 1)
+        ).get(0);
+        return blog.getId();
     }
 
     @Override
