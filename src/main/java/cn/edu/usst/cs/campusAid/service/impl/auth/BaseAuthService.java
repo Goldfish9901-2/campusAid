@@ -1,8 +1,8 @@
-package cn.edu.usst.cs.campusAid.service.impl;
+package cn.edu.usst.cs.campusAid.service.impl.auth;
 
 import cn.edu.usst.cs.campusAid.service.CampusAidException;
 import cn.edu.usst.cs.campusAid.service.ExceptionService;
-import cn.edu.usst.cs.campusAid.service.MailService;
+import cn.edu.usst.cs.campusAid.service.auth.MailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

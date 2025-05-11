@@ -1,4 +1,6 @@
-package cn.edu.usst.cs.campusAid.service;
+package cn.edu.usst.cs.campusAid.service.auth;
+
+import cn.edu.usst.cs.campusAid.service.CampusAidException;
 
 /**
  * 登录服务接口

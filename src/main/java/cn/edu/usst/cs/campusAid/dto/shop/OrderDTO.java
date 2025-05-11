@@ -8,8 +8,8 @@ import java.util.List;
 @Data
 @Builder
 public class OrderDTO {
-    private List<CartItemDTO> items;
+    private List<ProductTransaction> items;
     private Long userId;
-    // Getters and setters
+
 }
    

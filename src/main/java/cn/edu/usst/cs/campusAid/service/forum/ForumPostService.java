@@ -1,7 +1,6 @@
-package cn.edu.usst.cs.campusAid.service;
+package cn.edu.usst.cs.campusAid.service.forum;
 
 import cn.edu.usst.cs.campusAid.dto.forum.*;
-import cn.edu.usst.cs.campusAid.model.forum.Reply;
 import cn.edu.usst.cs.campusAid.model.forum.ReplyTreeNode;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.session.RowBounds;

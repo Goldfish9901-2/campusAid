@@ -1,4 +1,4 @@
-package cn.edu.usst.cs.campusAid.service;
+package cn.edu.usst.cs.campusAid.service.auth;
 
 
 

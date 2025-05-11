@@ -1,7 +1,7 @@
 package cn.edu.usst.cs.campusAid.interceptor;
 
 import cn.edu.usst.cs.campusAid.controller.SessionKeys;
-import cn.edu.usst.cs.campusAid.service.LoginService;
+import cn.edu.usst.cs.campusAid.service.auth.LoginService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;

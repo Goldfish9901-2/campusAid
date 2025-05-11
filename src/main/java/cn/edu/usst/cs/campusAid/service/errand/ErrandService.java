@@ -1,7 +1,6 @@
-package cn.edu.usst.cs.campusAid.service;
+package cn.edu.usst.cs.campusAid.service.errand;
 
 import cn.edu.usst.cs.campusAid.dto.errand.*;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 
@@ -30,10 +29,6 @@ public interface ErrandService {
      */
     String acceptOrder(Long id, Long runnerId);
 
-    /**
-     * 订单信息交换
-     */
-    ErrandExchangeInfo getExchangeInfo(Long id);
 
     /**
      * 用户手动确认完成订单

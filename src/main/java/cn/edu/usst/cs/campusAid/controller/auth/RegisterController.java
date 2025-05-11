@@ -5,7 +5,7 @@ import cn.edu.usst.cs.campusAid.dto.auth.VerifyRequest;
 import cn.edu.usst.cs.campusAid.dto.auth.ApiResponse;
 import cn.edu.usst.cs.campusAid.service.CampusAidException;
 import cn.edu.usst.cs.campusAid.model.User;
-import cn.edu.usst.cs.campusAid.service.RegisterService;
+import cn.edu.usst.cs.campusAid.service.auth.RegisterService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;

@@ -10,7 +10,6 @@ public class ErrandOrderRequest {
     private String startLocation;
     private String endLocation;
     private String description;
-    private List<Multipart> extras;
     private LocalDateTime latestArrivalTime;
     private Double fee;
 }

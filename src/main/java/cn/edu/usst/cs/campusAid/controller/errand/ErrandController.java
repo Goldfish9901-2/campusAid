@@ -1,15 +1,15 @@
-package cn.edu.usst.cs.campusAid.controller;
+package cn.edu.usst.cs.campusAid.controller.errand;
 
+import cn.edu.usst.cs.campusAid.controller.SessionKeys;
 import cn.edu.usst.cs.campusAid.dto.errand.*;
-import cn.edu.usst.cs.campusAid.service.ErrandService;
-import org.springframework.beans.factory.annotation.Autowired;
+import cn.edu.usst.cs.campusAid.service.errand.ErrandService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-//@RestController
-//@RequestMapping("/api/errand")
+@RestController
+@RequestMapping("/api/errand")
 public class ErrandController {
 //    @Autowired
     private ErrandService errandService;
@@ -29,7 +29,7 @@ public class ErrandController {
 
     /**
      * 给有意愿接单的用户：
-     * 获取跑腿订单列表（功能点 4），默认按时间排序
+     * 获取跑腿订单列表，默认按时间排序
      */
     @GetMapping("/orders")
     public ResponseEntity<List<ErrandOrderPreview>> listOrders() {
@@ -41,9 +41,9 @@ public class ErrandController {
     /**
      * 获取单个订单详细信息
      */
-    @GetMapping("/order/{id}")
+    @GetMapping("/order")
     public ResponseEntity<ErrandOrderView> getOrderDetail(
-            @PathVariable Long id,
+            @RequestParam("post") Long id,
             @SessionAttribute(SessionKeys.LOGIN_ID) Long userId
     ) {
         ErrandOrderView orderDetail = errandService.getOrderDetail(id, userId);
@@ -52,21 +52,21 @@ public class ErrandController {
     }
 
     /**
-     * 跑腿员接单（功能点 7）
+     * 跑腿员接单
      * @param runnerId  接单用户id 接单前需验证
-     * @param id 订单id
+     * @param errandID 订单id
      */
-    @PostMapping("/order/{id}/accept")
+    @PostMapping("/order/accept")
     public ResponseEntity<String> acceptOrder(
-            @PathVariable Long id,
+            @RequestParam("accept") Long errandID,
             @SessionAttribute(SessionKeys.LOGIN_ID) Long runnerId) {
-        errandService.acceptOrder(id, runnerId);
+        errandService.acceptOrder(errandID, runnerId);
         return ResponseEntity.ok("接单成功");
     }
 
 
     /**
-     * 用户手动确认完成（功能点 9）
+     * 用户手动确认完成
      */
     @PostMapping("/order/{id}/confirm")
     public ResponseEntity<String> confirmOrder(
@@ -77,7 +77,8 @@ public class ErrandController {
     }
 
     /**
-     * 用户取消订单（补充：在接单前允许取消）
+     * 用户取消订单
+     * <h2>接单后不可调用</h2>
      */
     @PostMapping("/order/{id}/cancel")
     public ResponseEntity<String> cancelOrder(

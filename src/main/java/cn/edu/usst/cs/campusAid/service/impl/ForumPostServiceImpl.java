@@ -11,9 +11,10 @@ import cn.edu.usst.cs.campusAid.model.forum.LikeBlog;
 import cn.edu.usst.cs.campusAid.model.forum.Reply;
 import cn.edu.usst.cs.campusAid.model.forum.ReplyTreeNode;
 import cn.edu.usst.cs.campusAid.service.CampusAidException;
-import cn.edu.usst.cs.campusAid.service.ForumPostService;
+import cn.edu.usst.cs.campusAid.service.forum.ForumPostService;
 import cn.edu.usst.cs.campusAid.service.UploadFileSystemService;
-import cn.edu.usst.cs.campusAid.service.UserService;
+import cn.edu.usst.cs.campusAid.service.auth.UserService;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,8 +26,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static cn.edu.usst.cs.campusAid.service.impl.MailServiceImpl.logger;
-
+@Slf4j
 @Service
 public class ForumPostServiceImpl implements ForumPostService {
     @Autowired
@@ -113,7 +113,7 @@ public class ForumPostServiceImpl implements ForumPostService {
     public void deletePost(Long postId, Long userId) {
         Blog blog = blogMapper.selectById(postId);
         if (blog == null) throw new CampusAidException("帖子不存在");
-        logger.info("👤 当前用户ID={}, 帖子作者={}, 是否是管理员={}", userId, blog.getCreator(), userService.isAdmin(userId));
+        log.info("👤 当前用户ID={}, 帖子作者={}, 是否是管理员={}", userId, blog.getCreator(), userService.isAdmin(userId));
 
         //权限控制
         if (!blog.getCreator().equals(userId) && !userService.isAdmin(userId))
@@ -167,7 +167,7 @@ public class ForumPostServiceImpl implements ForumPostService {
     /**
      * 回复帖子
      *
-     * @param userId
+     * @param userId 发出回复的用户ID
      * @param postId 帖子ID
      * @param reply  回复内容
      */
@@ -205,7 +205,7 @@ public class ForumPostServiceImpl implements ForumPostService {
      * 获取帖子的回复树结构
      *
      * @param postId 帖子ID
-     * @return
+     * @return 返回回复树结构
      */
     @Override
     public List<ReplyTreeNode> getRepliesTreeByPostId(Long userID, Long postId) {
@@ -311,22 +311,23 @@ public class ForumPostServiceImpl implements ForumPostService {
     /**
      * 检查用户是否是帖子的作者或管理员
      *
-     * @param userId
-     * @param targetUserId
-     * @return
+     * @param userId       当前操作用户的ID
+     * @param targetUserId 目标用户ID（如帖子作者或回复者）
+     * @return 如果是本人或管理员返回true，否则返回false
      */
     private boolean isUserOrAdmin(Long userId, Long targetUserId) {
         if (userId.equals(targetUserId)) return true;
         return userService.isAdmin(userId);
     }
 
+
     /**
      * 用于将 List<Map<String, Object>> 转换为 Map<Long, Integer>：
      *
-     * @param list
-     * @param keyField
-     * @param valueField
-     * @return
+     * @param list       包含键值对的数据列表
+     * @param keyField   每个map中作为key的字段名（应为Long类型）
+     * @param valueField 每个map中作为value的字段名（应为数值类型Integer/Long等）
+     * @return 转换后的Map<Long, Integer>
      */
     private Map<Long, Integer> convertToIdCountMap(List<Map<String, Object>> list, String keyField, String valueField) {
         if (list == null || list.isEmpty()) {
@@ -339,5 +340,6 @@ public class ForumPostServiceImpl implements ForumPostService {
                 (existing, replacement) -> existing // 若有重复 key，保留旧值
         ));
     }
+
 
 }

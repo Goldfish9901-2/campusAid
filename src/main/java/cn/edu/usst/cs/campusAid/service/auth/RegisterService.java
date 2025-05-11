@@ -1,6 +1,7 @@
-package cn.edu.usst.cs.campusAid.service;
+package cn.edu.usst.cs.campusAid.service.auth;
 
 import cn.edu.usst.cs.campusAid.model.User;
+import cn.edu.usst.cs.campusAid.service.CampusAidException;
 
 public interface RegisterService {
     /**

@@ -11,7 +11,6 @@ public class ErrandOrderView {
     private String startLocation;            // 起点
     private String endLocation;              // 终点
     private String description;              // 描述文字
-    private List<String> imageUrls;          // 图片（可选）
     private LocalDateTime latestArrivalTime; // 最晚送达时间
     private Double fee;                      // 费用
     private LocalDateTime publishTime;       // 发布时间
