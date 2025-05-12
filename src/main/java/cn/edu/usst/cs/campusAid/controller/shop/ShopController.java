@@ -2,11 +2,14 @@ package cn.edu.usst.cs.campusAid.controller.shop;
 
 import cn.edu.usst.cs.campusAid.controller.SessionKeys;
 import cn.edu.usst.cs.campusAid.dto.shop.OrderDTO;
+import cn.edu.usst.cs.campusAid.dto.shop.ProductTransaction;
 import cn.edu.usst.cs.campusAid.dto.shop.ShopInfo;
 import cn.edu.usst.cs.campusAid.service.CampusAidException;
 import cn.edu.usst.cs.campusAid.service.shop.ShopService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * 购物者用商家信息
@@ -51,6 +54,13 @@ public class ShopController {
         if (!userId.equals(String.valueOf(orderDTO.getUserId())))
             throw new CampusAidException("用户ID不匹配，请本人登陆下单");
         return ResponseEntity.ok(shopService.checkout(orderDTO));
+    }
+
+    @GetMapping("history")
+    List<ProductTransaction> getHistory(
+            @SessionAttribute(SessionKeys.LOGIN_ID) String userId
+    ){
+        return shopService.getHistory(userId);
     }
 
 }

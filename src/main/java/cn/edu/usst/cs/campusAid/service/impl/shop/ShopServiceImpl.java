@@ -14,10 +14,11 @@ import cn.edu.usst.cs.campusAid.model.shop.ShopOrder;
 import cn.edu.usst.cs.campusAid.service.CampusAidException;
 import cn.edu.usst.cs.campusAid.service.shop.ShopService;
 import io.micrometer.common.util.StringUtils;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-
+@Service
 public class ShopServiceImpl implements ShopService {
     ShopMapper shopMapper;
     GoodMapper goodMapper;
@@ -78,5 +79,10 @@ public class ShopServiceImpl implements ShopService {
         if (shopName == null)
             throw new CampusAidException("无法找到商家");
         return builder.build();
+    }
+
+    @Override
+    public List<ProductTransaction> getHistory(String userId) {
+        return transactionMapper.getHistory(userId);
     }
 }

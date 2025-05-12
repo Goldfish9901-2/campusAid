@@ -22,4 +22,6 @@ public interface TransactionMapper {
      * @return
      */
     Long getStock(Good matchingCandidate);
+
+    List<ProductTransaction> getHistory(String userId);
 }

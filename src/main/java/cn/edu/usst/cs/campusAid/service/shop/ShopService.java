@@ -2,8 +2,11 @@ package cn.edu.usst.cs.campusAid.service.shop;
 
 import cn.edu.usst.cs.campusAid.dto.shop.Order;
 import cn.edu.usst.cs.campusAid.dto.shop.OrderDTO;
+import cn.edu.usst.cs.campusAid.dto.shop.ProductTransaction;
 import cn.edu.usst.cs.campusAid.dto.shop.ShopInfo;
 import cn.edu.usst.cs.campusAid.service.CampusAidException;
+
+import java.util.List;
 
 /**
  * 代替商店与购物者交互
@@ -28,4 +31,5 @@ public interface ShopService {
     Order checkout(OrderDTO orderDTO);
 
 
+    List<ProductTransaction> getHistory(String userId);
 }

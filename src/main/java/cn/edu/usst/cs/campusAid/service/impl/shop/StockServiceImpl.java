@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 import java.util.Objects;
 
 @Service
-
 public class StockServiceImpl implements StockService {
     ShopMapper shopMapper;
     GoodMapper goodMapper;
