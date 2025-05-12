@@ -10,6 +10,6 @@ import java.util.List;
 public class OrderDTO {
     private List<ProductTransaction> items;
     private Long userId;
-
+    private String shopName;
 }
    

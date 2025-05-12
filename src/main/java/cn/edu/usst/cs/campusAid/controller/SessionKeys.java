@@ -11,5 +11,5 @@ public interface SessionKeys {
     String LOGIN_TIME = "login_time";
 
 
-    String SHOP_ID="shop_id";
+    String SHOP_NAME ="shop_name";
 }

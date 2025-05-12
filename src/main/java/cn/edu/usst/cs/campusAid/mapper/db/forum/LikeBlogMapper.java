@@ -1,4 +1,4 @@
-package cn.edu.usst.cs.campusAid.mapper.db;
+package cn.edu.usst.cs.campusAid.mapper.db.forum;
 
 import org.apache.ibatis.annotations.*;
 import cn.edu.usst.cs.campusAid.model.forum.LikeBlog;

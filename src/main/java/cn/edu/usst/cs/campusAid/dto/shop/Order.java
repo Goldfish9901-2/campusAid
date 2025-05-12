@@ -12,10 +12,6 @@ public class Order {
     Long buyerID;
     String shopID;
     List<ProductTransaction> products;
+    double price;
 
-    public double getTotalPrice() {
-        if(products == null)
-            return .0;
-        return products.stream().mapToDouble(ProductTransaction::getPrice).sum();
-    }
 }

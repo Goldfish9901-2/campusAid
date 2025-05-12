@@ -60,10 +60,18 @@ logging:
       mybatis: info
 
 mybatis:
-  mapper-locations: classpath:mapper/db/*.xml
+  mapper-locations: classpath:mapper/db/**/*.xml
   configuration:
     map-underscore-to-camel-case: true
-  type-aliases-package: cn.edu.usst.campusAid.model
+  type-aliases-package:
+    cn.edu.usst.campusAid.model
+    cn.edu.usst.campusAid.model.forum
+    cn.edu.usst.campusAid.model.shop
 
 campus_aid:
   admin: 2235032128
+jakarta:
+  validation:
+    constraints:
+      Positive:
+        message: 请输入正整数

@@ -24,8 +24,10 @@ public class StockController {
             @RequestParam String password,
             HttpSession session
     ) {
-        stockService.verify(shopName, password);
-        session.setAttribute(SessionKeys.SHOP_ID, shopName);
+        session.setAttribute(
+                SessionKeys.SHOP_NAME,
+                stockService.verify(shopName, password)
+        );
         return ResponseEntity.ok("登录成功");
     }
 
@@ -38,7 +40,7 @@ public class StockController {
      */
     @PostMapping("/supply")
     public ResponseEntity<String> supply(
-            @SessionAttribute(SessionKeys.SHOP_ID) String shopName,
+            @SessionAttribute(SessionKeys.SHOP_NAME) String shopName,
             @RequestBody ProductTransaction productTransaction
     ) {
         var productId = stockService.addProductToShop(shopName, productTransaction);

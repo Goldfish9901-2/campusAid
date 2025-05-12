@@ -9,6 +9,9 @@ import org.springframework.stereotype.Component;
 @Data
 @ConfigurationProperties()
 public class AdminConfig {
+    /**
+     * 管理员账号
+     */
     @Value("${campus_aid.admin}")
     String admin;
 }

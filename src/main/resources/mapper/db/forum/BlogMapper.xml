@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="cn.edu.usst.cs.campusAid.mapper.db.BlogMapper">
+<mapper namespace="cn.edu.usst.cs.campusAid.mapper.db.forum.BlogMapper">
 <!--    查询所有博客-->
     <select id="selectAll" resultType="cn.edu.usst.cs.campusAid.model.forum.Blog">
         SELECT * FROM blog

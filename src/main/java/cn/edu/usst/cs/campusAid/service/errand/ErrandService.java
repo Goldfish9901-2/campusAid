@@ -12,12 +12,12 @@ public interface ErrandService {
     /**
      * 用户发布跑腿订单
      */
-    String publishOrder(ErrandOrderRequest request, Long userId);
+    Long publishOrder(ErrandOrderRequest request, Long userId);
 
     /**
      * 获取所有跑腿订单列表（默认按时间排序）
      */
-    List<ErrandOrderPreview> listOrders();
+    List<ErrandOrderPreview> listOrders(Long userId);
 
     /**
      * 获取单个订单详细信息

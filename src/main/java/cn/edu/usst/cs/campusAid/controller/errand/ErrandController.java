@@ -32,10 +32,11 @@ public class ErrandController {
      * 获取跑腿订单列表，默认按时间排序
      */
     @GetMapping("/orders")
-    public ResponseEntity<List<ErrandOrderPreview>> listOrders() {
-        List<ErrandOrderPreview> orders = errandService.listOrders();
+    public ResponseEntity<List<ErrandOrderPreview>> listOrders(
+            @SessionAttribute(SessionKeys.LOGIN_ID) Long userId
+    ) {
+        List<ErrandOrderPreview> orders = errandService.listOrders(userId);
         return ResponseEntity.ok().body(orders);
-
     }
 
     /**
@@ -48,7 +49,6 @@ public class ErrandController {
     ) {
         ErrandOrderView orderDetail = errandService.getOrderDetail(id, userId);
         return ResponseEntity.ok().body(orderDetail);
-//        return ResponseEntity.ok().build(); // 后续可增加权限校验逻辑
     }
 
     /**
