@@ -2,10 +2,9 @@ package cn.edu.usst.cs.campusAid.controller.forum;
 
 import cn.edu.usst.cs.campusAid.controller.SessionKeys;
 import cn.edu.usst.cs.campusAid.dto.forum.*;
-
 import cn.edu.usst.cs.campusAid.service.CampusAidException;
-import cn.edu.usst.cs.campusAid.service.forum.ForumPostService;
 import cn.edu.usst.cs.campusAid.service.UploadFileSystemService;
+import cn.edu.usst.cs.campusAid.service.forum.ForumPostService;
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -82,6 +81,13 @@ public class ForumController {
         return ResponseEntity.ok("发帖成功"); // 待实现
     }
 
+    /**
+     * 用户向已有的帖子追加图文附件
+     * @param postId 帖子
+     * @param file 图文附件
+     * @param userId 用户ID 校验用
+     * @return 图文附件的映射uri
+     */
     @PostMapping("/post/upload")
     public ResponseEntity<String> uploadPost(
             @RequestParam("postId") Long postId,
@@ -162,5 +168,28 @@ public class ForumController {
         String[] files = contentDir.list();
         var contents = Arrays.asList(files == null ? new String[0] : files);
         return ResponseEntity.ok(contents);
+    }
+
+    /**
+     * 获取帖子附件url列表
+     */
+    @GetMapping("/post/contents")
+    public ResponseEntity<List<String>> getPostContentsUrl(
+            @SessionAttribute(SessionKeys.LOGIN_ID) Long userId,
+            @RequestParam Long postId
+    ) {
+        if (!Objects.equals(
+                forumPostService.getAuthorID(postId),
+                userId
+        ))
+            throw new CampusAidException("无权限");
+        File contentDir = uploadFileSystemService.getBlogsUploadDir(postId);
+        String[] files = contentDir.list();
+        List<String> urls = Arrays.asList(files == null ? new String[0] : files)
+                .stream()
+                .map(file -> contentDir+file)
+                .toList()
+                ;
+        return ResponseEntity.ok(urls);
     }
 }

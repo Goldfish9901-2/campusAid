@@ -1,6 +1,9 @@
 package cn.edu.usst.cs.campusAid.service;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import java.io.File;
+import java.time.LocalDateTime;
 
 public interface UploadFileSystemService {
     File getUploadRootDir();
@@ -53,4 +56,47 @@ public interface UploadFileSystemService {
         }
         return productDir;
     }
+
+    default String getFileExtension(MultipartFile file) {
+        String originalFilename = file.getOriginalFilename();
+        if (originalFilename != null && originalFilename.contains(".")) {
+            return originalFilename.substring(originalFilename.lastIndexOf("."));
+        }
+
+        // 回退：尝试从 content-type 获取
+        String contentType = file.getContentType();
+        try {
+            if (contentType != null) {
+                return switch (contentType) {
+                    case "image/jpeg" -> ".jpg";
+                    case "image/png" -> ".png";
+                    case "image/gif" -> ".gif";
+                    case "application/pdf" -> ".pdf";
+                    default -> contentType.split("/")[1];
+                };
+            }
+        } catch (ArrayIndexOutOfBoundsException ignored) {
+        }
+        return ".unknown";
+    }
+
+    default String uploadFile(File dir, MultipartFile file) {
+        try {
+            var contentType = file.getContentType();
+            String fileName = file.getOriginalFilename();
+            if (contentType == null || !contentType.startsWith("image")) {
+                throw new CampusAidException("请上传图片");
+            }
+            String defaultSuffix = getFileExtension(file);
+            fileName = fileName == null ? LocalDateTime.now() + defaultSuffix : fileName;
+            File targetLocation = new File(dir, fileName);
+            file.transferTo(targetLocation);
+            return targetLocation.toURI().toString();
+
+        } catch (Exception e) {
+            throw new CampusAidException("上传文件失败");
+        }
+    }
+
+
 }

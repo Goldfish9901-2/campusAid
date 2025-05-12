@@ -295,17 +295,7 @@ public class ForumPostServiceImpl implements ForumPostService {
         if (!Objects.equals(preview.getCreator(), userId))
             throw new CampusAidException("不是发布者 无权上传图片");
         File dir = uploadFileSystemService.getBlogsUploadDir(postId);
-        String newFileName = file.getOriginalFilename();
-        if (newFileName == null) {
-            newFileName = LocalDateTime.now() + ".bin";
-        }
-        File dest = new File(dir, newFileName);
-        try {
-            file.transferTo(dest);
-        } catch (Exception e) {
-            throw new CampusAidException(e);
-        }
-        return dest.getAbsolutePath();
+        return uploadFileSystemService.uploadFile(dir, file);
     }
 
     /**

@@ -2,15 +2,27 @@ package cn.edu.usst.cs.campusAid.controller.shop;
 
 import cn.edu.usst.cs.campusAid.controller.SessionKeys;
 import cn.edu.usst.cs.campusAid.dto.shop.ProductTransaction;
+import cn.edu.usst.cs.campusAid.service.ExceptionService;
+import cn.edu.usst.cs.campusAid.service.UploadFileSystemService;
 import cn.edu.usst.cs.campusAid.service.shop.StockService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.File;
 
 @RestController
 @RequestMapping("/api/stock")
 public class StockController {
+    private final UploadFileSystemService uploadFileSystemService;
+    private final ExceptionService exceptionService;
     StockService stockService;
+
+    public StockController(UploadFileSystemService uploadFileSystemService, ExceptionService exceptionService) {
+        this.uploadFileSystemService = uploadFileSystemService;
+        this.exceptionService = exceptionService;
+    }
 
     /**
      * 商户登录
@@ -45,6 +57,22 @@ public class StockController {
     ) {
         var productId = stockService.addProductToShop(shopName, productTransaction);
         return ResponseEntity.ok("商品添加成功 编号:" + productId);
+    }
+
+    /**
+     * 上传商品图片
+     */
+    @PostMapping("/extra/upload")
+    public ResponseEntity<String> uploadPost(
+            @RequestParam String goodName,
+            @RequestParam("file") MultipartFile file,
+            @SessionAttribute(SessionKeys.SHOP_NAME) String shopName
+    ) {
+        File dir = uploadFileSystemService.getProductDir(
+                shopName, goodName
+        );
+        var loc = uploadFileSystemService.uploadFile(dir, file);
+        return ResponseEntity.ok(loc);
     }
 
 }
