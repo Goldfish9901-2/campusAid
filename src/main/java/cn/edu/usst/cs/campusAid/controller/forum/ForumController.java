@@ -33,7 +33,7 @@ public class ForumController {
     public ResponseEntity<List<ForumPostPreview>> listPosts(
             @SessionAttribute(SessionKeys.LOGIN_ID) Long userId,
             @RequestParam(defaultValue = "TITLE") KeywordType type,
-            @RequestParam String keyword,
+            @RequestParam(defaultValue = "") String keyword,
             @RequestParam(defaultValue = "TIME") PostSortOrder sortBy,
             @RequestParam(defaultValue = "0") int page
     ) {
