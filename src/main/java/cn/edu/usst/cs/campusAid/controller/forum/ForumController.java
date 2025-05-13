@@ -169,27 +169,4 @@ public class ForumController {
         var contents = Arrays.asList(files == null ? new String[0] : files);
         return ResponseEntity.ok(contents);
     }
-
-//    /**
-//     * 获取帖子附件url列表
-//     */
-//    @GetMapping("/post/contents")
-//    public ResponseEntity<List<String>> getPostContentsUrl(
-//            @SessionAttribute(SessionKeys.LOGIN_ID) Long userId,
-//            @RequestParam Long postId
-//    ) {
-//        if (!Objects.equals(
-//                forumPostService.getAuthorID(postId),
-//                userId
-//        ))
-//            throw new CampusAidException("无权限");
-//        File contentDir = uploadFileSystemService.getBlogsUploadDir(postId);
-//        String[] files = contentDir.list();
-//        List<String> urls = Arrays.asList(files == null ? new String[0] : files)
-//                .stream()
-//                .map(file -> contentDir+file)
-//                .toList()
-//                ;
-//        return ResponseEntity.ok(urls);
-//    }
 }
