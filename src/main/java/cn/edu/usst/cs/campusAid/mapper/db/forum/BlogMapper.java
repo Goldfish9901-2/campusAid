@@ -1,6 +1,8 @@
 package cn.edu.usst.cs.campusAid.mapper.db.forum;
 
 import cn.edu.usst.cs.campusAid.model.forum.Blog;
+import cn.edu.usst.cs.campusAid.model.forum.Reply;
+import com.alipay.api.domain.AlipayAssetCardNewtemplateCreateModel;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.session.RowBounds;
@@ -132,4 +134,7 @@ public interface BlogMapper {
      * @return 博客实体
      */
     Blog selectById(Long id);
+
+
+    Blog selectByReplyId(Long complaintSourceId);
 }

@@ -1,4 +1,4 @@
-package cn.edu.usst.cs.campusAid.service.impl;
+package cn.edu.usst.cs.campusAid.service.impl.forum;
 
 import cn.edu.usst.cs.campusAid.dto.forum.*;
 import cn.edu.usst.cs.campusAid.mapper.mapstruct.BlogToForumPostPreview;

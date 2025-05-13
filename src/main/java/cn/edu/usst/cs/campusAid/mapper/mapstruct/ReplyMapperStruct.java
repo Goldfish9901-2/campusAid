@@ -15,12 +15,7 @@ public interface ReplyMapperStruct {
     ReplyMapperStruct INSTANCE = Mappers.getMapper(ReplyMapperStruct.class);
 
     @Mappings({
-            @Mapping(source = "id", target = "id"),
-            @Mapping(source = "blogId", target = "blogId"),
-            @Mapping(source = "sender", target = "senderId"),
-            @Mapping(source = "content", target = "content"),
-            @Mapping(source = "sendTime", target = "sendTime"),
-            @Mapping(source = "parentId", target = "parentId") //
+            @Mapping(source = "id", target = "senderId"),
     })
     ReplyView toView(Reply reply);
 

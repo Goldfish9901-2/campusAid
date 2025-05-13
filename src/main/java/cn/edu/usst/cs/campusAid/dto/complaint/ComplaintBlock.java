@@ -4,9 +4,13 @@ package cn.edu.usst.cs.campusAid.dto.complaint;
  */
 public enum ComplaintBlock {
     /**
-     * 论坛
+     * 论坛帖子(楼)
      */
-    FORUM,
+    BLOG,
+    /**
+     * 论坛回复
+     */
+    REPLY,
     /**
      * 商家购物
      */

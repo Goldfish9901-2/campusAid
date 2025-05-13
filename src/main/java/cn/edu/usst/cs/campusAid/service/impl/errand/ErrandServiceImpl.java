@@ -1,4 +1,4 @@
-package cn.edu.usst.cs.campusAid.service.impl;
+package cn.edu.usst.cs.campusAid.service.impl.errand;
 
 import cn.edu.usst.cs.campusAid.dto.errand.ErrandOrderPreview;
 import cn.edu.usst.cs.campusAid.dto.errand.ErrandOrderRequest;

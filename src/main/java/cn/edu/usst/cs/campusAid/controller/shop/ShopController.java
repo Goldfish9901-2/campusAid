@@ -1,11 +1,13 @@
 package cn.edu.usst.cs.campusAid.controller.shop;
 
+import cn.edu.usst.cs.campusAid.config.AdminConfig;
 import cn.edu.usst.cs.campusAid.controller.SessionKeys;
 import cn.edu.usst.cs.campusAid.dto.shop.OrderDTO;
 import cn.edu.usst.cs.campusAid.dto.shop.ProductTransaction;
 import cn.edu.usst.cs.campusAid.dto.shop.ShopInfo;
 import cn.edu.usst.cs.campusAid.service.CampusAidException;
 import cn.edu.usst.cs.campusAid.service.shop.ShopService;
+import io.micrometer.common.util.StringUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,10 +19,12 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/shop")
 public class ShopController {
+    private final AdminConfig adminConfig;
     private ShopService shopService;
 
-    public ShopController(ShopService shopService) {
+    public ShopController(ShopService shopService, AdminConfig adminConfig) {
         this.shopService = shopService;
+        this.adminConfig = adminConfig;
     }
 
     /**
@@ -64,9 +68,15 @@ public class ShopController {
      */
     @GetMapping("/history")
     List<ProductTransaction> getHistory(
-            @SessionAttribute(SessionKeys.LOGIN_ID) String userId
-    ){
-        return shopService.getHistory(userId);
+            @SessionAttribute(SessionKeys.LOGIN_ID) String userId,
+            @RequestParam(required = false, defaultValue = "") String targetUserId
+    ) {
+        String userIdToSearch = userId;
+        if (!StringUtils.isEmpty(targetUserId)) {
+            adminConfig.verifyIsAdmin(userId);
+            userIdToSearch = targetUserId;
+        }
+        return shopService.getHistory(userIdToSearch);
     }
 
 }

@@ -3,11 +3,12 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="cn.edu.usst.cs.campusAid.mapper.db.forum.BlogMapper">
-<!--    查询所有博客-->
+    <!--    查询所有博客-->
     <select id="selectAll" resultType="cn.edu.usst.cs.campusAid.model.forum.Blog">
-        SELECT * FROM blog
+        SELECT *
+        FROM blog
     </select>
-<!--    综合查询-->
+    <!--    综合查询-->
     <select id="selectBlogs" resultType="cn.edu.usst.cs.campusAid.model.forum.Blog">
         SELECT b.*,
         COALESCE(lc.like_count, 0) AS likeCount,
@@ -58,57 +59,66 @@
     </select>
     <!-- 根据标题模糊查询 -->
     <select id="selectByTitle" resultType="cn.edu.usst.cs.campusAid.model.forum.Blog">
-        SELECT * FROM blog
+        SELECT *
+        FROM blog
         WHERE title LIKE CONCAT('%', #{keyword}, '%')
     </select>
 
     <!-- 根据发帖人ID查询 -->
     <select id="selectByCreator" resultType="cn.edu.usst.cs.campusAid.model.forum.Blog">
-        SELECT * FROM blog
+        SELECT *
+        FROM blog
         WHERE creator = #{keyword}
     </select>
 
     <!-- 根据内容中的标签（以 # 开头的词）查询 -->
     <select id="selectByContentTag" resultType="cn.edu.usst.cs.campusAid.model.forum.Blog">
-        SELECT * FROM blog
+        SELECT *
+        FROM blog
         WHERE content REGEXP CONCAT('#', #{keyword}, '[\\s|$]')
     </select>
 
     <!-- 统计数量 -->
 
     <select id="countByTitle" resultType="int">
-        SELECT COUNT(*) FROM blog
+        SELECT COUNT(*)
+        FROM blog
         WHERE title LIKE CONCAT('%', #{keyword}, '%')
     </select>
 
     <select id="countByCreator" resultType="int">
-        SELECT COUNT(*) FROM blog
+        SELECT COUNT(*)
+        FROM blog
         WHERE creator = #{keyword}
     </select>
 
     <select id="countByContentTag" resultType="int">
-        SELECT COUNT(*) FROM blog
+        SELECT COUNT(*)
+        FROM blog
         WHERE content REGEXP CONCAT('#', #{keyword}, '[\\s|$]')
     </select>
 
     <!-- 按时间排序 -->
     <select id="selectSortedByTime" resultType="cn.edu.usst.cs.campusAid.model.forum.Blog">
-        SELECT * FROM blog
+        SELECT *
+        FROM blog
         ORDER BY send_time DESC
     </select>
 
     <!-- 按点赞量排序 -->
     <select id="selectSortedByLikeCount" resultType="cn.edu.usst.cs.campusAid.model.forum.Blog">
-        SELECT b.* FROM blog b
-                            LEFT JOIN like_blog lb ON b.id = lb.blog_id
+        SELECT b.*
+        FROM blog b
+                 LEFT JOIN like_blog lb ON b.id = lb.blog_id
         GROUP BY b.id
         ORDER BY COUNT(lb.liker) DESC
     </select>
 
     <!-- 按回复量排序 -->
     <select id="selectSortedByReplyCount" resultType="cn.edu.usst.cs.campusAid.model.forum.Blog">
-        SELECT b.* FROM blog b
-                            LEFT JOIN reply r ON b.id = r.blog_id
+        SELECT b.*
+        FROM blog b
+                 LEFT JOIN reply r ON b.id = r.blog_id
         GROUP BY b.id
         ORDER BY COUNT(r.id) DESC
     </select>
@@ -117,17 +127,40 @@
     <insert id="insertBlog">
         INSERT INTO blog (creator, title, content, visibility, send_time)
         VALUES (#{creator}, #{title}, #{content}, #{visibility}, NOW())
+        ;
     </insert>
 
 
     <!-- 删除博客 -->
     <delete id="deleteById">
-        DELETE FROM blog WHERE id = #{id}
+        DELETE
+        FROM blog
+        WHERE id = #{id}
+        ;
     </delete>
 
     <!-- 获取博客详情 -->
     <select id="selectById" resultType="cn.edu.usst.cs.campusAid.model.forum.Blog">
-        SELECT * FROM blog WHERE id = #{id}
+        SELECT *
+        FROM blog
+        WHERE id = #{id}
+        ;
+    </select>
+    <select id="selectReplyById" resultType="cn.edu.usst.cs.campusAid.model.forum.Reply">
+        SELECT *
+        FROM campus_aid.reply
+        WHERE id = #{id}
+        ;
+    </select>
+    <select id="selectByReplyId" resultType="cn.edu.usst.cs.campusAid.model.forum.Blog">
+        SELECT *
+        FROM campus_aid.blog
+        where id in (
+            select blog_id
+            from campus_aid.reply
+            where id = #{id}
+            )
+        ;
     </select>
 
 </mapper>
