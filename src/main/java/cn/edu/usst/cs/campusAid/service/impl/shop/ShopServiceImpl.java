@@ -45,7 +45,7 @@ public class ShopServiceImpl implements ShopService {
 
     @Override
     public Order checkout(OrderDTO orderDTO) {
-        if (orderDTO.getItems() == null || orderDTO.getItems().isEmpty())
+        if (orderDTO.getItems().isEmpty())
             throw new CampusAidException("订单为空");
         String shopName = orderDTO.getShopName();
         Order.OrderBuilder builder = Order.builder();

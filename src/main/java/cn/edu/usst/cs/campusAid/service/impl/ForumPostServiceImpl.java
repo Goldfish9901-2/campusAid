@@ -1,8 +1,8 @@
 package cn.edu.usst.cs.campusAid.service.impl;
 
 import cn.edu.usst.cs.campusAid.dto.forum.*;
-import cn.edu.usst.cs.campusAid.mapper.BlogToForumPostPreview;
-import cn.edu.usst.cs.campusAid.mapper.ReplyMapperStruct;
+import cn.edu.usst.cs.campusAid.mapper.mapstruct.BlogToForumPostPreview;
+import cn.edu.usst.cs.campusAid.mapper.mapstruct.ReplyMapperStruct;
 import cn.edu.usst.cs.campusAid.mapper.db.forum.BlogMapper;
 import cn.edu.usst.cs.campusAid.mapper.db.forum.LikeBlogMapper;
 import cn.edu.usst.cs.campusAid.mapper.db.forum.ReplyMapper;

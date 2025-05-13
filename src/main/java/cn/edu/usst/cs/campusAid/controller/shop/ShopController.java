@@ -17,8 +17,11 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/shop")
 public class ShopController {
-    //    @Autowired
     private ShopService shopService;
+
+    public ShopController(ShopService shopService) {
+        this.shopService = shopService;
+    }
 
     /**
      * 商户门户，陈列所有可购买的商品
@@ -56,7 +59,10 @@ public class ShopController {
         return ResponseEntity.ok(shopService.checkout(orderDTO));
     }
 
-    @GetMapping("history")
+    /**
+     * 难不成还想偷窥别人买了什么（
+     */
+    @GetMapping("/history")
     List<ProductTransaction> getHistory(
             @SessionAttribute(SessionKeys.LOGIN_ID) String userId
     ){

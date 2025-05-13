@@ -12,17 +12,22 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 
+/**
+ *
+ */
 @RestController
 @RequestMapping("/api/stock")
 public class StockController {
     private final UploadFileSystemService uploadFileSystemService;
     private final ExceptionService exceptionService;
-    StockService stockService;
+    private final StockService stockService;
 
-    public StockController(UploadFileSystemService uploadFileSystemService, ExceptionService exceptionService) {
+    public StockController(UploadFileSystemService uploadFileSystemService, ExceptionService exceptionService, StockService stockService) {
         this.uploadFileSystemService = uploadFileSystemService;
         this.exceptionService = exceptionService;
+        this.stockService = stockService;
     }
+
 
     /**
      * 商户登录

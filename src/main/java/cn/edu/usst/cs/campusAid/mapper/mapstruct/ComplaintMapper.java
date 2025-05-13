@@ -1,4 +1,4 @@
-package cn.edu.usst.cs.campusAid.mapper;
+package cn.edu.usst.cs.campusAid.mapper.mapstruct;
 
 import cn.edu.usst.cs.campusAid.dto.complaint.ComplaintDetail;
 import cn.edu.usst.cs.campusAid.dto.complaint.ComplaintRequest;

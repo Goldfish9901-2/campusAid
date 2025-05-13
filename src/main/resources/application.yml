@@ -70,6 +70,7 @@ mybatis:
 
 campus_aid:
   admin: 2235032128
+  delay_threads: 10
 jakarta:
   validation:
     constraints:

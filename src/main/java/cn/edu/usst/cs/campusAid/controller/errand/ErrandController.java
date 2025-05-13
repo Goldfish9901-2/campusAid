@@ -2,6 +2,7 @@ package cn.edu.usst.cs.campusAid.controller.errand;
 
 import cn.edu.usst.cs.campusAid.controller.SessionKeys;
 import cn.edu.usst.cs.campusAid.dto.errand.*;
+import cn.edu.usst.cs.campusAid.model.errand.Errand;
 import cn.edu.usst.cs.campusAid.service.errand.ErrandService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,7 +12,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/errand")
 public class ErrandController {
-//    @Autowired
     private ErrandService errandService;
 
     /**
@@ -43,11 +43,11 @@ public class ErrandController {
      * 获取单个订单详细信息
      */
     @GetMapping("/order")
-    public ResponseEntity<ErrandOrderView> getOrderDetail(
+    public ResponseEntity<Errand> getOrderDetail(
             @RequestParam("post") Long id,
             @SessionAttribute(SessionKeys.LOGIN_ID) Long userId
     ) {
-        ErrandOrderView orderDetail = errandService.getOrderDetail(id, userId);
+        Errand orderDetail = errandService.getOrderDetail(id, userId);
         return ResponseEntity.ok().body(orderDetail);
     }
 

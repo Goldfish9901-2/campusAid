@@ -9,6 +9,8 @@ import java.util.List;
 public class ErrandOrderRequest {
     private String startLocation;
     private String endLocation;
+    private String title;
+    private Long senderId;
     private String description;
     private LocalDateTime latestArrivalTime;
     private Double fee;

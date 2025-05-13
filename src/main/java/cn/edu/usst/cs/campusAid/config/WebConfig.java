@@ -48,6 +48,12 @@ public class WebConfig implements WebMvcConfigurer {
 
 //                论坛后端支持
                 .addPathPatterns("/api/forum/**")
+
+                .addPathPatterns("/api/errand/**")
+
+                // 商店页面只有结账和历史订单需要访问者为一般用户
+                .addPathPatterns("/api/shop/checkout")
+                .addPathPatterns("/api/shop/history")
         ;
     }
 }

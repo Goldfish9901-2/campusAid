@@ -1,6 +1,7 @@
 package cn.edu.usst.cs.campusAid.service.errand;
 
 import cn.edu.usst.cs.campusAid.dto.errand.*;
+import cn.edu.usst.cs.campusAid.model.errand.Errand;
 
 import java.util.List;
 
@@ -22,7 +23,7 @@ public interface ErrandService {
     /**
      * 获取单个订单详细信息
      */
-    ErrandOrderView getOrderDetail(Long id, Long userId);
+    Errand getOrderDetail(Long id, Long userId);
 
     /**
      * 跑腿员接单

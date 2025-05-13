@@ -13,5 +13,4 @@ public class Order {
     String shopID;
     List<ProductTransaction> products;
     double price;
-
 }
