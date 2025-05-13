@@ -4,8 +4,240 @@
     <meta charset="UTF-8">
     <title>论坛</title>
     <link rel="icon" href='/favicon.jpg'>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            background-color: #f1f1f1;
+            padding: 10px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            width: 50px;
+            height: 50px;
+            background-image: url('/favicon.jpg');
+            background-size: cover;
+            border-radius: 50%;
+        }
+
+        .title {
+            flex-grow: 1;
+            text-align: center;
+            font-size: 24px;
+        }
+
+        .user-center {
+            padding: 10px 20px;
+            background-color: #ddd;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            margin-left: 10px;
+        }
+
+        .main-container {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .nav-bar {
+            width: 200px;
+            background-color: #e1e1e1;
+            padding: 20px;
+            position: sticky;
+            top: 70px; /* header高度 */
+            height: calc(100vh - 70px); /* 视口高度减去header高度 */
+            overflow-y: auto;
+        }
+
+        .nav-bar button {
+            display: block;
+            width: 100%;
+            margin-bottom: 10px;
+            padding: 10px;
+            font-size: 16px;
+        }
+
+        .content-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .content {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .post-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .post-card {
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            padding: 15px;
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .post-card h3 {
+            margin: 0;
+            font-size: 18px;
+        }
+
+        .post-card .post-id {
+            color: #777;
+            font-size: 14px;
+            margin-left: 8px;
+        }
+
+        .post-card .post-time {
+            font-size: 12px;
+            color: #999;
+            margin-top: 4px;
+        }
+
+        .post-card .post-content {
+            font-size: 14px;
+            color: #555;
+            margin-top: 6px;
+        }
+
+        .post-tags {
+            margin-top: 5px;
+        }
+
+        .post-tags span {
+            display: inline-block;
+            background-color: #e0e0e0;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            margin-right: 5px;
+        }
+    </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            fetch('/api/user', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                credentials: 'include'
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('获取用户信息失败');
+                    }
+                    return response.json();
+                })
+                .then(user => {
+                    document.getElementById('user-id').textContent = user.id;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    document.getElementById('user-id').textContent = '用户';
+                });
+
+            const userId = 2235062121;
+            const keyword = "";
+            const type = "TITLE";
+            const sortBy = "TIME";
+            const page = 0;
+
+            fetch(`/api/forum/posts?keyword=${encodeURIComponent(keyword)}&type=${type}&sortBy=${sortBy}&page=${page}`, {
+                method: 'GET',
+                credentials: 'include'
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('网络响应失败');
+                    }
+                    return response.json();
+                })
+                .then(posts => {
+                    const postList = document.getElementById("post-list");
+                    if (posts.length === 0) {
+                        postList.innerHTML = "<p>暂无帖子</p>";
+                        return;
+                    }
+
+                    posts.forEach(post => {
+                        const postCard = document.createElement("div");
+                        postCard.className = "post-card";
+
+                        let tagsHtml = '';
+                        if (post.tags && post.tags.length > 0) {
+                            tagsHtml = '<div class="post-tags">';
+                            post.tags.forEach(tag => {
+                                tagsHtml += `<span>${tag}</span>`;
+                            });
+                            tagsHtml += '</div>';
+                        }
+
+                        postCard.innerHTML = `
+                            <h3>${post.title}<span class="post-id"> posted by ${post.id}</span></h3>
+                            <div class="post-time">${formatTime(post.publishTime)}</div>
+                            <div class="post-content">${truncateText(post.content, 100)}</div>
+                        `;
+
+                        postList.appendChild(postCard);
+                    });
+                })
+                .catch(error => {
+                    console.error("获取帖子失败:", error);
+                    document.getElementById("post-list").innerHTML = "<p>加载帖子时出错</p>";
+                });
+        });
+
+        function truncateText(text, maxLength) {
+            return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
+        }
+
+        function formatTime(timeStr) {
+            return timeStr.replace("T", " ").substring(0, 16);
+        }
+    </script>
 </head>
 <body>
-<h1>论坛</h1>
+<div class="header">
+    <div class="logo"></div>
+    <div class="title">欢迎您，<span id="user-id"></span>！</div>
+    <button class="user-center">举报</button>
+    <button class="user-center">充值</button>
+    <button class="user-center" onclick="window.location.href='/forum/information'">个人中心</button>
+</div>
+<div class="main-container">
+    <div class="nav-bar">
+        <button>模块一</button>
+        <button>模块二</button>
+        <button>模块三</button>
+        <button>模块四</button>
+    </div>
+    <div class="content-container">
+        <div class="content">
+            <div id="post-list" class="post-list">
+                <!-- 帖子将被动态插入到这里 -->
+            </div>
+        </div>
+    </div>
+</div>
 </body>
 </html>

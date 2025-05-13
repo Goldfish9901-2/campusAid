@@ -17,7 +17,7 @@ public class MailServiceImpl implements MailService {
     private final TemplateEngine templateEngine;
     private final JavaMailSender javaMailSender;
 
-    private static final Logger logger = org.apache.logging.log4j.LogManager.getLogger(MailServiceImpl.class);
+    static final Logger logger = org.apache.logging.log4j.LogManager.getLogger(MailServiceImpl.class);
 
     @Value("${spring.mail.username}")
     private String sender_addr;

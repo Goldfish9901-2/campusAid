@@ -1,0 +1,36 @@
+###
+GET localhost:8090/api/forum/posts?keyword=life&type=TAG
+
+###
+
+GET http://localhost:8090/api/forum/post/1/replies
+###
+
+POST http://localhost:8090/api/forum/post/submit
+Content-Type: application/json
+
+{
+    "title": "hello",
+    "content": "from goldfish"
+
+}
+###
+POST http://localhost:8090/api/forum/post/submit
+Content-Type: application/json
+
+{
+    "title": "hello from goldfish",
+    "content": " #life how to live as a goldfish"
+
+}
+###
+DELETE localhost:8090/api/forum/post/8
+###
+POST http://localhost:8090/api/forum/post/2/like
+###
+POST http://localhost:8090/api/forum/post/1/reply
+Content-Type: application/json
+
+{
+    "content": "没想到misaka也会发帖"
+}

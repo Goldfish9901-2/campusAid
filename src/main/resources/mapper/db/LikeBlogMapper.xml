@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.edu.usst.cs.campusAid.mapper.db.LikeBlogMapper">
+
+    <!-- 插入点赞记录 -->
+    <insert id="insertLike">
+        INSERT INTO like_blog (blog_id, liker, like_time)
+        VALUES (#{blogId}, #{liker}, NOW())
+    </insert>
+
+    <!-- 删除单个点赞记录 -->
+    <delete id="deleteLike">
+        DELETE FROM like_blog
+        WHERE blog_id = #{blogId} AND liker = #{liker}
+    </delete>
+<!--    判断某个用户是否已对某博客点赞-->
+    <select id="countLikesByUserAndPost" resultType="int">
+        SELECT COUNT(*) FROM like_blog
+        WHERE blog_id = #{blogId} AND liker = #{liker}
+    </select>
+
+    <!-- 统计点赞数量 -->
+    <select id="countLikes" resultType="int">
+        SELECT COUNT(*) FROM like_blog
+        WHERE blog_id = #{blogId}
+    </select>
+
+    <!-- 根据博客ID删除所有点赞记录 -->
+    <delete id="deleteByBlogId">
+        DELETE FROM like_blog
+        WHERE blog_id = #{blogId}
+    </delete>
+    <select id="countLikesByBlogIds" resultType="java.util.HashMap">
+        SELECT
+        blog_id AS blogId,
+        COUNT(*) AS likeCount
+        FROM
+        like_blog
+        WHERE
+        blog_id IN
+        <foreach collection="blogIds" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        GROUP BY
+        blog_id
+    </select>
+
+</mapper>

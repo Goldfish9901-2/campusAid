@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>个人信息</title>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            fetch('/api/user', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                credentials: 'include' // 确保发送cookie/session信息
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('获取用户信息失败');
+                    }
+                    return response.json();
+                })
+                .then(user => {
+                    // 显示用户ID
+                    document.getElementById('user-id').textContent = user.id;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    document.getElementById('user-id').textContent = '用户';
+                });
+
+            document.getElementById("logout").onclick = function () {
+                window.location.href = "/";
+            };
+
+            document.getElementById("return").onclick = function () {
+                window.location.href = "/forum";
+            };
+        });
+    </script>
+</head>
+<body>
+<h2>当前用户：</h2><br>
+<div class="title"><span id="user-id"></span></div>
+<h2>余额：</h2><br>
+<button id="logout">退出登录</button>
+<button id="return">返回首页</button>
+</body>
+</html>

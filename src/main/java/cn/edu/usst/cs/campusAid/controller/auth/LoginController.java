@@ -1,0 +1,46 @@
+package cn.edu.usst.cs.campusAid.controller.auth;
+
+import cn.edu.usst.cs.campusAid.controller.SessionKeys;
+import cn.edu.usst.cs.campusAid.dto.auth.LoginRequest;
+import cn.edu.usst.cs.campusAid.dto.auth.VerifyRequest;
+import cn.edu.usst.cs.campusAid.dto.auth.ApiResponse;
+import cn.edu.usst.cs.campusAid.service.CampusAidException;
+import cn.edu.usst.cs.campusAid.service.LoginService;
+import jakarta.servlet.http.HttpSession;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalTime;
+
+@RestController
+@RequestMapping("/api/login")
+public class LoginController {
+
+    @Autowired
+    private LoginService loginService;
+
+    @PostMapping
+    public ApiResponse<String> sendLoginCode(
+            HttpSession session,
+            @RequestBody LoginRequest request
+    ) throws CampusAidException {
+        String code = loginService.generateAndSendCode(request.getId());
+        session.setAttribute(SessionKeys.LOGIN_CODE, code);
+        session.setAttribute(SessionKeys.LOGIN_ID, request.getId());
+        session.setAttribute(SessionKeys.LOGIN_TIME, LocalTime.now());
+        return ApiResponse.success("验证码已发送");
+    }
+
+    @PostMapping("/verify")
+    public ApiResponse<String> verifyLogin(
+            @SessionAttribute(SessionKeys.LOGIN_CODE) String sessionCode,
+            @SessionAttribute(SessionKeys.LOGIN_ID) Long id,
+            @RequestBody VerifyRequest request,
+            HttpSession session
+    ) throws CampusAidException {
+        loginService.verifyCode(id, request.getCode(), sessionCode);
+        session.setAttribute(SessionKeys.LOGIN_TIME, LocalTime.now());
+        return ApiResponse.success("登录成功");
+    }
+}
+

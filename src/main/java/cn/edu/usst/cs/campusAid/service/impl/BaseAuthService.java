@@ -21,8 +21,16 @@ public abstract class BaseAuthService {
      * @return 生成的验证码
      */
     protected String generateVerificationCode() {
+        int length = 6;
+
+        StringBuffer buffer = new StringBuffer();
         // 生成一个基于当前时间戳的随机验证码
-        return String.valueOf((long) (Math.random() * System.currentTimeMillis()));
+        var raw = String.valueOf((long) (Math.random() * System.currentTimeMillis()) % 1000000);
+        while (buffer.length() + raw.length() < length) {
+            buffer.append("0");
+        }
+        buffer.append(raw);
+        return buffer.toString();
     }
 
     /**
