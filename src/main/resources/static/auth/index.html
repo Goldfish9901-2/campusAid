@@ -301,7 +301,6 @@
                 event.preventDefault();
                 return false;
             }
-
             return true;
         }
 
@@ -324,7 +323,10 @@
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ code: code })
+                body: JSON.stringify({
+                    id: parseInt(studentId), // 确保学号被发送到服务器
+                    code: code
+                })
             })
                 .then(response => {
                     if (!response.ok) {
@@ -333,10 +335,13 @@
                     return response.json();
                 })
                 .then(data => {
-                    alert(data.message || '验证成功');
+                    const isSuccess = data.success === true ||
+                        data.message === 'success';
 
-                    if (data.message === 'success') {
-                        window.location.href = "/forum";
+                    if (isSuccess) {
+                        window.location.href = '/forum';
+                    } else {
+                        alert(data.message || '验证失败');
                     }
                 })
                 .catch(error => {

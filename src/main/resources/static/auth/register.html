@@ -182,8 +182,23 @@
             text-decoration: underline;
             color: #0056b3;
         }
-    </style>
 
+        .return {
+            margin-top: 1rem;
+            text-align: center;
+        }
+
+        .return a {
+            color: #007bff;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .return a:hover {
+            text-decoration: underline;
+            color: #0056b3;
+        }
+    </style>
 
     <script>
         window.onload = function () {
@@ -303,10 +318,13 @@
                     <input type="button" id="getCodeBtn" value="获取验证码">
                     <input type="button" id="registerBtn" value="注册">
                 </div>
+
+                <div class="return">
+                    <a href="/">返回登录</a>
+                </div>
             </form>
         </div>
     </div>
 </div>
-
 </body>
 </html>
