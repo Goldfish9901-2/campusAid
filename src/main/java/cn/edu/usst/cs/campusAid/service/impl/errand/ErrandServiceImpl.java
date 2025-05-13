@@ -29,7 +29,10 @@ public class ErrandServiceImpl implements ErrandService {
     private final UserMapper userMapper;
     private final ScheduledExecutorService executorService;
 
-    public ErrandServiceImpl(ErrandViewsMapper errandViewsMapper, ErrandMapper errandMapper, UserMapper userMapper, ScheduledExecutorService executorService) {
+    public ErrandServiceImpl(ErrandViewsMapper errandViewsMapper,
+                             ErrandMapper errandMapper,
+                             UserMapper userMapper,
+                             ScheduledExecutorService executorService) {
         this.errandViewsMapper = errandViewsMapper;
         this.errandMapper = errandMapper;
         this.userMapper = userMapper;
@@ -58,8 +61,7 @@ public class ErrandServiceImpl implements ErrandService {
     @Override
     public Errand getOrderDetail(Long id, Long userId) {
         Errand errand = getErrand(id, userId);
-        if (errand.getSenderId().equals(userId) || Objects.equals(errand.getAcceptorId(), userId))
-            return errand;
+        if (errand.getSenderId().equals(userId) || Objects.equals(errand.getAcceptorId(), userId)) return errand;
         throw new CampusAidException("跑腿订单无权限查看");
     }
 
@@ -148,8 +150,7 @@ public class ErrandServiceImpl implements ErrandService {
      */
 
     private static void verifyState(Long userId, @Nullable Errand errand) {
-        if (errand == null)
-            throw new CampusAidException("跑腿订单不存在");
+        if (errand == null) throw new CampusAidException("跑腿订单不存在");
         if (errand.getStatus() != ErrandOrderStatus.NORMAL) {
             throw new CampusAidException(userId + "：跑腿订单状态异常，您的确认无法接受");
         }
@@ -163,16 +164,13 @@ public class ErrandServiceImpl implements ErrandService {
      * @throws CampusAidException 订单不存在，或者订单不是该用户提交的
      */
     private static void verifyPublisher(Long userId, @Nullable Errand errand) {
-        if (errand == null)
-            throw new CampusAidException("跑腿订单不存在");
-        if (!errand.getSenderId().equals(userId))
-            throw new CampusAidException("您无权修改此订单");
+        if (errand == null) throw new CampusAidException("跑腿订单不存在");
+        if (!errand.getSenderId().equals(userId)) throw new CampusAidException("您无权修改此订单");
     }
 
     private void scheduleAutoConfirmTask(Errand errand, long userId) {
         LocalDateTime now = LocalDateTime.now();
-        if (now.isAfter(errand.getLatestArrivalTime()))
-            throw new CampusAidException("请给我表演一下怎么回到过去送达");
+        if (now.isAfter(errand.getLatestArrivalTime())) throw new CampusAidException("请给我表演一下怎么回到过去送达");
         LocalDateTime timeOut = errand.getLatestArrivalTime().plusHours(3);
         long delay = Duration.between(LocalDateTime.now(), timeOut).toMillis();
         executorService.schedule(() -> {

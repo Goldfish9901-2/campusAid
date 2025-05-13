@@ -1,6 +1,6 @@
 package cn.edu.usst.cs.campusAid.handler;
 
-import cn.edu.usst.cs.campusAid.dto.auth.ApiResponse;
+import cn.edu.usst.cs.campusAid.dto.ApiResponse;
 import cn.edu.usst.cs.campusAid.service.ExceptionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

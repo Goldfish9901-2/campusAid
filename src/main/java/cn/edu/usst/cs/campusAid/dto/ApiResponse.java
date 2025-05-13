@@ -1,4 +1,4 @@
-package cn.edu.usst.cs.campusAid.dto.auth;
+package cn.edu.usst.cs.campusAid.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

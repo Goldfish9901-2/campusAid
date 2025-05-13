@@ -6,24 +6,25 @@ import java.io.File;
 import java.time.LocalDateTime;
 
 public interface UploadFileSystemService {
+    static void ensureSubDir(File productDir) {
+        if (!productDir.exists()) {
+            if (!productDir.mkdir())
+                throw new CampusAidException("创建 " + productDir + " 失败");
+        }
+    }
+
     File getUploadRootDir();
 
     default File getBlogsUploadDir() {
         File rootDir = getUploadRootDir();
         File blogsDir = new File(rootDir, "blogs");
-        if (!blogsDir.exists()) {
-            if (!blogsDir.mkdir())
-                throw new CampusAidException("创建 " + blogsDir + " 失败");
-        }
+        ensureSubDir(blogsDir);
         return blogsDir;
     }
 
     default File getBlogsUploadDir(Long blogId) {
         File blogsDir = new File(getBlogsUploadDir(), String.valueOf(blogId));
-        if (!blogsDir.exists()) {
-            if (!blogsDir.mkdir())
-                throw new CampusAidException("创建 " + blogsDir + " 失败");
-        }
+        ensureSubDir(blogsDir);
         return blogsDir;
     }
 
@@ -36,10 +37,7 @@ public interface UploadFileSystemService {
      */
     default File getShopDir(String shopName) {
         File shopDir = new File(getUploadRootDir(), shopName);
-        if (!shopDir.exists()) {
-            if (!shopDir.mkdir())
-                throw new CampusAidException("创建 " + shopDir + " 失败");
-        }
+        ensureSubDir(shopDir);
         return shopDir;
     }
 
@@ -50,10 +48,7 @@ public interface UploadFileSystemService {
      */
     default File getProductDir(String shopName, String productName) {
         File productDir = new File(getShopDir(shopName), productName);
-        if (!productDir.exists()) {
-            if (!productDir.mkdir())
-                throw new CampusAidException("创建 " + productDir + " 失败");
-        }
+        ensureSubDir(productDir);
         return productDir;
     }
 
