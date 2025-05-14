@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>我的帖子</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+
+        .post-card {
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 15px;
+            background-color: #f9f9f9;
+        }
+
+        .post-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin: 0 0 10px;
+        }
+
+        .post-meta {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .post-content {
+            font-size: 14px;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+<h1>我的帖子</h1>
+
+<h2>当前用户：</h2>
+<div class="title"><span id="user-id"></span></div>
+
+<div id="posts-container" style="margin-top: 20px;"></div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        fetch('/api/user', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            credentials: 'include'
+        })
+            .then(response => {
+                if (!response.ok) throw new Error('获取用户信息失败');
+                return response.json();
+            })
+            .then(user => {
+                const userId = user.id;
+
+                // 显示用户ID
+                document.getElementById('user-id').textContent = userId;
+
+                // 请求该用户的所有帖子
+                return fetch(`/api/forum/posts?type=CREATOR&keyword=${userId}&sortBy=TIME&page=0`, {
+                    method: 'GET',
+                    credentials: 'include'
+                });
+            })
+            .then(response => {
+                if (!response.ok) throw new Error('获取帖子失败');
+                return response.json();
+            })
+            .then(posts => {
+                renderPosts(posts);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('posts-container').innerHTML = `<p>加载帖子时出错：${error.message}</p>`;
+            });
+    });
+
+    function renderPosts(posts) {
+        const container = document.getElementById('posts-container');
+        container.innerHTML = '';
+
+        if (posts.length === 0) {
+            container.innerHTML = '<p>暂无帖子</p>';
+            return;
+        }
+
+        posts.forEach(post => {
+            const postCard = document.createElement('div');
+            postCard.className = 'post-card';
+
+            postCard.innerHTML = `
+                <div class="post-title">${post.title}</div>
+                <div class="post-meta">发布时间：${formatTime(post.publishTime)} | 点赞数：${post.likeCount} | 回复数：${post.replyCount}</div>
+                <div class="post-content">${truncateText(post.content, 100)}</div>
+                <button class="delete-btn" data-post-id="${post.postId}">删除</button>
+            `;
+
+            container.appendChild(postCard);
+
+            // 绑定删除事件
+            postCard.querySelector('.delete-btn').addEventListener('click', function () {
+                const postId = this.getAttribute('data-post-id');
+                if (confirm("确定要删除这篇帖子吗？")) {
+                    deletePost(postId);
+                }
+            });
+        });
+    }
+
+    function formatTime(timeStr) {
+        return timeStr.replace("T", " ").substring(0, 16);
+    }
+
+    function truncateText(text, maxLength) {
+        return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
+    }
+
+    function deletePost(postId) {
+        fetch(`/api/forum/post/${postId}`, {
+            method: 'DELETE',
+            credentials: 'include'
+        })
+            .then(response => {
+                if (!response.ok) {
+                    return response.text().then(text => {
+                        throw new Error(text || '删除失败');
+                    });
+                }
+                return response.text();
+            })
+            .then(() => {
+                alert("删除成功");
+                window.location.reload(); // 刷新页面
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                alert("删除失败：" + error.message);
+            });
+    }
+</script>
+</body>
+</html>

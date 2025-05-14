@@ -86,6 +86,7 @@
             padding: 10px;
             background-color: white;
             text-align: center;
+            position: relative; /* 为按钮提供定位上下文 */
         }
 
         .search-bar {
@@ -124,21 +125,23 @@
             flex: 1;
             padding: 20px;
             overflow-y: auto;
+            position: relative; /* 为按钮容器提供定位上下文 */
         }
 
         .post-list {
             display: flex;
             flex-wrap: wrap;
-            gap: 15px;
+            gap: 10px;
         }
 
         .post-card {
-            flex: 0 0 calc(33.333% - 10px);
+            flex: 0 0 calc(50% - 10px);
             box-sizing: border-box;
             background-color: white;
             border: 1px solid #eee;
-            padding: 15px;
+            padding: 10px;
             border-radius: 8px;
+            position: relative; /* 为内部元素定位 */
         }
 
         .post-card h3 {
@@ -174,90 +177,60 @@
             margin-right: 0;
         }
 
-        .blog-button {
-            margin-top: 1%;
-            margin-right: 1%;
+        .pagination {
+            position: fixed;
+            bottom: 20px;
+            left: 55%;
+            transform: translateX(-50%);
+            z-index: 1000;
+            background-color: white;
+            padding: 8px 16px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+            border-radius: 6px;
+        }
+
+        .pagination button {
+            padding: 8px 16px;
+            margin: 0 5px;
+            background-color: #f1f1f1;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .pagination button:disabled {
+            background-color: #e1e1e1;
+            color: #aaa;
+            cursor: not-allowed;
+        }
+
+        .page-info {
+            margin: 0 15px;
+        }
+
+        /* 新增的帖子操作按钮样式 */
+        .post-actions {
+            position: absolute;
+            top: 10px;
+            right: 30px;
+            display: flex;
+            gap: 5px;
+        }
+
+        .post-actions button {
+            padding: 4px 8px;
+            font-size: 12px;
+            background-color: #f1f1f1;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .post-actions button:hover {
+            background-color: #3399ff;
+            color: white;
         }
     </style>
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            fetch('/api/user', {
-                method: 'GET',
-                headers: { 'Content-Type': 'application/json' },
-                credentials: 'include'
-            })
-                .then(response => {
-                    if (!response.ok) throw new Error('获取用户信息失败');
-                    return response.json();
-                })
-                .then(user => {
-                    document.getElementById('user-id').textContent = user.id;
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    document.getElementById('user-id').textContent = '用户';
-                });
-
-            const keyword = "";
-            const type = "TITLE";
-            const sortBy = "TIME";
-            const page = 0;
-
-            fetch(`/api/forum/posts?keyword=${encodeURIComponent(keyword)}&type=${type}&sortBy=${sortBy}&page=${page}`, {
-                method: 'GET',
-                credentials: 'include'
-            })
-                .then(response => {
-                    if (!response.ok) throw new Error('网络响应失败');
-                    return response.json();
-                })
-                .then(posts => {
-                    const postList = document.getElementById("post-list");
-                    postList.innerHTML = "";
-
-                    posts.forEach(post => {
-                        console.log("Post data:", post);
-
-                        const postCard = document.createElement("div");
-                        postCard.className = "post-card";
-
-                        postCard.innerHTML = `
-                            <h3>${post.title}<span class="post-id"> /${post.authorName}</span></h3>
-                            <div class="post-time">${formatTime(post.publishTime)}</div>
-                            <div class="post-content">${truncateText(post.content, 24)}</div>
-                            <div class="post-like"><a>点赞：${post.likeCount}</a> <a>共${post.replyCount}条回复></a></div>
-                        `;
-
-                        postList.appendChild(postCard);
-                    });
-
-                    // 补全为 3 的倍数
-                    const count = posts.length;
-                    const remainder = count % 3;
-
-                    if (remainder !== 0) {
-                        for (let i = 0; i < 3 - remainder; i++) {
-                            const ghost = document.createElement("div");
-                            ghost.className = "post-card";
-                            ghost.style.visibility = "hidden";
-                            postList.appendChild(ghost);
-                        }
-                    }
-                })
-                .catch(error => {
-                    console.error("获取帖子失败:", error);
-                    document.getElementById("post-list").innerHTML = "<p>加载帖子时出错</p>";
-                });
-        });
-
-        function truncateText(text, maxLength) {
-            return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
-        }
-
-        function formatTime(timeStr) {
-            return timeStr.replace("T", " ").substring(0, 16);
-        }
-    </script>
 </head>
 <body>
 <div class="header">
@@ -277,41 +250,203 @@
         <div class="search-wrapper">
             <div class="search-bar">
                 <div class="search-controls">
-                    <select class="search-select">
-                        <option value="title">标题</option>
-                        <option value="authorName">发帖人</option>
-                        <option value="tags">标签</option>
+                    <select class="search-select" id="search-type">
+                        <option value="TITLE">标题</option>
+                        <option value="CREATOR">学号</option>
+                        <option value="TAG">标签</option>
                     </select>
                     <label>
-                        <input type="text" class="search-input" placeholder="请输入搜索内容">
+                        <input type="text" class="search-input" id="search-keyword" placeholder="请输入搜索内容">
                     </label>
                     <button class="search-button" id="search-btn">🔍 搜索</button>
                 </div>
                 <div class="filter-radios">
                     <label class="radio-option">
-                        <input type="radio" name="sortType" value="publishTime" checked>
+                        <input type="radio" name="sortType" value="TIME" checked>
                         <span>发布时间</span>
                     </label>
                     <label class="radio-option">
-                        <input type="radio" name="sortType" value="likeCount">
+                        <input type="radio" name="sortType" value="LIKE_COUNT">
                         <span>点赞量</span>
                     </label>
                     <label class="radio-option">
-                        <input type="radio" name="sortType" value="replyCount">
+                        <input type="radio" name="sortType" value="REPLY_COUNT">
                         <span>回复量</span>
                     </label>
                 </div>
             </div>
+            <div class="post-actions">
+                <button id="view-my-posts">查看我的帖子</button>
+                <button id="add-new-post">新增帖子</button>
+            </div>
         </div>
         <div class="content-container">
-            <div id="post-list" class="post-list">  <!-- 帖子将被动态插入到这里 -->
+            <div id="post-list" class="post-list"></div>
+            <div class="pagination">
+                <button id="prev-page" disabled>上一页</button>
+                <span class="page-info">第 <span id="current-page">1</span> 页</span>
+                <button id="next-page">下一页</button>
             </div>
         </div>
     </div>
-    <div class="blog-button">
-        <button value="watch">查看您的帖子</button>
-        <button value="add">新增帖子</button>
-    </div>
 </div>
+
+<script>
+    const pagination = {
+        currentPage: 0,
+        hasMore: true,
+        isLoading: false
+    };
+    const searchParams = {
+        keyword: "",
+        type: "TITLE",
+        sortBy: "TIME"
+    };
+
+    document.addEventListener('DOMContentLoaded', function () {
+        fetch('/api/user', {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include'
+        })
+            .then(response => {
+                if (!response.ok) throw new Error('获取用户信息失败');
+                return response.json();
+            })
+            .then(user => {
+                document.getElementById('user-id').textContent = user.id;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('user-id').textContent = '用户';
+            });
+
+        loadPosts();
+        const radioButtons = document.querySelectorAll('input[name="sortType"]');
+        radioButtons.forEach(radio => {
+            radio.addEventListener('change', function() {
+                if (this.checked) {
+                    searchParams.sortBy = this.value;
+                    pagination.currentPage = 0;
+                    loadPosts();
+                }
+            });
+        });
+        document.getElementById('search-btn').addEventListener('click', function() {
+            searchParams.keyword = document.getElementById('search-keyword').value;
+            searchParams.type = document.getElementById('search-type').value;
+            searchParams.sortBy = document.querySelector('input[name="sortType"]:checked').value;
+
+            pagination.currentPage = 0;
+            pagination.hasMore = true;
+
+            loadPosts();
+        });
+        document.getElementById('prev-page').addEventListener('click', function() {
+            if (pagination.currentPage > 0) {
+                pagination.currentPage--;
+                loadPosts();
+            }
+        });
+        document.getElementById('next-page').addEventListener('click', function() {
+            if (pagination.hasMore) {
+                pagination.currentPage++;
+                loadPosts();
+            }
+        });
+
+        // 新增按钮事件监听
+        document.getElementById('view-my-posts').addEventListener('click', function() {
+            window.location.href = '/forum/blog';
+        });
+
+        document.getElementById('add-new-post').addEventListener('click', function() {
+            window.location.href = '/forum/add_blog';
+        });
+    });
+
+    function loadPosts() {
+        if (pagination.isLoading) return;
+        pagination.isLoading = true;
+        document.getElementById('post-list').innerHTML = '<p>加载中...</p>';
+
+        const { keyword, type, sortBy } = searchParams;
+        const page = pagination.currentPage;
+
+        fetch(`/api/forum/posts?keyword=${encodeURIComponent(keyword)}&type=${type}&sortBy=${sortBy}&page=${page}`, {
+            method: 'GET',
+            credentials: 'include'
+        })
+            .then(response => {
+                if (!response.ok) throw new Error('网络响应失败');
+                return response.json();
+            })
+            .then(posts => {
+                pagination.isLoading = false;
+
+                if (posts.length < 10) {
+                    pagination.hasMore = false;
+                } else {
+                    pagination.hasMore = true;
+                }
+                renderPosts(posts);
+                updatePaginationUI();
+            })
+            .catch(error => {
+                pagination.isLoading = false;
+                console.error("获取帖子失败:", error);
+                document.getElementById("post-list").innerHTML = "<p>加载帖子时出错</p>";
+            });
+    }
+
+    function renderPosts(posts) {
+        const postList = document.getElementById("post-list");
+        postList.innerHTML = "";
+
+        if (posts.length === 0) {
+            postList.innerHTML = "<p>暂无帖子</p>";
+            return;
+        }
+
+        posts.forEach(post => {
+            console.log('当前帖子数据:', post);
+
+            const postCard = document.createElement("div");
+            postCard.className = "post-card";
+            postCard.innerHTML = `
+                <h3>${post.title}<span class="post-id"> /${post.authorName} ${post.authorId}</span></h3>
+                <div class="post-time">${formatTime(post.publishTime)}</div>
+                <div class="post-content">${truncateText(post.content, 40)}</div>
+                <div class="post-like"><a>点赞：${post.likeCount}</a> <a>共${post.replyCount}条回复></a></div>
+            `;
+
+            postList.appendChild(postCard);
+        });
+        const count = posts.length;
+        const remainder = count % 2;
+        if (remainder !== 0) {
+            for (let i = 0; i < 2 - remainder; i++) {
+                const ghost = document.createElement("div");
+                ghost.className = "post-card";
+                ghost.style.visibility = "hidden";
+                postList.appendChild(ghost);
+            }
+        }
+    }
+
+    function updatePaginationUI() {
+        document.getElementById('current-page').textContent = pagination.currentPage + 1;
+        document.getElementById('prev-page').disabled = pagination.currentPage === 0;
+        document.getElementById('next-page').disabled = !pagination.hasMore;
+    }
+
+    function truncateText(text, maxLength) {
+        return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
+    }
+
+    function formatTime(timeStr) {
+        return timeStr.replace("T", " ").substring(0, 16);
+    }
+</script>
 </body>
 </html>
