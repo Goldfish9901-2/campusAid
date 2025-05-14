@@ -7,7 +7,6 @@ import cn.edu.usst.cs.campusAid.dto.shop.ProductTransaction;
 import cn.edu.usst.cs.campusAid.dto.shop.ShopInfo;
 import cn.edu.usst.cs.campusAid.service.CampusAidException;
 import cn.edu.usst.cs.campusAid.service.shop.ShopService;
-import io.micrometer.common.util.StringUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -68,15 +67,14 @@ public class ShopController {
      */
     @GetMapping("/history")
     List<ProductTransaction> getHistory(
-            @SessionAttribute(SessionKeys.LOGIN_ID) String userId,
-            @RequestParam(required = false, defaultValue = "") String targetUserId
+            @SessionAttribute(SessionKeys.LOGIN_ID) Long userId,
+            @RequestParam(required = false, defaultValue = "") Long targetUserId
     ) {
-        String userIdToSearch = userId;
-        if (!StringUtils.isEmpty(targetUserId)) {
+        Long userIdToSearch = userId;
+        if (targetUserId != null) {
             adminConfig.verifyIsAdmin(userId);
             userIdToSearch = targetUserId;
         }
         return shopService.getHistory(userIdToSearch);
     }
-
 }

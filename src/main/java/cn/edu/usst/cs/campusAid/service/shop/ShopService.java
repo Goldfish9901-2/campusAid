@@ -29,5 +29,5 @@ public interface ShopService {
     Order checkout(OrderDTO orderDTO);
 
 
-    List<ProductTransaction> getHistory(String userId);
+    List<ProductTransaction> getHistory(Long userId);
 }

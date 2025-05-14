@@ -49,7 +49,9 @@ public class ShopServiceImpl implements ShopService {
             throw new CampusAidException("订单为空");
         String shopName = orderDTO.getShopName();
         Order.OrderBuilder builder = Order.builder();
-        builder.shopID(shopName)
+        builder
+
+                .shopName(shopName)
                 .buyerID(orderDTO.getUserId())
                 .products(orderDTO.getItems());
         double price = .0;
@@ -75,6 +77,7 @@ public class ShopServiceImpl implements ShopService {
                 .build();
         orderMapper.insert(shopOrder);
         builder
+                .id(orderID)
                 .price(price);
         if (shopName == null)
             throw new CampusAidException("无法找到商家");
@@ -82,7 +85,7 @@ public class ShopServiceImpl implements ShopService {
     }
 
     @Override
-    public List<ProductTransaction> getHistory(String userId) {
+    public List<ProductTransaction> getHistory(Long userId) {
         return transactionMapper.getHistory(userId);
     }
 }

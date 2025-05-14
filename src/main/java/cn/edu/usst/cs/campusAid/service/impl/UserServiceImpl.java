@@ -3,6 +3,7 @@ package cn.edu.usst.cs.campusAid.service.impl;
 import cn.edu.usst.cs.campusAid.config.AdminConfig;
 import cn.edu.usst.cs.campusAid.mapper.db.UserMapper;
 import cn.edu.usst.cs.campusAid.model.User;
+import cn.edu.usst.cs.campusAid.service.CampusAidException;
 import cn.edu.usst.cs.campusAid.service.auth.UserService;
 import org.springframework.stereotype.Service;
 
@@ -20,7 +21,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getUserById(Long userId) {
-        return userMapper.getUserById(userId);
+        User user = userMapper.getUserById(userId);
+        if (user == null)
+            throw new CampusAidException("用户不存在");
+        return user;
     }
 
     /**

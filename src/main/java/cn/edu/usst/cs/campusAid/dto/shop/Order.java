@@ -9,8 +9,9 @@ import java.util.List;
 @Data
 @Builder
 public class Order {
+    Long id;
     Long buyerID;
-    String shopID;
+    String shopName;
     List<ProductTransaction> products;
     double price;
 }

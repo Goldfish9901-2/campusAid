@@ -11,6 +11,9 @@ import lombok.ToString;
 @ToString
 public class ShopOrder {
     Long id;
+    /**
+     * 订单的创建者
+     */
     Long shopperId;
     String shop;
 }
