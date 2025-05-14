@@ -88,6 +88,7 @@ public class ForumPostServiceImpl implements ForumPostService {
         return blogs.stream()
                 .map(blog -> {
                     ForumPostPreview preview = BlogToForumPostPreview.INSTANCE.toView(blog);
+                    preview.setAuthorName(userService.getUserById(preview.getAuthorId()).getName());
                     preview.setLikeCount(likeCountMap.getOrDefault(preview.getPostId(), 0));
                     preview.setReplyCount(replyCountMap.getOrDefault(preview.getPostId(), 0));
                     preview.setLiked(isLikedByUser(blog.getId(), userId));

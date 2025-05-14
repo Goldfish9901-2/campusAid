@@ -1,10 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8" />
     <title>论坛</title>
-    <link rel="icon" href='/favicon.jpg'>
+    <link rel="icon" href="/favicon.jpg" />
     <style>
+        * {
+            box-sizing: border-box;
+        }
+
         body {
             margin: 0;
             font-family: Arial, sans-serif;
@@ -21,6 +25,7 @@
             position: sticky;
             top: 0;
             z-index: 100;
+            height: 70px;
         }
 
         .logo {
@@ -57,8 +62,8 @@
             background-color: #e1e1e1;
             padding: 20px;
             position: sticky;
-            top: 70px; /* header高度 */
-            height: calc(100vh - 70px); /* 视口高度减去header高度 */
+            top: 70px; /* header 高度 */
+            height: calc(100vh - 70px);
             overflow-y: auto;
         }
 
@@ -70,14 +75,52 @@
             font-size: 16px;
         }
 
-        .content-container {
+        .right-panel {
             flex: 1;
             display: flex;
             flex-direction: column;
             overflow: hidden;
         }
 
-        .content {
+        .search-wrapper {
+            padding: 10px;
+            background-color: white;
+            text-align: center;
+        }
+
+        .search-bar {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: stretch;
+            gap: 10px;
+            max-width: 600px;
+            width: 100%;
+        }
+
+        .search-select,
+        .search-input,
+        .search-button {
+            padding: 8px 12px;
+            font-size: 14px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .search-input {
+            flex: 1;
+        }
+
+        .search-button {
+            color: black;
+            border: none;
+            cursor: pointer;
+        }
+
+        .search-button:hover {
+            background-color: #3399ff;
+        }
+
+        .content-container {
             flex: 1;
             padding: 20px;
             overflow-y: auto;
@@ -85,16 +128,17 @@
 
         .post-list {
             display: flex;
-            flex-direction: column;
+            flex-wrap: wrap;
             gap: 15px;
         }
 
         .post-card {
-            border: 1px solid #ccc;
-            border-radius: 8px;
+            flex: 0 0 calc(33.333% - 10px);
+            box-sizing: border-box;
+            background-color: white;
+            border: 1px solid #eee;
             padding: 15px;
-            background-color: #fff;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            border-radius: 8px;
         }
 
         .post-card h3 {
@@ -120,32 +164,25 @@
             margin-top: 6px;
         }
 
-        .post-tags {
-            margin-top: 5px;
+        .post-card .post-like a {
+            font-size: 12px;
+            color: #999;
+            margin-right: 10px;
         }
 
-        .post-tags span {
-            display: inline-block;
-            background-color: #e0e0e0;
-            padding: 3px 8px;
-            border-radius: 4px;
-            font-size: 12px;
-            margin-right: 5px;
+        .post-card .post-like a:last-child {
+            margin-right: 0;
         }
     </style>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             fetch('/api/user', {
                 method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
+                headers: { 'Content-Type': 'application/json' },
                 credentials: 'include'
             })
                 .then(response => {
-                    if (!response.ok) {
-                        throw new Error('获取用户信息失败');
-                    }
+                    if (!response.ok) throw new Error('获取用户信息失败');
                     return response.json();
                 })
                 .then(user => {
@@ -156,7 +193,6 @@
                     document.getElementById('user-id').textContent = '用户';
                 });
 
-            const userId = 2235062121;
             const keyword = "";
             const type = "TITLE";
             const sortBy = "TIME";
@@ -167,39 +203,41 @@
                 credentials: 'include'
             })
                 .then(response => {
-                    if (!response.ok) {
-                        throw new Error('网络响应失败');
-                    }
+                    if (!response.ok) throw new Error('网络响应失败');
                     return response.json();
                 })
                 .then(posts => {
                     const postList = document.getElementById("post-list");
-                    if (posts.length === 0) {
-                        postList.innerHTML = "<p>暂无帖子</p>";
-                        return;
-                    }
+                    postList.innerHTML = "";
 
                     posts.forEach(post => {
+                        console.log("Post data:", post);
+
                         const postCard = document.createElement("div");
                         postCard.className = "post-card";
 
-                        let tagsHtml = '';
-                        if (post.tags && post.tags.length > 0) {
-                            tagsHtml = '<div class="post-tags">';
-                            post.tags.forEach(tag => {
-                                tagsHtml += `<span>${tag}</span>`;
-                            });
-                            tagsHtml += '</div>';
-                        }
-
                         postCard.innerHTML = `
-                            <h3>${post.title}<span class="post-id"> posted by ${post.id}</span></h3>
+                            <h3>${post.title}<span class="post-id"> /${post.authorName}</span></h3>
                             <div class="post-time">${formatTime(post.publishTime)}</div>
-                            <div class="post-content">${truncateText(post.content, 100)}</div>
+                            <div class="post-content">${truncateText(post.content, 24)}</div>
+                            <div class="post-like"><a>点赞：${post.likeCount}</a> <a>共${post.replyCount}条回复></a></div>
                         `;
 
                         postList.appendChild(postCard);
                     });
+
+                    // 补全为 3 的倍数
+                    const count = posts.length;
+                    const remainder = count % 3;
+
+                    if (remainder !== 0) {
+                        for (let i = 0; i < 3 - remainder; i++) {
+                            const ghost = document.createElement("div");
+                            ghost.className = "post-card";
+                            ghost.style.visibility = "hidden";
+                            postList.appendChild(ghost);
+                        }
+                    }
                 })
                 .catch(error => {
                     console.error("获取帖子失败:", error);
@@ -226,15 +264,42 @@
 </div>
 <div class="main-container">
     <div class="nav-bar">
-        <button>模块一</button>
-        <button>模块二</button>
-        <button>模块三</button>
-        <button>模块四</button>
+        <button>论坛</button>
+        <button>跑腿</button>
+        <button>商家</button>
     </div>
-    <div class="content-container">
-        <div class="content">
-            <div id="post-list" class="post-list">
-                <!-- 帖子将被动态插入到这里 -->
+    <div class="right-panel">
+        <div class="search-wrapper">
+            <div class="search-bar">
+                <div class="search-controls">
+                    <select class="search-select">
+                        <option value="title">标题</option>
+                        <option value="authorName">发帖人</option>
+                        <option value="tags">标签</option>
+                    </select>
+                    <label>
+                        <input type="text" class="search-input" placeholder="请输入搜索内容">
+                    </label>
+                    <button class="search-button">🔍 搜索</button>
+                </div>
+                <div class="filter-radios">
+                    <label class="radio-option">
+                        <input type="radio" name="sortType" value="publishTime" checked>
+                        <span>发布时间</span>
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="sortType" value="likeCount">
+                        <span>点赞量</span>
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="sortType" value="replyCount">
+                        <span>回复量</span>
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="content-container">
+            <div id="post-list" class="post-list">  <!-- 帖子将被动态插入到这里 -->
             </div>
         </div>
     </div>
