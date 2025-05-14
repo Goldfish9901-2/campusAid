@@ -1,6 +1,45 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
 <mapper namespace="cn.edu.usst.cs.campusAid.mapper.db.shop.TransactionMapper">
+
+    <!-- 插入交易记录 -->
+    <insert id="insert">
+        INSERT INTO good_transaction (id, good_id, amount, order_id,time)
+        VALUES (#{id}, #{goodId}, #{amount}, #{orderId},Now());
+    </insert>
+
+    <!-- 获取最小可用交易ID -->
+    <select id="minFreeID" resultType="long">
+        SELECT COALESCE(MAX(id) + 1, 1) FROM good_transaction;
+    </select>
+
+    <!-- 查询商店的所有商品 -->
+    <select id="selectGoodsByShop" parameterType="string" resultType="cn.edu.usst.cs.campusAid.dto.shop.ProductTransaction">
+        SELECT g.name AS name, g.price AS price, SUM(gt.amount) AS amount
+        FROM goods g
+                 LEFT JOIN good_transaction gt ON g.id = gt.good_id
+        WHERE g.shop = #{shopName}
+        GROUP BY g.name, g.price;
+    </select>
+
+    <!-- 获取指定商品的库存 -->
+    <select id="getStock" parameterType="cn.edu.usst.cs.campusAid.model.shop.Good" resultType="long">
+        SELECT SUM(amount) FROM good_transaction
+        WHERE good_id = #{matchingCandidate.id} AND order_id IS NULL;
+    </select>
+
+    <!-- 获取用户的历史订单 -->
+    <select id="getHistory" parameterType="string" resultType="cn.edu.usst.cs.campusAid.dto.shop.ProductTransaction">
+        SELECT g.name AS name, g.price AS price, SUM(gt.amount) AS amount
+        FROM good_transaction gt
+                 INNER JOIN goods g ON gt.good_id = g.id
+        WHERE gt.order_id IN (
+            SELECT id FROM shop_order WHERE shopper_id = #{userId}
+        )
+        GROUP BY g.name, g.price;
+    </select>
 
 </mapper>

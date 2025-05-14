@@ -25,6 +25,13 @@ public class ShopServiceImpl implements ShopService {
     OrderMapper orderMapper;
     TransactionMapper transactionMapper;
 
+    public ShopServiceImpl(ShopMapper shopMapper, GoodMapper goodMapper, OrderMapper orderMapper, TransactionMapper transactionMapper) {
+        this.shopMapper = shopMapper;
+        this.goodMapper = goodMapper;
+        this.orderMapper = orderMapper;
+        this.transactionMapper = transactionMapper;
+    }
+
     @Override
     public ShopInfo getShopInfo(String shopName, String shopNameStored) {
         ShopInfo.ShopInfoBuilder builder = ShopInfo.builder();

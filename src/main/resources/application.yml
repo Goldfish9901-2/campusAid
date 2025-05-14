@@ -58,6 +58,9 @@ logging:
       thymeleaf:
         template: debug
       mybatis: info
+    # 自定义 Mapper 日志级别（与 org 同级）
+    cn.edu.usst.cs.campusAid.mapper: debug
+
 
 mybatis:
   mapper-locations: classpath:mapper/db/**/*.xml
