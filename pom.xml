@@ -175,7 +175,7 @@
                 <version>${spring-boot.version}</version>
                 <configuration>
                     <mainClass>cn.edu.usst.cs.campusAid.CampusAidApplication</mainClass>
-<!--                    <skip>true</skip>-->
+<!--                     <skip>true</skip>-->
                 </configuration>
                 <executions>
                     <execution>
