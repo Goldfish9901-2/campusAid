@@ -173,6 +173,11 @@
         .post-card .post-like a:last-child {
             margin-right: 0;
         }
+
+        .blog-button {
+            margin-top: 1%;
+            margin-right: 1%;
+        }
     </style>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
@@ -280,7 +285,7 @@
                     <label>
                         <input type="text" class="search-input" placeholder="请输入搜索内容">
                     </label>
-                    <button class="search-button">🔍 搜索</button>
+                    <button class="search-button" id="search-btn">🔍 搜索</button>
                 </div>
                 <div class="filter-radios">
                     <label class="radio-option">
@@ -302,6 +307,10 @@
             <div id="post-list" class="post-list">  <!-- 帖子将被动态插入到这里 -->
             </div>
         </div>
+    </div>
+    <div class="blog-button">
+        <button value="watch">查看您的帖子</button>
+        <button value="add">新增帖子</button>
     </div>
 </div>
 </body>
