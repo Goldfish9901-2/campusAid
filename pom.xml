@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>cn.edu.usst.cs</groupId>
     <artifactId>campusAid</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0.1-SNAPSHOT</version>
     <name>campusAid</name>
     <description>Demo project for Spring Boot</description>
     <properties>
@@ -113,12 +113,6 @@
             <artifactId>mapstruct</artifactId>
             <version>1.5.5.Final</version>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>org.mapstruct</groupId>-->
-<!--            <artifactId>mapstruct-processor</artifactId>-->
-<!--            <version>1.5.5.Final</version>-->
-<!--            <scope>provided</scope> &lt;!&ndash; 编译期生效 &ndash;&gt;-->
-<!--        </dependency>-->
 
     </dependencies>
     <dependencyManagement>
@@ -181,7 +175,7 @@
                 <version>${spring-boot.version}</version>
                 <configuration>
                     <mainClass>cn.edu.usst.cs.campusAid.CampusAidApplication</mainClass>
-                    <skip>true</skip>
+<!--                     <skip>true</skip>-->
                 </configuration>
                 <executions>
                     <execution>
@@ -193,6 +187,7 @@
                 </executions>
             </plugin>
         </plugins>
+
     </build>
 
 
