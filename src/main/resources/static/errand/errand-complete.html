@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <title>跑腿任务完成 - CampusAid</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #f4f7fb;
+      color: #1a1a1a;
+      margin: 0;
+      padding: 40px 20px;
+    }
+
+    .logo {
+      text-align: center;
+      margin-bottom: 16px;
+    }
+
+    .logo img {
+      width: 100px;
+      height: 100px;
+    }
+
+    .container {
+      max-width: 700px;
+      margin: 0 auto;
+      background-color: #ffffff;
+      padding: 30px 24px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+    }
+
+    h2 {
+      text-align: center;
+      color: #0A2540;
+      margin-bottom: 24px;
+    }
+
+    .order-info, .task-info {
+      margin-bottom: 20px;
+      line-height: 1.6;
+    }
+
+    .order-info strong, .task-info strong {
+      color: #0A2540;
+    }
+
+    .feedback {
+      margin-top: 20px;
+    }
+
+    .feedback label {
+      font-weight: bold;
+      color: #0A2540;
+    }
+
+    .feedback textarea {
+      width: 100%;
+      padding: 10px;
+      margin-top: 6px;
+      box-sizing: border-box;
+      font-size: 14px;
+      height: 100px;
+    }
+
+    .rating {
+      margin-top: 10px;
+    }
+
+    .rating label {
+      margin-right: 8px;
+    }
+
+    .button-group {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      margin-top: 20px;
+    }
+
+    .button-group button {
+      padding: 12px 20px;
+      font-size: 16px;
+      background-color: #0A2540;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .button-group button:hover {
+      background-color: #16365f;
+    }
+
+    .footer {
+      margin-top: 40px;
+      font-size: 13px;
+      color: #666;
+      text-align: center;
+      border-top: 1px solid #e0e0e0;
+      padding-top: 16px;
+      line-height: 1.6;
+    }
+  </style>
+</head>
+<body>
+
+<div class="logo">
+  <img src="../favicon.jpg" alt="CampusAid Logo">
+</div>
+
+<div class="container">
+  <h2>跑腿任务完成</h2>
+
+  <div class="order-info" id="order-info">
+    <!-- JS 渲染订单信息 -->
+  </div>
+
+  <div class="task-info" id="task-info">
+    <!-- JS 渲染任务详情 -->
+  </div>
+
+  <div class="feedback">
+    <label for="rating">给任务评分：</label>
+    <div class="rating">
+      <label for="rating1">1</label><input type="radio" id="rating1" name="rating" value="1">
+      <label for="rating2">2</label><input type="radio" id="rating2" name="rating" value="2">
+      <label for="rating3">3</label><input type="radio" id="rating3" name="rating" value="3">
+      <label for="rating4">4</label><input type="radio" id="rating4" name="rating" value="4">
+      <label for="rating5">5</label><input type="radio" id="rating5" name="rating" value="5">
+    </div>
+    <label for="feedback">反馈内容：</label>
+    <textarea id="feedback" placeholder="请输入反馈内容..."></textarea>
+  </div>
+
+  <div class="button-group">
+    <button onclick="completeErrand()">确认完成任务</button>
+  </div>
+
+  <div class="footer">
+    如果您在使用过程中遇到任何问题，请联系管理员：<br>
+    📧 邮箱：admin@campusaid.edu.cn<br>
+    ☎️ 电话：010-12345678
+  </div>
+</div>
+
+<script>
+  // 获取 URL 参数
+  function getQueryParam(param) {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get(param);
+  }
+
+  const errandId = getQueryParam("id") || "202505123456"; // 模拟数据
+
+  // 渲染订单信息
+  function renderOrder(order) {
+    document.getElementById("order-info").innerHTML = `
+      订单编号：<strong>#${order.id}</strong><br>
+      下单时间：<strong>${order.time}</strong><br>
+      状态：<strong>${order.status}</strong>
+    `;
+
+    document.getElementById("task-info").innerHTML = `
+      任务描述：${order.description}<br>
+      起点：${order.from}<br>
+      终点：${order.to}<br>
+      酬金：¥${order.price.toFixed(2)}<br>
+      最晚送达时间：${order.deadline}
+    `;
+  }
+
+  // 模拟订单数据
+  const mockOrder = {
+    id: errandId,
+    status: "已接单",
+    time: "2025-05-12 14:32",
+    description: "帮我买一瓶水",
+    from: "宿舍楼下",
+    to: "图书馆一楼",
+    price: 10.00,
+    deadline: "2025-05-12 17:00"
+  };
+
+  renderOrder(mockOrder);
+
+  // 完成任务逻辑
+  function completeErrand() {
+    const rating = document.querySelector('input[name="rating"]:checked');
+    const feedback = document.getElementById("feedback").value.trim();
+
+    if (!rating) {
+      alert("请给任务评分！");
+      return;
+    }
+
+    // 提交反馈和评分
+    const feedbackData = {
+      rating: rating.value,
+      feedback: feedback
+    };
+
+    // 模拟后端请求
+    fetch(`/api/errand/complete/${errandId}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(feedbackData)
+    })
+            .then(res => {
+              if (res.ok) {
+                alert("任务已标记为完成！");
+                location.reload();
+              } else {
+                alert("完成任务失败，请稍后重试！");
+              }
+            })
+            .catch(() => alert("网络错误"));
+  }
+</script>
+
+</body>
+</html>

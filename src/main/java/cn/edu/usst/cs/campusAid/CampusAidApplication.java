@@ -27,7 +27,7 @@ import java.util.concurrent.ExecutorService;
                 SecurityProperties.class
         }
 )
-public class CampusAidApplication {
+public class   CampusAidApplication {
 
     public static void main(String[] args) {
 
