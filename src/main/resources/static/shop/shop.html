@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>商店详情 - CampusAid</title>
+    <style>
+        /* 页面样式 */
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>商店详情</h2>
+    <div id="shop-info">
+        <!-- 这里将显示商店信息 -->
+    </div>
+</div>
+
+<script>
+    const shopName = 'TestShop'; // 这里是商店的名称，根据实际情况调整
+
+    fetch(`/api/shop/${shopName}`)
+        .then(response => response.json())
+        .then(data => {
+            const shopInfoContainer = document.getElementById('shop-info');
+            if (data) {
+                shopInfoContainer.innerHTML = `
+                    <p><strong>商店名称：</strong>${data.name}</p>
+                    <p><strong>商店描述：</strong>${data.description}</p>
+                `;
+            } else {
+                shopInfoContainer.innerHTML = `<p>商店未找到。</p>`;
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching shop info:', error);
+        });
+</script>
+
+</body>
+</html>
+
