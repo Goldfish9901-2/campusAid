@@ -97,6 +97,15 @@ public class ForumPostServiceImpl implements ForumPostService {
                 .toList();
     }
 
+    @Override
+    public ForumPostPreview getPostById(Long postId) {
+        //获取指定帖子blog
+        Blog blog = blogMapper.selectById(postId);
+        if (blog == null) throw new CampusAidException("帖子不存在");
+        //转换成dto返回
+        return BlogToForumPostPreview.INSTANCE.toView(blog);
+    }
+
 
     @Override
     public void createPost(Long userId, ForumPostPreview post) {

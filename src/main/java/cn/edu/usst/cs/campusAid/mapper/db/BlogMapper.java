@@ -3,6 +3,7 @@ package cn.edu.usst.cs.campusAid.mapper.db;
 import cn.edu.usst.cs.campusAid.model.forum.Blog;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.session.RowBounds;
 
 import java.util.List;
@@ -34,6 +35,8 @@ public interface BlogMapper {
             @Param("sortBy") String sortBy,
             RowBounds rowBounds
     );
+//    @Select("SELECT * FROM blog WHERE id = #{postId}")
+//    Blog selectById(@Param("postId") Long postId);
     /**
      * 根据标题模糊查询博客列表
      *
