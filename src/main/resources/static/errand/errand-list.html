@@ -117,48 +117,34 @@
 </div>
 
 <script>
-    // 模拟跑腿订单数据
-    const errands = [
-        {
-            id: "202505123456",
-            status: "待接单",
-            time: "2025-05-12 14:32",
-            price: 12.00
-        },
-        {
-            id: "202505123457",
-            status: "已接单",
-            time: "2025-05-11 19:05",
-            price: 8.50
-        },
-        {
-            id: "202505123458",
-            status: "已完成",
-            time: "2025-05-10 10:22",
-            price: 23.00
-        }
-    ];
+    // 通过 fetch 获取后端跑腿订单数据
+    fetch('/api/errand/errands')
+        .then(res => res.json())
+        .then(errands => {
+            const container = document.getElementById("errand-list");
 
-    const container = document.getElementById("errand-list");
-
-    errands.forEach(errand => {
-        const card = document.createElement("div");
-        card.className = "order-card";
-        card.innerHTML = `
-      <div class="order-header">
-        <div class="order-id">订单编号：${errand.id}</div>
-        <div class="order-status">${errand.status}</div>
-      </div>
-      <div class="order-info">
-        发布时间：${errand.time}<br>
-        酬金：¥${errand.price.toFixed(2)}
-      </div>
-      <div class="order-actions">
-        <button onclick="location.href='errand-detail.html?id=${errand.id}'">查看详情</button>
-      </div>
-    `;
-        container.appendChild(card);
-    });
+            errands.forEach(errand => {
+                const card = document.createElement("div");
+                card.className = "order-card";
+                card.innerHTML = `
+                    <div class="order-header">
+                        <div class="order-id">订单编号：${errand.id}</div>
+                        <div class="order-status">${errand.status}</div>
+                    </div>
+                    <div class="order-info">
+                        发布时间：${errand.latestArrival}<br>
+                        酬金：¥${errand.fee}
+                    </div>
+                    <div class="order-actions">
+                        <button onclick="location.href='errand-detail.html?id=${errand.id}'">查看详情</button>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        })
+        .catch(err => {
+            console.error('获取跑腿订单失败', err);
+        });
 </script>
 
 </body>
