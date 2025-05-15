@@ -2,9 +2,253 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>帖子回复</title>
+    <title>帖子详情</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9; /* 统一背景色 */
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* 主内容容器 */
+        .content-wrapper {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            background-color: #f4f4f9; /* 与body背景一致 */
+        }
+
+        /* 帖子容器 */
+        .post-container {
+            max-width: 700px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            padding: 25px;
+        }
+
+        .post-title {
+            font-size: 22px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .post-meta {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .post-content {
+            font-size: 15px;
+            color: #333;
+            line-height: 1.6;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+
+        /* 回复区域标题 */
+        .replies-title {
+            font-size: 18px;
+            margin: 25px 0 15px;
+            color: #333;
+        }
+
+        /* 回复列表容器 */
+        .replies-container {
+            max-height: 400px; /* 增加高度 */
+            overflow-y: auto;
+            margin-bottom: 15px;
+        }
+
+        /* 每条回复卡片样式 */
+        .reply-card {
+            padding: 15px;
+            border: 1px solid #eee;
+            border-radius: 6px;
+            background-color: #f9f9f9;
+            margin-bottom: 12px;
+        }
+
+        .reply-card strong {
+            font-size: 15px;
+            color: #333;
+        }
+
+        .reply-card small {
+            font-size: 13px;
+            color: #999;
+            display: block;
+            margin-top: 5px;
+        }
+
+        /* 固定返回首页按钮 */
+        #back-home-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 14px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #back-home-btn:hover {
+            background-color: #2980b9;
+        }
+
+        /* 底部回复框 */
+        .bottom-reply-box {
+            background-color: #f4f4f9; /* 与整体背景一致 */
+            padding: 15px 0;
+            border-top: 1px solid #ddd;
+        }
+
+        .reply-input-container {
+            max-width: 700px;
+            margin: 0 auto;
+            display: flex;
+            gap: 10px;
+            padding: 0 20px;
+        }
+
+        #reply-input {
+            flex: 1;
+            padding: 12px 15px;
+            font-size: 15px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            outline: none;
+        }
+
+        #send-reply-btn {
+            padding: 12px 25px;
+            background-color: #3399ff;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 15px;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        #send-reply-btn:hover {
+            background-color: #2980b9;
+        }
+
+        .no-replies {
+            color: #999;
+            text-align: center;
+            padding: 20px;
+        }
+    </style>
 </head>
 <body>
-<h1>帖子回复</h1>
+<button id="back-home-btn" onclick="window.location.href='/forum'">返回首页</button>
+<div class="content-wrapper">
+    <div class="post-container">
+        <div id="post-detail">
+        </div>
+        <h3 class="replies-title">全部回复</h3>
+        <div id="replies-container" class="replies-container"></div>
+    </div>
+</div>
+<div class="bottom-reply-box">
+    <div class="reply-input-container">
+        <input type="text" id="reply-input" placeholder="输入你的回复...">
+        <button type="button" id="send-reply-btn">发送</button>
+    </div>
+</div>
+<script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const postId = urlParams.get('postId');
+
+    if (!postId) {
+        document.getElementById('post-detail').innerHTML = '<p>未指定帖子ID</p>';
+        throw new Error("缺少 postId");
+    }
+
+    fetch(`/api/forum/post/${postId}`, {
+        method: 'GET',
+        credentials: 'include'
+    })
+        .then(response => {
+            if (!response.ok) throw new Error('获取帖子失败');
+            return response.json();
+        })
+        .then(post => {
+            renderPost(post);
+        })
+        .catch(error => {
+            console.error("Error:", error);
+            document.getElementById('post-detail').innerHTML = `<p>加载帖子时出错：${error.message}</p>`;
+        });
+
+    fetch(`/api/forum/post/${postId}/replies`, {
+        method: 'GET',
+        credentials: 'include'
+    })
+        .then(response => {
+            console.log('Response status:', response.status);
+            if (response.status === 404) return [];
+
+            if (!response.ok) throw new Error('获取回复失败');
+            return response.json();
+        })
+        .then(replies => {
+            renderReplies(replies || []);
+        })
+        .catch(error => {
+            console.error("获取回复失败:", error);
+            document.getElementById('replies-container').innerHTML =
+                `<p class="no-replies">加载回复失败：${error.message}</p>`;
+        });
+
+    function renderPost(post) {
+        console.log('当前帖子数据:', post);
+        const container = document.getElementById('post-detail');
+        container.innerHTML = `
+        <h1 class="post-title">${post.title}</h1>
+        <div class="post-meta">作者：${post.authorId} • 时间：${formatTime(post.publishTime)}</div>
+        <div class="post-content">${post.content}</div>
+    `;
+    }
+
+    function renderReplies(replies) {
+        console.log('当前回复数据:', replies);
+        const container = document.getElementById('replies-container');
+        container.innerHTML = '';
+
+        if (replies.length === 0) {
+            container.innerHTML = '<p class="no-replies">暂无回复</p>';
+            return;
+        }
+
+        replies.forEach(reply => {
+            const replyCard = document.createElement('div');
+            replyCard.className = 'reply-card';
+
+            replyCard.innerHTML = `
+                <strong>${reply.senderId}：</strong>
+                <div>${reply.content}</div>
+                <small>${formatTime(reply.sendTime)}</small>
+            `;
+
+            container.appendChild(replyCard);
+        });
+    }
+    function formatTime(timeStr) {
+        return timeStr ? timeStr.replace("T", " ").substring(0, 16) : "";
+    }
+</script>
 </body>
 </html>

@@ -86,7 +86,7 @@
             padding: 10px;
             background-color: white;
             text-align: center;
-            position: relative; /* 为按钮提供定位上下文 */
+            position: relative;
         }
 
         .search-bar {
@@ -125,7 +125,7 @@
             flex: 1;
             padding: 20px;
             overflow-y: auto;
-            position: relative; /* 为按钮容器提供定位上下文 */
+            position: relative;
         }
 
         .post-list {
@@ -187,6 +187,8 @@
             padding: 8px 16px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
             border-radius: 6px;
+            display: flex;
+            align-items: center;
         }
 
         .pagination button {
@@ -208,7 +210,25 @@
             margin: 0 15px;
         }
 
-        /* 新增的帖子操作按钮样式 */
+        .page-jump {
+            display: flex;
+            align-items: center;
+            margin-left: 15px;
+        }
+
+        .page-jump input {
+            width: 50px;
+            padding: 5px;
+            margin: 0 5px;
+            text-align: center;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .page-jump button {
+            padding: 5px 10px;
+        }
+
         .post-actions {
             position: absolute;
             top: 10px;
@@ -286,11 +306,16 @@
                 <button id="prev-page" disabled>上一页</button>
                 <span class="page-info">第 <span id="current-page">1</span> 页</span>
                 <button id="next-page">下一页</button>
+                <div class="page-jump">
+                    <span>跳至</span>
+                    <input type="number" id="page-input" min="1" value="1">
+                    <span>页</span>
+                    <button id="jump-btn">跳转</button>
+                </div>
             </div>
         </div>
     </div>
 </div>
-
 <script>
     const pagination = {
         currentPage: 0,
@@ -354,8 +379,27 @@
                 loadPosts();
             }
         });
+        document.getElementById('jump-btn').addEventListener('click', function() {
+            const pageInput = document.getElementById('page-input');
+            let targetPage = parseInt(pageInput.value) - 1; // 转为0-based
 
-        // 新增按钮事件监听
+            if (isNaN(targetPage)) {
+                alert('请输入有效的页码');
+                return;
+            }
+            if (targetPage < 0) {
+                targetPage = 0;
+            }
+            if (targetPage !== pagination.currentPage) {
+                pagination.currentPage = targetPage;
+                loadPosts();
+            }
+        });
+        document.getElementById('page-input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                document.getElementById('jump-btn').click();
+            }
+        });
         document.getElementById('view-my-posts').addEventListener('click', function() {
             window.location.href = '/forum/blog';
         });
@@ -364,7 +408,6 @@
             window.location.href = '/forum/add_blog';
         });
     });
-
     function loadPosts() {
         if (pagination.isLoading) return;
         pagination.isLoading = true;
@@ -372,7 +415,6 @@
 
         const { keyword, type, sortBy } = searchParams;
         const page = pagination.currentPage;
-
         fetch(`/api/forum/posts?keyword=${encodeURIComponent(keyword)}&type=${type}&sortBy=${sortBy}&page=${page}`, {
             method: 'GET',
             credentials: 'include'
@@ -398,7 +440,6 @@
                 document.getElementById("post-list").innerHTML = "<p>加载帖子时出错</p>";
             });
     }
-
     function renderPosts(posts) {
         const postList = document.getElementById("post-list");
         postList.innerHTML = "";
@@ -407,7 +448,6 @@
             postList.innerHTML = "<p>暂无帖子</p>";
             return;
         }
-
         posts.forEach(post => {
             console.log('当前帖子数据:', post);
 
@@ -417,7 +457,10 @@
                 <h3>${post.title}<span class="post-id"> /${post.authorName} ${post.authorId}</span></h3>
                 <div class="post-time">${formatTime(post.publishTime)}</div>
                 <div class="post-content">${truncateText(post.content, 40)}</div>
-                <div class="post-like"><a>点赞：${post.likeCount}</a> <a href="/forum/reply">共${post.replyCount}条回复></a></div>
+                <div class="post-like">
+    <a>点赞：${post.likeCount}</a>
+    <a href="/forum/reply?postId=${post.postId}">共${post.replyCount}条回复></a>
+</div>
             `;
 
             postList.appendChild(postCard);
@@ -435,7 +478,12 @@
     }
 
     function updatePaginationUI() {
-        document.getElementById('current-page').textContent = pagination.currentPage + 1;
+        const currentPageElement = document.getElementById('current-page');
+        const pageInput = document.getElementById('page-input');
+
+        currentPageElement.textContent = pagination.currentPage + 1;
+        pageInput.value = pagination.currentPage + 1;
+
         document.getElementById('prev-page').disabled = pagination.currentPage === 0;
         document.getElementById('next-page').disabled = !pagination.hasMore;
     }

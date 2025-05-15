@@ -33,6 +33,7 @@ public interface ForumPostService {
      * @return 返回经过筛选、排序和补充信息后的帖子预览列表
      */
     List<ForumPostPreview> getPostsSorted(Long userId, KeywordType type, String keyword, PostSortOrder sortBy, RowBounds rowBounds);
+    public ForumPostPreview getPostById(Long postId) ;
 
 
     /**

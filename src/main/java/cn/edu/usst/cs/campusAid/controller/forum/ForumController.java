@@ -45,7 +45,17 @@ public class ForumController {
         List<ForumPostPreview> posts = forumPostService.getPostsSorted(userId, type, keyword, sortBy, rowBounds);
         return ResponseEntity.ok(posts);
     }
-
+    /**
+     * 获取单个帖子详情
+     */
+    @GetMapping("/post/{postId}")
+    public ResponseEntity<ForumPostPreview> getPost(
+            @PathVariable Long postId,
+            @SessionAttribute(SessionKeys.LOGIN_ID) Long userId
+    ) {
+        ForumPostPreview post = forumPostService.getPostById(postId);
+        return ResponseEntity.ok(post);
+    }
 
     /**
      * 获取回复列表
@@ -55,11 +65,11 @@ public class ForumController {
             @PathVariable Long postId,
             @SessionAttribute(SessionKeys.LOGIN_ID) Long userId
     ) {
-        if (!Objects.equals(
-                forumPostService.getAuthorID(postId),
-                userId
-        ))
-            throw new CampusAidException("无权限");
+//        if (!Objects.equals(
+//                forumPostService.getAuthorID(postId),
+//                userId
+//        ))
+//            throw new CampusAidException("无权限");
 //        List<ReplyView> replyTree = ReplyTreeConverter.buildTree(
 //                forumPostService.getRepliesByPostId(postId)
 //        );
