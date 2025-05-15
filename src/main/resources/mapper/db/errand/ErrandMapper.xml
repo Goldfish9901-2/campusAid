@@ -31,8 +31,10 @@
     <!-- 查询用户未被接单的跑腿订单列表 -->
     <select id="selectUnacceptedOrders" resultType="cn.edu.usst.cs.campusAid.model.errand.Errand">
         SELECT * FROM errand
-        WHERE sender_id = #{userId}
-          AND acceptor_id IS NULL
+        WHERE
+            not sender_id = #{userId}
+          AND
+            acceptor_id IS NULL
           AND status = 'NORMAL'
     </select>
 

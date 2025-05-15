@@ -35,7 +35,8 @@ public interface ErrandMapper {
      * 查询用户未被接单的跑腿订单预览信息（包含转换逻辑）
      */
     default List<ErrandOrderPreview> selectUnacceptedOrderPreviews(Long userId) {
-        return selectUnacceptedOrders(userId).stream()
+        var errands = selectUnacceptedOrders(userId);
+        return errands.stream()
                 .map(errand -> ErrandViewsMapper.getInstance().getPreview(errand))
                 .toList();
     }

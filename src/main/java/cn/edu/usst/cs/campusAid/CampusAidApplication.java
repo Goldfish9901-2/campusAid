@@ -51,20 +51,6 @@ public class CampusAidApplication {
         return executorService;
     }
 
-    @Bean
-    public UploadFileSystemService getUploadFileSystemService() {
-        return new UploadFileSystemService() {
-            final String uploadRootDir = "uploads/";
-
-            @Override
-            public File getUploadRootDir() {
-                File dir = new File(uploadRootDir);
-                UploadFileSystemService.ensureSubDir(dir);
-                return dir;
-            }
-
-        };
-    }
 
 
 }

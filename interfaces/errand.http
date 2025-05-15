@@ -1,0 +1,30 @@
+# 首先发一个单子
+
+POST http://localhost:8090/api/errand/order
+Content-Type: application/json
+
+{
+    "title": "拿鱼饲料",
+    "description": "拿最好的鱼饲料",
+    "startLocation": "餐桌",
+    "endLocation": "鱼缸",
+    "latestArrivalTime": "2025-05-25T08:00:00",
+    "fee": 0.01
+}
+
+###
+# 假设上面得到的单号为2
+###
+
+GET http://localhost:8090/api/errand/orders
+
+###
+GET http://localhost:8090/api/errand/order/2
+
+###
+POST http://localhost:8090/api/errand/order/2/cancel
+
+###
+# 还有别人发的单号1
+###
+POST http://localhost:8090/api/errand/order/1/accept

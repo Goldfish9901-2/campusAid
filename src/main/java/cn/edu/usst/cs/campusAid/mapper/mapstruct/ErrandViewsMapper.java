@@ -33,7 +33,7 @@ public interface ErrandViewsMapper {
      */
     @Mappings({
             @Mapping(target = "errandDescription", source = "description"),
-            @Mapping(target = "id", ignore = true),
+//            @Mapping(target = "id", ignore = true),
             @Mapping(target = "acceptorId", ignore = true),
             @Mapping(target = "status", expression =
                     "java(cn.edu.usst.cs.campusAid.dto.errand.ErrandOrderStatus.NORMAL)")
