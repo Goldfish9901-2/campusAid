@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <title>登录</title>
-    <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
     <link rel="icon" href='/favicon.jpg'>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -88,7 +87,6 @@
             z-index: -1;
         }
 
-
         .login-wrapper {
             display: flex;
             flex-direction: column;
@@ -99,6 +97,14 @@
             margin: 0 auto;
             padding: 2rem;
             box-sizing: border-box;
+        }
+
+        @font-face {
+            font-family: 'Pacifico';
+            src: url('/fonts/Pacifico-Regular.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+            font-display: swap;
         }
 
         .page-title {
@@ -239,6 +245,15 @@
             transform: scale(0.98);
         }
 
+        .form-container input[type="button"].clicked {
+            background-color: #6c757d; /* 灰色表示已点击 */
+            cursor: pointer; /* 确保鼠标指针保持为手型 */
+        }
+
+        .form-container input[type="button"].clicked:hover {
+            background-color: #5a6268; /* 深一点的灰色 */
+        }
+
         .register {
             margin-top: 1rem;
             text-align: center;
@@ -258,6 +273,7 @@
     <script>
         function fetchVerificationCode() {
             const studentId = document.querySelector("input[name='id']").value;
+            const codeBtn = document.getElementById('getCodeBtn');
 
             if (!studentId) {
                 alert("请输入学号");
@@ -278,6 +294,7 @@
                     return response.json();
                 })
                 .then(data => {
+                    codeBtn.classList.add('clicked');
                     alert(data.message || '验证码已发送');
                 })
                 .catch(error => {
