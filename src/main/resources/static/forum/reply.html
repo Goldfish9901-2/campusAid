@@ -14,7 +14,6 @@
             flex-direction: column;
         }
 
-        /* 主内容容器 */
         .content-wrapper {
             flex: 1;
             overflow-y: auto;
@@ -22,7 +21,6 @@
             background-color: #f4f4f9; /* 与body背景一致 */
         }
 
-        /* 帖子容器 */
         .post-container {
             max-width: 700px;
             margin: 0 auto;
@@ -52,21 +50,18 @@
             border-bottom: 1px solid #eee;
         }
 
-        /* 回复区域标题 */
         .replies-title {
             font-size: 18px;
             margin: 25px 0 15px;
             color: #333;
         }
 
-        /* 回复列表容器 */
         .replies-container {
-            max-height: 400px; /* 增加高度 */
+            max-height: 450px; /* 增加高度 */
             overflow-y: auto;
             margin-bottom: 15px;
         }
 
-        /* 每条回复卡片样式 */
         .reply-card {
             padding: 15px;
             border: 1px solid #eee;
@@ -87,7 +82,6 @@
             margin-top: 5px;
         }
 
-        /* 固定返回首页按钮 */
         #back-home-btn {
             position: fixed;
             top: 20px;
@@ -106,7 +100,6 @@
             background-color: #2980b9;
         }
 
-        /* 底部回复框 */
         .bottom-reply-box {
             background-color: #f4f4f9; /* 与整体背景一致 */
             padding: 15px 0;
@@ -193,25 +186,74 @@
             document.getElementById('post-detail').innerHTML = `<p>加载帖子时出错：${error.message}</p>`;
         });
 
-    fetch(`/api/forum/post/${postId}/replies`, {
-        method: 'GET',
-        credentials: 'include'
-    })
-        .then(response => {
-            console.log('Response status:', response.status);
-            if (response.status === 404) return [];
+    // 加载回复列表
+    function loadReplies() {
+        fetch(`/api/forum/post/${postId}/replies`, {
+            method: 'GET',
+            credentials: 'include'
+        })
+            .then(response => {
+                console.log('Response status:', response.status);
+                if (response.status === 404) return [];
 
-            if (!response.ok) throw new Error('获取回复失败');
-            return response.json();
+                if (!response.ok) throw new Error('获取回复失败');
+                return response.json();
+            })
+            .then(replies => {
+                renderReplies(replies || []);
+            })
+            .catch(error => {
+                console.error("获取回复失败:", error);
+                document.getElementById('replies-container').innerHTML =
+                    `<p class="no-replies">加载回复失败：${error.message}</p>`;
+            });
+    }
+
+    loadReplies();
+
+    document.getElementById('send-reply-btn').addEventListener('click', sendReply);
+    document.getElementById('reply-input').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            sendReply();
+        }
+    });
+
+    function sendReply() {
+        const replyInput = document.getElementById('reply-input');
+        const content = replyInput.value.trim();
+
+        if (!content) {
+            alert('回复内容不能为空');
+            return;
+        }
+
+        const replyData = {
+            content: content
+        };
+
+        fetch(`/api/forum/post/${postId}/reply`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            credentials: 'include',
+            body: JSON.stringify(replyData)
         })
-        .then(replies => {
-            renderReplies(replies || []);
-        })
-        .catch(error => {
-            console.error("获取回复失败:", error);
-            document.getElementById('replies-container').innerHTML =
-                `<p class="no-replies">加载回复失败：${error.message}</p>`;
-        });
+            .then(response => {
+                if (!response.ok) throw new Error('回复失败');
+                return response.text();
+            })
+            .then(() => {
+                // 清空输入框
+                replyInput.value = '';
+                // 重新加载回复列表
+                loadReplies();
+            })
+            .catch(error => {
+                console.error('回复失败:', error);
+                alert('回复失败: ' + error.message);
+            });
+    }
 
     function renderPost(post) {
         console.log('当前帖子数据:', post);
@@ -246,6 +288,7 @@
             container.appendChild(replyCard);
         });
     }
+
     function formatTime(timeStr) {
         return timeStr ? timeStr.replace("T", " ").substring(0, 16) : "";
     }
