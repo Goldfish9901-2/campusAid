@@ -51,6 +51,13 @@ public interface UploadFileSystemService {
         ensureSubDir(productDir);
         return productDir;
     }
+    default File getUserDir(Long userId){
+        File userDir = new File(getUploadRootDir(), String.valueOf(userId));
+        ensureSubDir(userDir);
+        return userDir;
+    }
+
+    // 下面是各板块通用的方法
 
     default String getFileExtension(MultipartFile file) {
         String originalFilename = file.getOriginalFilename();
@@ -92,6 +99,7 @@ public interface UploadFileSystemService {
             throw new CampusAidException("上传文件失败");
         }
     }
+
 
 
 }
