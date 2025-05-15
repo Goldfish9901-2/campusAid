@@ -245,6 +245,15 @@
             transform: scale(0.98);
         }
 
+        .form-container input[type="button"].clicked {
+            background-color: #6c757d; /* 灰色表示已点击 */
+            cursor: pointer; /* 确保鼠标指针保持为手型 */
+        }
+
+        .form-container input[type="button"].clicked:hover {
+            background-color: #5a6268; /* 深一点的灰色 */
+        }
+
         .register {
             margin-top: 1rem;
             text-align: center;
@@ -264,6 +273,7 @@
     <script>
         function fetchVerificationCode() {
             const studentId = document.querySelector("input[name='id']").value;
+            const codeBtn = document.getElementById('getCodeBtn');
 
             if (!studentId) {
                 alert("请输入学号");
@@ -284,6 +294,7 @@
                     return response.json();
                 })
                 .then(data => {
+                    codeBtn.classList.add('clicked');
                     alert(data.message || '验证码已发送');
                 })
                 .catch(error => {

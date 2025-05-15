@@ -417,7 +417,7 @@
                 <h3>${post.title}<span class="post-id"> /${post.authorName} ${post.authorId}</span></h3>
                 <div class="post-time">${formatTime(post.publishTime)}</div>
                 <div class="post-content">${truncateText(post.content, 40)}</div>
-                <div class="post-like"><a>点赞：${post.likeCount}</a> <a>共${post.replyCount}条回复></a></div>
+                <div class="post-like"><a>点赞：${post.likeCount}</a> <a href="/forum/reply">共${post.replyCount}条回复></a></div>
             `;
 
             postList.appendChild(postCard);
