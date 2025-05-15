@@ -4,6 +4,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 
 public interface UploadFileSystemService {
     static void ensureSubDir(File productDir) {
@@ -51,7 +52,8 @@ public interface UploadFileSystemService {
         ensureSubDir(productDir);
         return productDir;
     }
-    default File getUserDir(Long userId){
+
+    default File getUserDir(Long userId) {
         File userDir = new File(getUploadRootDir(), String.valueOf(userId));
         ensureSubDir(userDir);
         return userDir;
@@ -83,23 +85,29 @@ public interface UploadFileSystemService {
     }
 
     default String uploadFile(File dir, MultipartFile file) {
-        try {
-            var contentType = file.getContentType();
-            String fileName = file.getOriginalFilename();
-            if (contentType == null || !contentType.startsWith("image")) {
-                throw new CampusAidException("请上传图片");
+        var contentType = file.getContentType();
+        String fileName = file.getOriginalFilename();
+        if (contentType == null || !contentType.startsWith("image")) {
+            throw new CampusAidException("请上传图片");
+        }         String defaultSuffix = getFileExtension(file);
+//            fileName = fileName == null ? LocalDateTime.now() + defaultSuffix : fileName;
+        if (fileName == null) {
+            fileName = LocalDateTime.now() + defaultSuffix;
+        } else {
+            for (var split_candidates : Arrays.asList("/", "\\")) {
+                if (fileName.contains(split_candidates)) {
+                    fileName = fileName.substring(fileName.lastIndexOf(split_candidates) + 1);
+                }
             }
-            String defaultSuffix = getFileExtension(file);
-            fileName = fileName == null ? LocalDateTime.now() + defaultSuffix : fileName;
+        }
+        try {
             File targetLocation = new File(dir, fileName);
             file.transferTo(targetLocation);
             return targetLocation.toURI().toString();
-
         } catch (Exception e) {
-            throw new CampusAidException("上传文件失败");
+            throw new CampusAidException("上传文件失败", e);
         }
     }
-
 
 
 }

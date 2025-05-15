@@ -34,3 +34,26 @@ Content-Type: application/json
 {
     "content": "没想到misaka也会发帖"
 }
+
+###
+
+
+###
+POST http://localhost:8090/api/forum/post/upload
+Content-Type: multipart/form-data; boundary=WebAppBoundary
+
+--WebAppBoundary
+Content-Disposition: form-data; name="postId"
+Content-Type: text/plain
+
+115
+--WebAppBoundary
+Content-Disposition: form-data; name="file"; filename="D:\iCloudPhotos\IMG_0354.JPG"
+Content-Type: image/jpeg
+
+< D:\iCloudPhotos\IMG_0354.JPG
+--WebAppBoundary--
+
+###
+GET http://localhost:8090/api/forum/post/contents?postId=115
+

@@ -1,14 +1,19 @@
 package cn.edu.usst.cs.campusAid;
 
+import cn.edu.usst.cs.campusAid.mapper.db.forum.BlogMapper;
+import cn.edu.usst.cs.campusAid.mapper.db.forum.LikeBlogMapper;
+import cn.edu.usst.cs.campusAid.mapper.db.forum.ReplyMapper;
 import cn.edu.usst.cs.campusAid.service.CampusAidException;
 import cn.edu.usst.cs.campusAid.dto.forum.*;
-import cn.edu.usst.cs.campusAid.mapper.db.BlogMapper;
-import cn.edu.usst.cs.campusAid.mapper.db.LikeBlogMapper;
-import cn.edu.usst.cs.campusAid.mapper.db.ReplyMapper;
+//import cn.edu.usst.cs.campusAid.mapper.db.BlogMapper;
+//import cn.edu.usst.cs.campusAid.mapper.db.LikeBlogMapper;
+//import cn.edu.usst.cs.campusAid.mapper.db.ReplyMapper;
 import cn.edu.usst.cs.campusAid.model.forum.Blog;
 import cn.edu.usst.cs.campusAid.model.forum.Reply;
-import cn.edu.usst.cs.campusAid.service.ForumPostService;
-import cn.edu.usst.cs.campusAid.service.UserService;
+//import cn.edu.usst.cs.campusAid.service.ForumPostService;
+//import cn.edu.usst.cs.campusAid.service.UserService;
+import cn.edu.usst.cs.campusAid.service.auth.UserService;
+import cn.edu.usst.cs.campusAid.service.forum.ForumPostService;
 import cn.edu.usst.cs.campusAid.util.ReplyTreeConverter;
 import org.apache.ibatis.session.RowBounds;
 import org.junit.jupiter.api.*;

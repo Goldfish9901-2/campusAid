@@ -19,6 +19,7 @@ public class AdminConfig {
     /**
      *
      * @param userId 用户id 一般建议传入{@link Long} 或者 {@link String}
+     * @throws CampusAidException 用户无权限
      */
     public void verifyIsAdmin(Object userId) {
         if (!userId.toString().equals(admin))
