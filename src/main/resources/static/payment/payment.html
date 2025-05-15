@@ -2,7 +2,7 @@
 <html lang="zh">
 <head>
     <meta charset="UTF-8">
-    <title>商品详情 - CampusAid</title>
+    <title>支付页面 - CampusAid</title>
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -23,10 +23,10 @@
         }
 
         .container {
-            max-width: 700px;
+            max-width: 600px;
             margin: 0 auto;
             background-color: #ffffff;
-            padding: 30px 24px;
+            padding: 24px;
             border-radius: 12px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
         }
@@ -37,32 +37,23 @@
             margin-bottom: 24px;
         }
 
-        .product-info {
-            font-size: 14px;
-            color: #555;
-            line-height: 1.6;
+        .order-info {
             margin-bottom: 20px;
+            font-size: 16px;
         }
 
-        .product-info p {
-            margin: 10px 0;
-        }
-
-        .button-group {
-            text-align: center;
-        }
-
-        .button-group button {
-            padding: 10px 20px;
+        .payment-btn {
+            padding: 12px;
             font-size: 16px;
             background-color: #0A2540;
             color: white;
             border: none;
-            border-radius: 8px;
+            border-radius: 6px;
             cursor: pointer;
+            width: 100%;
         }
 
-        .button-group button:hover {
+        .payment-btn:hover {
             background-color: #16365f;
         }
 
@@ -84,19 +75,15 @@
 </div>
 
 <div class="container">
-    <h2>商品详情</h2>
+    <h2>支付页面</h2>
 
-    <div class="product-info">
-        <p><strong>商品名称：</strong>雪花矿泉水</p>
-        <p><strong>商品描述：</strong>500ml 纯净水，夏日清凉首选</p>
-        <p><strong>价格：</strong>¥3.50</p>
-        <p><strong>当前余额：</strong>¥100.00</p>
+    <div class="order-info">
+        <div>订单编号：<strong>#202505123456</strong></div>
+        <div>商品名称：<strong>雪花矿泉水</strong></div>
+        <div>价格：<strong>¥3.50</strong></div>
     </div>
 
-    <div class="button-group">
-        <button onclick="location.href='/shop'">查看商店</button>
-        <button onclick="location.href='/payment/checkout'">立即购买</button>
-    </div>
+    <button class="payment-btn" onclick="submitPayment()">立即支付</button>
 
     <div class="footer">
         如果您在使用过程中遇到任何问题，请联系管理员：<br>
@@ -105,6 +92,15 @@
     </div>
 </div>
 
+<script>
+    function submitPayment() {
+        // 模拟支付请求
+        alert("支付成功！订单已提交！");
+        window.location.href = "/order-success.html";  // 跳转到订单成功页面
+    }
+</script>
+
 </body>
 </html>
+
 
