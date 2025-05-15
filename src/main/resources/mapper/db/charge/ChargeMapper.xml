@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.edu.usst.cs.campusAid.mapper.db.charge.ChargeMapper">
+    <select id="insertCharge">
+        INSERT INTO `charge` (`id`,
+                              `user_id`,
+                              `charge_time`,
+                              `amount`)
+        VALUES (#{id},
+                #{userId},
+                #{chargeTime},
+                #{amount})
+        ;
+    </select>
+    <select id="listCharges" parameterType="long" resultType="cn.edu.usst.cs.campusAid.model.charge.Charge" >
+        SELECT *
+        FROM `charge`
+        WHERE `user_id` = #{value}
+          ;
+    </select>
+</mapper>

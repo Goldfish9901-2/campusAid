@@ -2,7 +2,6 @@ package cn.edu.usst.cs.campusAid.dto.shop;
 
 import lombok.Builder;
 import lombok.Data;
-import org.springframework.web.multipart.MultipartFile;
 
 @Data
 @Builder

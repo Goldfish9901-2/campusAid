@@ -1,10 +1,21 @@
 # 开发人员请注意
 
-### 本项目须在顶部(与src, pom.xml等平级)自行添加.env文本文件，填入邮箱信息、数据库密码等
+### 本项目须另外
+* 在顶部(与src, pom.xml等平级)自行添加.env文本文件，填入邮箱信息、数据库密码等
+* 在src/main/resources 中自行添加 alipay.properties 文件，填入支付宝信息
 ### 前端开发人员还需完成邮件界面和标准错误界面
 * 邮件界面： src/main/resources/templates/mail.html
 * 错误界面： src/main/resources/templates/error.html
 ### 静态页面可在 cn.edu.usst.cs.campusAid.config.WebConfig 类的 addViewControllers 方法中添加
+
+### 支付板块需打开内网穿透
+* 用bash （windows使用cygwin/git bash/wsl等）执行以下命令
+```bash
+cd natapp_windows_amd64_2_4_0/
+bash run.sh
+```
+##### 不可以多人同时执行run.sh 要调试请务必周知
+#### 所有其他组员
 
 ## 后端接口
 ### 认证板块（注册和登录） 均只返还一个字符串，仅在状态码为200时标志返回的时成功信息

@@ -17,6 +17,9 @@ POST http://localhost:8090/api/login/verify
 Content-Type: application/json
 
 {
-    "code": "311784"
+    "code": "789965"
 }
 ###
+
+GET http://localhost:8090/api/alipay/pay?price=2.2
+
