@@ -26,7 +26,7 @@
 <!--    </select>-->
 
     <!-- 获取指定商品的进货量 -->
-    <select id="getStock" parameterType="cn.edu.usst.cs.campusAid.model.shop.Good" resultType="long">
+    <select id="getAllSupplyHistory" parameterType="cn.edu.usst.cs.campusAid.model.shop.Good" resultType="long">
         SELECT SUM(amount) FROM good_transaction
         WHERE good_id = #{id} AND order_id IS NULL;
     </select>
