@@ -1,7 +1,6 @@
 package cn.edu.usst.cs.campusAid.mapper.db.shop;
 
 import cn.edu.usst.cs.campusAid.dto.shop.ProductTransaction;
-import cn.edu.usst.cs.campusAid.model.shop.Good;
 import cn.edu.usst.cs.campusAid.model.shop.GoodTransaction;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -20,7 +19,7 @@ public interface TransactionMapper {
     /**
      * 获取指定商品的进货量（order_id IS NULL）
      */
-    Long getStock(Long id);
+    Long getAllSupplyHistory(Long id);
 
     /**
      * 获取指定商品的销售量（order_id IS NOT NULL）

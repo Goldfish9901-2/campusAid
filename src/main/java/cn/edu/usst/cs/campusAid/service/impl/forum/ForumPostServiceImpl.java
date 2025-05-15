@@ -29,19 +29,28 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 public class ForumPostServiceImpl implements ForumPostService {
-    @Autowired
-    private UserService userService;
-    @Autowired
-    private UploadFileSystemService uploadFileSystemService;
-    @Autowired
-    private LikeBlogMapper likeBlogMapper;
-    @Autowired
-    private ReplyMapper replyMapper;
-    @Autowired
-    private BlogMapper blogMapper;
-    @Autowired
-    private BlogToForumPostPreview blogToForumPostPreview;
+    private final UserService userService;
+    private final UploadFileSystemService uploadFileSystemService;
+    private final LikeBlogMapper likeBlogMapper;
+    private final ReplyMapper replyMapper;
+    private final BlogMapper blogMapper;
+    private final BlogToForumPostPreview blogToForumPostPreview;
 
+    // 构造器注入
+    public ForumPostServiceImpl(
+            UserService userService,
+            UploadFileSystemService uploadFileSystemService,
+            LikeBlogMapper likeBlogMapper,
+            ReplyMapper replyMapper,
+            BlogMapper blogMapper,
+            BlogToForumPostPreview blogToForumPostPreview) {
+        this.userService = userService;
+        this.uploadFileSystemService = uploadFileSystemService;
+        this.likeBlogMapper = likeBlogMapper;
+        this.replyMapper = replyMapper;
+        this.blogMapper = blogMapper;
+        this.blogToForumPostPreview = blogToForumPostPreview;
+    }
 
     /**
      * 获取排序后的帖子列表，并附带每个帖子的点赞数、回复数及是否已点赞状态。
@@ -88,6 +97,7 @@ public class ForumPostServiceImpl implements ForumPostService {
         return blogs.stream()
                 .map(blog -> {
                     ForumPostPreview preview = BlogToForumPostPreview.INSTANCE.toView(blog);
+                    preview.setAuthorName(userService.getUserById(preview.getAuthorId()).getName());
                     preview.setLikeCount(likeCountMap.getOrDefault(preview.getPostId(), 0));
                     preview.setReplyCount(replyCountMap.getOrDefault(preview.getPostId(), 0));
                     preview.setLiked(isLikedByUser(blog.getId(), userId));
@@ -272,14 +282,17 @@ public class ForumPostServiceImpl implements ForumPostService {
 
     @Override
     public Long submitPost(Long userId, ForumPostPreview post) {
-        blogMapper.insertBlog(blogToForumPostPreview.toModel(post));
-        Blog blog = blogMapper.selectBlogs(
+        Blog blog = blogToForumPostPreview.toModel(post);
+        blog.setCreator(userId);
+        blog.setVisibility(Visibility.VISIBLE.getValue());
+        blogMapper.insertBlog(blog);
+        Blog inserted = blogMapper.selectBlogs(
                 "TITLE",
                 post.getTitle(),
                 "TIME",
                 new RowBounds(0, 1)
         ).get(0);
-        return blog.getId();
+        return inserted.getId();
     }
 
     @Override

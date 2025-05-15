@@ -1,13 +1,14 @@
 package cn.edu.usst.cs.campusAid;
 
+import cn.edu.usst.cs.campusAid.service.CampusAidException;
 import cn.edu.usst.cs.campusAid.dto.forum.*;
-import cn.edu.usst.cs.campusAid.mapper.db.forum.BlogMapper;
-import cn.edu.usst.cs.campusAid.mapper.db.forum.LikeBlogMapper;
-import cn.edu.usst.cs.campusAid.mapper.db.forum.ReplyMapper;
+import cn.edu.usst.cs.campusAid.mapper.db.BlogMapper;
+import cn.edu.usst.cs.campusAid.mapper.db.LikeBlogMapper;
+import cn.edu.usst.cs.campusAid.mapper.db.ReplyMapper;
 import cn.edu.usst.cs.campusAid.model.forum.Blog;
 import cn.edu.usst.cs.campusAid.model.forum.Reply;
-import cn.edu.usst.cs.campusAid.service.forum.ForumPostService;
-import cn.edu.usst.cs.campusAid.service.auth.UserService;
+import cn.edu.usst.cs.campusAid.service.ForumPostService;
+import cn.edu.usst.cs.campusAid.service.UserService;
 import cn.edu.usst.cs.campusAid.util.ReplyTreeConverter;
 import org.apache.ibatis.session.RowBounds;
 import org.junit.jupiter.api.*;
@@ -15,7 +16,10 @@ import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.format.DateTimeFormatter;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Comparator;
 import java.util.Objects;
@@ -132,22 +136,20 @@ public class ForumPostServiceImplTest {
     @DisplayName("0. 用户2发帖")
     void testUser2CreatePost() {
         lock.lock();
-//        try
         synchronized (this) {
             logger.info("🧪 正在执行测试: testUser2CreatePost");
 
             ForumPostPreview post = new ForumPostPreview();
-            post.setTitle(POST_TITLE_2);
+            // 用唯一标题，防止查找混淆
+            String realTitle = POST_TITLE_2 + "-" + System.currentTimeMillis();
+            post.setTitle(realTitle);
             post.setContent(POST_CONTENT_2);
-//            forumPostService.createPost(USER_ID_2, post);
             postId2 = forumPostService.submitPost(USER_ID_2, post);
-            if (Objects.equals(postId2, postId1)) {
-                System.err.println("相同");
-                testUser2CreatePost();
-                return;
-            }
+            logger.info("postId2 = {}", postId2);
+
             assertNotNull(postId2, "❌ 用户2发帖失败");
             logger.info("✅ 用户 {} 成功发布帖子 ID={}", USER_ID_2, postId2);
+
             List<ForumPostPreview> postsSorted = forumPostService.getPostsSorted(
                     USER_ID_2,
                     KeywordType.TITLE,
@@ -155,22 +157,17 @@ public class ForumPostServiceImplTest {
                     PostSortOrder.TIME,
                     new RowBounds(0, 10)
             );
+            boolean found = false;
             for (ForumPostPreview postTemp : postsSorted) {
                 System.out.println(postTemp);
-
+                // 只用postId2判断即可
                 if (postTemp.getPostId().equals(postId2)) {
-                    System.err.println(postTemp);
-                    if (postTemp.getTitle().equals(POST_TITLE_2))
-                        return;
+                    found = true;
+                    break;
                 }
             }
-            fail("未找到");
+            assertTrue(found, "未找到");
         }
-//        finally {
-//            System.err.println("unlock");
-//            lock.unlock();
-//        }
-
     }
 
     /**
@@ -183,6 +180,7 @@ public class ForumPostServiceImplTest {
         logger.info("🧪 正在执行测试: testCreatePost");
         assertNotNull(postId1, "❌ 帖子1发布失败");
         assertNotNull(postId2, "❌ 帖子2发布失败");
+        logger.info("postId1 = {}, postId2 = {}", postId1, postId2);
         logger.info("✅ 发帖测试通过，两个帖子均成功创建");
     }
 
@@ -232,7 +230,9 @@ public class ForumPostServiceImplTest {
         //日志显示搜到的所有帖子id和标题
         result.forEach(p -> logger.info("🔍 帖子ID={}, 标题={}", p.getPostId(), p.getTitle()));
 
-        logger.info("✅ 成功搜索到标题包含“第一次”的帖子");
+        String keyword = "第一次";
+logger.info("✅ 成功搜索到标题包含\"" + keyword + "\"的帖子");
+
     }
 
     @Test
@@ -344,13 +344,33 @@ public class ForumPostServiceImplTest {
         assertTrue(page1.size() > 0, "❌ 第一页无数据");
         assertNotEquals(page1, page2, "❌ 分页结果相同，可能未正确分页");
         logger.info("✅ 分页功能测试通过");
+
+        // ====== 新增：断言时间降序 ======
+        DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
+        List<ForumPostPreview> all = forumPostService.getPostsSorted(
+                USER_ID_1, KeywordType.TITLE, "", PostSortOrder.TIME, new RowBounds(0, 10));
+        for (int i = 1; i < all.size(); i++) {
+            LocalDateTime prev = LocalDateTime.parse(all.get(i-1).getPublishTime(), formatter);
+            LocalDateTime curr = LocalDateTime.parse(all.get(i).getPublishTime(), formatter);
+            assertTrue(
+                prev.isAfter(curr) || prev.isEqual(curr),
+                "帖子未按时间降序排列"
+            );
+        }
+        logger.info("✅ 帖子时间排序断言通过");
     }
 
     @Test
     @DisplayName("8. 支持删除自己的帖子")
     @Order(42)
     void testDeletePost() {
-        final long idToDelete = 7L;
+        // 先发一条帖子
+        ForumPostPreview post = new ForumPostPreview();
+        post.setTitle("待删除帖子");
+        post.setContent("内容");
+        forumPostService.createPost(USER_ID_1, post);
+        Long idToDelete = getLatestPostId(); // 用你已有的工具方法获取最新帖子ID
+
         logger.info("🧪 正在执行测试: testDeletePost");
         logger.info("🗑️ 用户 {} 正在删除帖子 {}", USER_ID_1, idToDelete);
 
@@ -368,11 +388,17 @@ public class ForumPostServiceImplTest {
     @DisplayName("9. 不能删除别人的帖子")
     @Order(41)
     void testCannotDeleteOthersPost() {
-        final long idToDelete = 6L;
+        // 先用用户1发一条帖子
+        ForumPostPreview post = new ForumPostPreview();
+        post.setTitle("别人发的帖子");
+        post.setContent("内容");
+        forumPostService.createPost(USER_ID_1, post);
+        Long idToDelete = getLatestPostId();
+
         logger.info("🧪 正在执行测试: testCannotDeleteOthersPost");
         logger.info("🚫 用户 {} 尝试删除不属于自己的帖子 {}", USER_ID_2, idToDelete);
 
-        Exception exception = assertThrows(Exception.class, () ->
+        Exception exception = assertThrows(CampusAidException.class, () ->
                 forumPostService.deletePost(idToDelete, USER_ID_2)
         );
 
@@ -452,15 +478,18 @@ public class ForumPostServiceImplTest {
     @Order(53)
     void testGetFlatReplies() {
         logger.info("🧪 正在执行测试: testGetFlatReplies");
-//        postId1 = 159L;
-        // Step 0: 确保有一个帖子ID
-        assertNotNull(postId1, "❌ 帖子未初始化");
+        // Step 0: 新建一个干净的帖子
+        ForumPostPreview post = new ForumPostPreview();
+        post.setTitle("扁平回复测试帖");
+        post.setContent("内容");
+        forumPostService.createPost(USER_ID_1, post);
+        Long testPostId = getLatestPostId();
 
         // Step 1: 用户2对帖子进行一级回复
         ReplyView firstLevelReply = new ReplyView();
         firstLevelReply.setContent("这个帖子不错！");
-        forumPostService.replyPost(USER_ID_2, postId1, firstLevelReply);
-        Long firstLevelId = getLatestReplyId(USER_ID_2,postId1);
+        forumPostService.replyPost(USER_ID_2, testPostId, firstLevelReply);
+        Long firstLevelId = getLatestReplyId(USER_ID_2, testPostId);
 
         assertNotNull(firstLevelId, "❌ 一级回复未成功插入");
         logger.info("✅ 成功创建一级回复 ID={}", firstLevelId);
@@ -468,14 +497,14 @@ public class ForumPostServiceImplTest {
         // Step 2: 用户1对帖子再发一条一级回复
         ReplyView secondLevelReply = new ReplyView();
         secondLevelReply.setContent("我也想说点什么～");
-        forumPostService.replyPost(USER_ID_1, postId1, secondLevelReply);
-        Long secondLevelId = getLatestReplyId(USER_ID_1,postId1);
+        forumPostService.replyPost(USER_ID_1, testPostId, secondLevelReply);
+        Long secondLevelId = getLatestReplyId(USER_ID_1, testPostId);
 
         assertNotNull(secondLevelId, "❌ 第二条回复未成功插入");
         logger.info("✅ 成功创建第二条回复 ID={}", secondLevelId);
 
         // Step 3: 获取扁平回复列表
-        List<ReplyView> flatReplies = forumPostService.getRepliesByPostId(USER_ID_1,postId1);
+        List<ReplyView> flatReplies = forumPostService.getRepliesByPostId(USER_ID_1, testPostId);
 
         assertNotNull(flatReplies, "❌ 回复列表为 null");
         assertEquals(2, flatReplies.size(), "❌ 回复数量不为2");
@@ -508,6 +537,15 @@ public class ForumPostServiceImplTest {
         assertTrue(foundSecond, "❌ 未找到第二条回复");
 
         logger.info("✅ 成功通过 testGetFlatReplies，回复字段和数量均匹配");
+    }
+
+    @Test
+    @DisplayName("删除不存在的帖子应抛出异常")
+    void testDeleteNonExistentPost() {
+        Exception exception = assertThrows(CampusAidException.class, () -> {
+            forumPostService.deletePost(999999L, USER_ID_1); // 用一个一定不存在的ID
+        });
+        assertTrue(exception.getMessage().contains("帖子不存在"));
     }
 
 }

@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>我的跑腿订单 - CampusAid</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f7fb;
+            color: #1a1a1a;
+            margin: 0;
+            padding: 40px 20px;
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 16px;
+        }
+
+        .logo img {
+            width: 100px;
+            height: 100px;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            padding: 30px 24px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+        }
+
+        h2 {
+            text-align: center;
+            color: #0A2540;
+            margin-bottom: 24px;
+        }
+
+        .order-card {
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .order-id {
+            font-weight: bold;
+            color: #0A2540;
+        }
+
+        .order-status {
+            color: #4C9AFF;
+            font-weight: bold;
+        }
+
+        .order-info {
+            font-size: 14px;
+            color: #555;
+            line-height: 1.6;
+        }
+
+        .order-actions {
+            text-align: right;
+            margin-top: 10px;
+        }
+
+        .order-actions button {
+            padding: 8px 12px;
+            font-size: 14px;
+            background-color: #0A2540;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .order-actions button:hover {
+            background-color: #16365f;
+        }
+
+        .footer {
+            margin-top: 40px;
+            font-size: 13px;
+            color: #666;
+            text-align: center;
+            border-top: 1px solid #e0e0e0;
+            padding-top: 16px;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+
+<div class="logo">
+    <img src="../favicon.jpg" alt="CampusAid Logo">
+</div>
+
+<div class="container">
+    <h2>我的跑腿订单</h2>
+
+    <div id="errand-list">
+        <!-- JS 渲染订单卡片 -->
+    </div>
+
+    <div class="footer">
+        如果您在使用过程中遇到任何问题，请联系管理员：<br>
+        📧 邮箱：admin@campusaid.edu.cn<br>
+        ☎️ 电话：010-12345678
+    </div>
+</div>
+
+<script>
+    // 通过 fetch 获取后端跑腿订单数据
+    fetch('/api/errand/errands')
+        .then(res => res.json())
+        .then(errands => {
+            const container = document.getElementById("errand-list");
+
+            errands.forEach(errand => {
+                const card = document.createElement("div");
+                card.className = "order-card";
+                card.innerHTML = `
+                    <div class="order-header">
+                        <div class="order-id">订单编号：${errand.id}</div>
+                        <div class="order-status">${errand.status}</div>
+                    </div>
+                    <div class="order-info">
+                        发布时间：${errand.latestArrival}<br>
+                        酬金：¥${errand.fee}
+                    </div>
+                    <div class="order-actions">
+                        <button onclick="location.href='errand-detail.html?id=${errand.id}'">查看详情</button>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        })
+        .catch(err => {
+            console.error('获取跑腿订单失败', err);
+        });
+</script>
+
+</body>
+</html>

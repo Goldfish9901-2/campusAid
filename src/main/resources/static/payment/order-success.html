@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <title>订单成功 - CampusAid</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #f4f7fb;
+      color: #1a1a1a;
+      margin: 0;
+      padding: 40px 20px;
+    }
+
+    .logo {
+      text-align: center;
+      margin-bottom: 16px;
+    }
+
+    .logo img {
+      width: 100px;
+      height: 100px;
+    }
+
+    .container {
+      max-width: 500px;
+      margin: 0 auto;
+      background-color: #ffffff;
+      padding: 30px 24px;
+      border-radius: 12px;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+      animation: fadeInUp 0.8s ease;
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .success-icon {
+      font-size: 48px;
+      color: #4CAF50;
+      margin-bottom: 16px;
+      animation: popIn 0.5s ease-out;
+    }
+
+    @keyframes popIn {
+      from {
+        opacity: 0;
+        transform: scale(0.5);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    h2 {
+      color: #0A2540;
+      font-size: 24px;
+      margin-bottom: 12px;
+      animation: fadeInUp 1s ease forwards;
+    }
+
+    .thank-you {
+      font-size: 16px;
+      color: #0A2540;
+      margin-bottom: 16px;
+      opacity: 0;
+      animation: fadeIn 1s ease forwards;
+      animation-delay: 0.6s;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .order-info {
+      font-size: 16px;
+      color: #444;
+      margin: 12px 0 24px;
+      animation: fadeIn 1s ease forwards;
+      animation-delay: 1s;
+      opacity: 0;
+    }
+
+    .button-group {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 20px;
+      animation: fadeIn 1s ease forwards;
+      animation-delay: 1.4s;
+      opacity: 0;
+    }
+
+    .button-group button {
+      padding: 12px;
+      font-size: 16px;
+      background-color: #0A2540;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .button-group button:hover {
+      background-color: #16365f;
+    }
+
+    .footer {
+      margin-top: 40px;
+      font-size: 13px;
+      color: #666;
+      text-align: center;
+      border-top: 1px solid #e0e0e0;
+      padding-top: 16px;
+      line-height: 1.6;
+    }
+  </style>
+</head>
+<body>
+
+<div class="logo">
+  <img src="../favicon.jpg" alt="CampusAid Logo">
+</div>
+
+<div class="container">
+  <div class="success-icon">✅</div>
+  <h2>订单提交成功！</h2>
+  <div class="thank-you">谢谢惠顾，祝您生活愉快！</div>
+  <div class="order-info">
+    感谢您的购买，您的订单已成功生成。<br>
+    订单编号：<strong>#202505123456</strong>
+  </div>
+
+  <div class="button-group">
+    <button onclick="location.href='/index.html'">返回首页</button>
+    <button onclick="location.href='/order-detail.html?id=202505123456'">查看我的订单</button>
+  </div>
+
+  <div class="footer">
+    如果您在使用过程中遇到任何问题，请联系管理员：<br>
+    📧 邮箱：admin@campusaid.edu.cn<br>
+    ☎️ 电话：010-12345678
+  </div>
+</div>
+
+</body>
+</html>

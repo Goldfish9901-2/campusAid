@@ -13,7 +13,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
 
-import static com.mysql.cj.conf.PropertyKey.logger;
 import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 public class ShopMapperTest {
@@ -206,7 +205,7 @@ public class ShopMapperTest {
         transactionMapper.insert(sale);
 
         // 5. 查询进货量
-        Long stock = transactionMapper.getStock(testGood.getId());
+        Long stock = transactionMapper.getAllSupplyHistory(testGood.getId());
         assertNotNull(stock, "[ERROR] 进货量不应为 null");
         assertEquals(30L, stock.longValue(), "[ERROR] 进货量应为 10 + 20 = 30");
         System.out.println("查询到进货量为"+stock);

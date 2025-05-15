@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  *
@@ -78,6 +80,18 @@ public class StockController {
         );
         var loc = uploadFileSystemService.uploadFile(dir, file);
         return ResponseEntity.ok(loc);
+    }
+    @GetMapping("/post/uploaded")
+    public ResponseEntity<List<String>> getUploadedPosts(
+            @SessionAttribute(SessionKeys.SHOP_NAME) String shopName,
+            @RequestParam String goodName
+    ) {
+        var dir = uploadFileSystemService.getProductDir(shopName, goodName);
+        var files = dir.listFiles();
+        List<String> fileList = (files==null)
+                ? List.of(new String[0])
+                : Arrays.stream(files).map(File::getName).toList();
+        return ResponseEntity.ok(fileList);
     }
 
 }

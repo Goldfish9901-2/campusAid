@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>购物车 - CampusAid</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f7fb;
+            color: #1a1a1a;
+            margin: 0;
+            padding: 40px 20px;
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 16px;
+        }
+
+        .logo img {
+            width: 100px;
+            height: 100px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            padding: 24px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+        }
+
+        h2 {
+            color: #0A2540;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        th, td {
+            border-bottom: 1px solid #e0e0e0;
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            color: #0A2540;
+        }
+
+        .total {
+            font-weight: bold;
+            font-size: 20px;
+            color: #4C9AFF;
+            text-align: right;
+            margin-top: 10px;
+        }
+
+        .highlight-balance {
+            color: #E53935;
+            font-weight: bold;
+            font-size: 20px;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 24px;
+            background-color: #0A2540;
+            color: white;
+            border: none;
+            font-size: 16px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #16365f;
+        }
+
+        .footer {
+            margin-top: 40px;
+            font-size: 13px;
+            color: #666;
+            text-align: center;
+            border-top: 1px solid #e0e0e0;
+            padding-top: 16px;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+
+<div class="logo">
+    <img src="../favicon.jpg" alt="CampusAid Logo">
+</div>
+
+<div class="container">
+    <h2>购物车</h2>
+
+    <table>
+        <thead>
+        <tr>
+            <th>商品</th>
+            <th>单价</th>
+            <th>数量</th>
+            <th>小计</th>
+        </tr>
+        </thead>
+        <tbody id="cart-body">
+        <!-- JS 动态渲染 -->
+        </tbody>
+    </table>
+
+    <div class="total">总金额：<span id="total-amount">¥0.00</span></div>
+    <div style="margin-top:10px;">当前余额：<span class="highlight-balance" id="user-balance">¥100.00</span></div>
+
+    <button onclick="checkout()">提交订单</button>
+
+    <div class="footer">
+        如果您在使用过程中遇到任何问题，请联系管理员：<br>
+        📧 邮箱：admin@campusaid.edu.cn<br>
+        ☎️ 电话：010-12345678
+    </div>
+</div>
+
+<script>
+    // 🛒 模拟购物车数据
+    const cart = [
+        { id: 1, name: '矿泉水', price: 3.5, quantity: 2 },
+        { id: 2, name: '泡面', price: 5.0, quantity: 1 }
+    ];
+
+    const userBalance = 100.00;
+    document.getElementById("user-balance").textContent = `¥${userBalance.toFixed(2)}`;
+
+    // 💰 渲染购物车
+    const tbody = document.getElementById("cart-body");
+    let totalAmount = 0;
+
+    cart.forEach(item => {
+        const subtotal = item.price * item.quantity;
+        totalAmount += subtotal;
+
+        const row = document.createElement("tr");
+        row.innerHTML = `
+      <td>${item.name}</td>
+      <td>¥${item.price.toFixed(2)}</td>
+      <td>${item.quantity}</td>
+      <td>¥${subtotal.toFixed(2)}</td>
+    `;
+        tbody.appendChild(row);
+    });
+
+    document.getElementById("total-amount").textContent = `¥${totalAmount.toFixed(2)}`;
+
+    // 🧾 提交逻辑
+    function checkout() {
+        if (userBalance < totalAmount) {
+            alert("余额不足，请先充值！");
+            window.location.href = "/recharge.html";
+            return;
+        }
+
+        fetch("/api/order", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                items: cart.map(i => ({ id: i.id, quantity: i.quantity }))
+            })
+        })
+            .then(res => {
+                if (res.ok) {
+                    alert("订单提交成功！");
+                    window.location.href = "/order-success.html";
+                } else {
+                    alert("订单提交失败！");
+                }
+            })
+            .catch(() => alert("网络错误，请稍后再试"));
+    }
+</script>
+
+</body>
+</html>

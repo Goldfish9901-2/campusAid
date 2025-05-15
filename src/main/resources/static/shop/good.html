@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>商品详情 - CampusAid</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f7fb;
+            color: #1a1a1a;
+            margin: 0;
+            padding: 40px 20px;
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 16px;
+        }
+
+        .logo img {
+            width: 100px;
+            height: 100px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            padding: 24px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+        }
+
+        h2 {
+            color: #0A2540;
+            text-align: center;
+            margin-bottom: 16px;
+        }
+
+        .section {
+            margin: 10px 0;
+        }
+
+        .label {
+            font-weight: bold;
+            color: #0A2540;
+        }
+
+        .price, .highlight-balance {
+            font-size: 24px;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+
+        .price {
+            color: #4C9AFF;
+        }
+
+        .highlight-balance {
+            color: #E53935;
+        }
+
+        button {
+            margin-top: 30px;
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            background-color: #0A2540;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #16365f;
+        }
+
+        .footer {
+            margin-top: 40px;
+            font-size: 13px;
+            color: #666;
+            text-align: center;
+            border-top: 1px solid #e0e0e0;
+            padding-top: 16px;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+
+<div class="logo">
+    <img src="../../favicon.jpg" alt="CampusAid Logo">
+</div>
+
+<div class="container">
+    <h2>商品详情</h2>
+
+    <div id="product-info"></div>
+
+    <button id="buyButton">立即购买</button>
+
+    <div class="footer">
+        如果您在使用过程中遇到任何问题，请联系管理员：<br>
+        📧 邮箱：admin@campusaid.edu.cn<br>
+        ☎️ 电话：010-12345678
+    </div>
+</div>
+
+<script>
+    // 模拟商品ID（在实际项目中应该从URL中获取商品ID）
+    const productId = 1;
+
+    // 请求商品数据
+    fetch(`/api/products/${productId}`)
+        .then(response => response.json())
+        .then(product => {
+            // 渲染商品详情
+            const productInfo = document.getElementById('product-info');
+            productInfo.innerHTML = `
+                <div class="section">
+                    <div class="label">商品名称：</div>
+                    <div>${product.name}</div>
+                </div>
+
+                <div class="section">
+                    <div class="label">商品描述：</div>
+                    <div>${product.description}</div>
+                </div>
+
+                <div class="section">
+                    <div class="label">价格：</div>
+                    <div class="price">¥${product.price}</div>
+                </div>
+
+                <div class="section">
+                    <div class="label">当前余额：</div>
+                    <div class="highlight-balance">¥100.00</div>
+                </div>
+            `;
+        })
+        .catch(error => {
+            console.error('商品数据加载失败:', error);
+        });
+
+    // 立即购买按钮点击事件
+    document.getElementById('buyButton').addEventListener('click', () => {
+        alert('跳转至支付页面');
+        // 实际中可以在这里跳转到支付页面或执行其他操作
+        // location.href = '/payment.html';
+    });
+</script>
+
+</body>
+</html>
+
