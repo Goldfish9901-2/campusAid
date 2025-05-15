@@ -1,3 +1,4 @@
+<!-- 商品详情页面 -->
 <!DOCTYPE html>
 <html lang="zh">
 <head>
@@ -46,7 +47,6 @@
             color: #0A2540;
         }
 
-        /* 统一样式 */
         .price, .highlight-balance {
             font-size: 24px;
             font-weight: bold;
@@ -99,17 +99,17 @@
 
     <div class="section">
         <div class="label">商品名称：</div>
-        <div>雪花矿泉水</div>
+        <div id="product-name">雪花矿泉水</div>
     </div>
 
     <div class="section">
         <div class="label">商品描述：</div>
-        <div>500ml 纯净水，夏日清凉首选</div>
+        <div id="product-description">500ml 纯净水，夏日清凉首选</div>
     </div>
 
     <div class="section">
         <div class="label">价格：</div>
-        <div class="price">¥3.50</div>
+        <div class="price" id="product-price">¥3.50</div>
     </div>
 
     <div class="section">
@@ -127,30 +127,29 @@
 </div>
 
 <script>
-    const userBalance = 100.00;
-    const productPrice = 3.50;
+    // 模拟从后端获取的数据
+    const product = {
+        name: "雪花矿泉水",
+        description: "500ml 纯净水，夏日清凉首选",
+        price: 3.50,
+        balance: 100.00
+    };
+
+    // 渲染商品信息
+    document.getElementById("product-name").innerText = product.name;
+    document.getElementById("product-description").innerText = product.description;
+    document.getElementById("product-price").innerText = `¥${product.price.toFixed(2)}`;
 
     function submitOrder() {
-        if (userBalance < productPrice) {
+        if (product.balance < product.price) {
             alert("余额不足，跳转至充值页面");
             window.location.href = "/recharge.html";
             return;
         }
 
-        fetch("/api/order", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ productId: 1, quantity: 1 })
-        })
-            .then(res => {
-                if (res.ok) {
-                    alert("订单提交成功！");
-                    window.location.href = "/order-success.html";
-                } else {
-                    alert("订单提交失败！");
-                }
-            })
-            .catch(() => alert("网络错误"));
+        // 在此处添加订单提交逻辑（模拟跳转到支付页面）
+        alert("订单提交成功！");
+        window.location.href = "/order-success.html";
     }
 </script>
 

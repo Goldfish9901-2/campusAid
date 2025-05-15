@@ -23,86 +23,26 @@
     }
 
     .container {
-      max-width: 500px;
+      max-width: 600px;
       margin: 0 auto;
       background-color: #ffffff;
-      padding: 30px 24px;
+      padding: 24px;
       border-radius: 12px;
-      text-align: center;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
-      animation: fadeInUp 0.8s ease;
-    }
-
-    @keyframes fadeInUp {
-      from {
-        opacity: 0;
-        transform: translateY(30px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    .success-icon {
-      font-size: 48px;
-      color: #4CAF50;
-      margin-bottom: 16px;
-      animation: popIn 0.5s ease-out;
-    }
-
-    @keyframes popIn {
-      from {
-        opacity: 0;
-        transform: scale(0.5);
-      }
-      to {
-        opacity: 1;
-        transform: scale(1);
-      }
     }
 
     h2 {
       color: #0A2540;
-      font-size: 24px;
-      margin-bottom: 12px;
-      animation: fadeInUp 1s ease forwards;
-    }
-
-    .thank-you {
-      font-size: 16px;
-      color: #0A2540;
+      text-align: center;
       margin-bottom: 16px;
-      opacity: 0;
-      animation: fadeIn 1s ease forwards;
-      animation-delay: 0.6s;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
     }
 
     .order-info {
+      margin-bottom: 20px;
       font-size: 16px;
-      color: #444;
-      margin: 12px 0 24px;
-      animation: fadeIn 1s ease forwards;
-      animation-delay: 1s;
-      opacity: 0;
     }
 
-    .button-group {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      margin-top: 20px;
-      animation: fadeIn 1s ease forwards;
-      animation-delay: 1.4s;
-      opacity: 0;
-    }
-
-    .button-group button {
+    button {
       padding: 12px;
       font-size: 16px;
       background-color: #0A2540;
@@ -110,9 +50,10 @@
       border: none;
       border-radius: 6px;
       cursor: pointer;
+      width: 100%;
     }
 
-    .button-group button:hover {
+    button:hover {
       background-color: #16365f;
     }
 
@@ -134,18 +75,16 @@
 </div>
 
 <div class="container">
-  <div class="success-icon">✅</div>
-  <h2>订单提交成功！</h2>
-  <div class="thank-you">谢谢惠顾，祝您生活愉快！</div>
+  <h2>订单成功</h2>
+
   <div class="order-info">
-    感谢您的购买，您的订单已成功生成。<br>
-    订单编号：<strong>#202505123456</strong>
+    <div>订单编号：<strong>#202505123456</strong></div>
+    <div>商品名称：<strong>雪花矿泉水</strong></div>
+    <div>支付金额：<strong>¥3.50</strong></div>
+    <div>支付状态：<strong>成功</strong></div>
   </div>
 
-  <div class="button-group">
-    <button onclick="location.href='/index.html'">返回首页</button>
-    <button onclick="location.href='/order-detail.html?id=202505123456'">查看我的订单</button>
-  </div>
+  <button onclick="location.href='/index.html'">返回首页</button>
 
   <div class="footer">
     如果您在使用过程中遇到任何问题，请联系管理员：<br>
@@ -156,3 +95,4 @@
 
 </body>
 </html>
+

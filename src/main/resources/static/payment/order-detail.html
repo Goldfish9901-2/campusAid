@@ -37,42 +37,20 @@
             margin-bottom: 24px;
         }
 
-        .order-info, .total-section {
-            margin-bottom: 20px;
+        .order-info {
+            font-size: 14px;
+            color: #555;
             line-height: 1.6;
         }
 
-        .order-info strong {
-            color: #0A2540;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 16px;
-        }
-
-        th, td {
-            border-bottom: 1px solid #e0e0e0;
-            padding: 10px;
-            text-align: left;
-        }
-
-        th {
-            color: #0A2540;
-        }
-
-        .total {
+        .order-actions {
             text-align: right;
-            font-size: 18px;
-            color: #E53935;
-            font-weight: bold;
+            margin-top: 10px;
         }
 
-        button {
-            padding: 12px;
-            width: 100%;
-            font-size: 16px;
+        .order-actions button {
+            padding: 8px 12px;
+            font-size: 14px;
             background-color: #0A2540;
             color: white;
             border: none;
@@ -80,7 +58,7 @@
             cursor: pointer;
         }
 
-        button:hover {
+        .order-actions button:hover {
             background-color: #16365f;
         }
 
@@ -104,29 +82,19 @@
 <div class="container">
     <h2>订单详情</h2>
 
-    <div class="order-info" id="order-info">
-        <!-- JS 渲染订单信息 -->
+    <div class="order-info">
+        <div>订单编号：<strong>#202505123456</strong></div>
+        <div>支付状态：<strong>已支付</strong></div>
+        <div>商品信息：<br>
+            - 矿泉水 x 2<br>
+            - 泡面 x 1
+        </div>
+        <div>总金额：<strong>¥12.00</strong></div>
     </div>
 
-    <table>
-        <thead>
-        <tr>
-            <th>商品</th>
-            <th>单价</th>
-            <th>数量</th>
-            <th>小计</th>
-        </tr>
-        </thead>
-        <tbody id="product-list">
-        <!-- JS 渲染商品 -->
-        </tbody>
-    </table>
-
-    <div class="total-section">
-        <div class="total">总金额：<span id="total-amount">¥0.00</span></div>
+    <div class="order-actions">
+        <button onclick="location.href='/payment.html'">继续支付</button>
     </div>
-
-    <button onclick="location.href='/index.html'">返回首页</button>
 
     <div class="footer">
         如果您在使用过程中遇到任何问题，请联系管理员：<br>
@@ -134,67 +102,6 @@
         ☎️ 电话：010-12345678
     </div>
 </div>
-
-<script>
-    function getQueryParam(param) {
-        const urlParams = new URLSearchParams(window.location.search);
-        return urlParams.get(param);
-    }
-
-    const orderId = getQueryParam("id") || "202505123456";
-
-    function renderOrder(order) {
-        document.getElementById("order-info").innerHTML = `
-        订单编号：<strong>#${order.id}</strong><br>
-        下单时间：<strong>${order.time}</strong><br>
-        状态：<strong>${order.status}</strong>
-      `;
-
-        let total = 0;
-        const tbody = document.getElementById("product-list");
-        tbody.innerHTML = "";
-
-        order.items.forEach(item => {
-            const subtotal = item.price * item.quantity;
-            total += subtotal;
-
-            const row = document.createElement("tr");
-            row.innerHTML = `
-          <td>${item.name}</td>
-          <td>¥${item.price.toFixed(2)}</td>
-          <td>${item.quantity}</td>
-          <td>¥${subtotal.toFixed(2)}</td>
-        `;
-            tbody.appendChild(row);
-        });
-
-        document.getElementById("total-amount").textContent = `¥${total.toFixed(2)}`;
-    }
-
-    // 尝试从后端拉取订单详情
-    fetch(`/api/order/${orderId}`)
-        .then(res => {
-            if (!res.ok) throw new Error("接口异常");
-            return res.json();
-        })
-        .then(orderData => {
-            console.log("接口返回订单：", orderData);
-            renderOrder(orderData);
-        })
-        .catch(err => {
-            console.warn("接口失败，使用模拟数据", err);
-            const mockOrder = {
-                id: orderId,
-                status: "已支付",
-                time: "2025-05-12 14:32",
-                items: [
-                    { name: "矿泉水", price: 3.5, quantity: 2 },
-                    { name: "泡面", price: 5.0, quantity: 1 }
-                ]
-            };
-            renderOrder(mockOrder);
-        });
-</script>
 
 </body>
 </html>
