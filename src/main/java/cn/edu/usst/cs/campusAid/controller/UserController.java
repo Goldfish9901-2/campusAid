@@ -1,9 +1,7 @@
 package cn.edu.usst.cs.campusAid.controller;
 
-import cn.edu.usst.cs.campusAid.config.AdminConfig;
 import cn.edu.usst.cs.campusAid.model.User;
-import cn.edu.usst.cs.campusAid.service.CampusAidException;
-import cn.edu.usst.cs.campusAid.service.auth.UserService;
+import cn.edu.usst.cs.campusAid.service.UserService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Objects;
@@ -12,11 +10,9 @@ import java.util.Objects;
 @RequestMapping("/api/user")
 public class UserController {
     private final UserService userService;
-    private final AdminConfig adminConfig;
 
-    public UserController(UserService userService, AdminConfig adminConfig) {
+    public UserController(UserService userService) {
         this.userService = userService;
-        this.adminConfig = adminConfig;
     }
 
     @GetMapping
@@ -24,21 +20,11 @@ public class UserController {
             @SessionAttribute(SessionKeys.LOGIN_ID) Long userId,
             @RequestParam(required = false) Long targetUserId
     ) {
-        Long userIdToQuery = targetUserId;
-        if (targetUserId == null) {
-            userIdToQuery = userId;
-        }
         User targetUser = userService.getUserById(
-                userIdToQuery
+                targetUserId == null ? userId : targetUserId
         );
-        boolean hidePrivate = userService.getTargetUserId(
-                userId,
-                targetUserId
-        )!=null;
-        if (hidePrivate) {
+        if (!Objects.equals(userId, targetUserId)) // 非本人，隐藏余额
             targetUser.setBalance(0);
-        }
-
         return targetUser;
     }
 }

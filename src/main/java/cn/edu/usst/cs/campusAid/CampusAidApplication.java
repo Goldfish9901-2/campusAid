@@ -25,6 +25,8 @@ import java.util.concurrent.ScheduledExecutorService;
                 }
 ) // 只扫描真正的数据库 Mapper
 @SpringBootApplication
+
+
 @EnableConfigurationProperties({SecurityProperties.class})
 @ConfigurationProperties()
 public class CampusAidApplication {
@@ -38,6 +40,8 @@ public class CampusAidApplication {
 
         SpringApplication.run(CampusAidApplication.class, args);
     }
+
+
 
     @Bean
     public ScheduledExecutorService getExecutorService() {

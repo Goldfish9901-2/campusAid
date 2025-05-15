@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>cn.edu.usst.cs</groupId>
     <artifactId>campusAid</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0.1-SNAPSHOT</version>
     <name>campusAid</name>
     <description>Demo project for Spring Boot</description>
     <properties>
@@ -234,7 +234,7 @@
                 <version>${spring-boot.version}</version>
                 <configuration>
                     <mainClass>cn.edu.usst.cs.campusAid.CampusAidApplication</mainClass>
-                    <skip>true</skip>
+<!--                     <skip>true</skip>-->
                 </configuration>
                 <executions>
                     <execution>
@@ -246,6 +246,7 @@
                 </executions>
             </plugin>
         </plugins>
+
     </build>
 
 

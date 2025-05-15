@@ -88,6 +88,7 @@ public class ForumPostServiceImpl implements ForumPostService {
         return blogs.stream()
                 .map(blog -> {
                     ForumPostPreview preview = BlogToForumPostPreview.INSTANCE.toView(blog);
+                    preview.setAuthorName(userService.getUserById(preview.getAuthorId()).getName());
                     preview.setLikeCount(likeCountMap.getOrDefault(preview.getPostId(), 0));
                     preview.setReplyCount(replyCountMap.getOrDefault(preview.getPostId(), 0));
                     preview.setLiked(isLikedByUser(blog.getId(), userId));
@@ -272,14 +273,17 @@ public class ForumPostServiceImpl implements ForumPostService {
 
     @Override
     public Long submitPost(Long userId, ForumPostPreview post) {
-        blogMapper.insertBlog(blogToForumPostPreview.toModel(post));
-        Blog blog = blogMapper.selectBlogs(
+        Blog blog = blogToForumPostPreview.toModel(post);
+        blog.setCreator(userId);
+        blog.setVisibility(Visibility.VISIBLE.getValue());
+        blogMapper.insertBlog(blog);
+        Blog inserted = blogMapper.selectBlogs(
                 "TITLE",
                 post.getTitle(),
                 "TIME",
                 new RowBounds(0, 1)
         ).get(0);
-        return blog.getId();
+        return inserted.getId();
     }
 
     @Override
