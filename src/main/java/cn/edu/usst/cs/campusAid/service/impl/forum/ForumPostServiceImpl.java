@@ -29,19 +29,28 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 public class ForumPostServiceImpl implements ForumPostService {
-    @Autowired
-    private UserService userService;
-    @Autowired
-    private UploadFileSystemService uploadFileSystemService;
-    @Autowired
-    private LikeBlogMapper likeBlogMapper;
-    @Autowired
-    private ReplyMapper replyMapper;
-    @Autowired
-    private BlogMapper blogMapper;
-    @Autowired
-    private BlogToForumPostPreview blogToForumPostPreview;
+    private final UserService userService;
+    private final UploadFileSystemService uploadFileSystemService;
+    private final LikeBlogMapper likeBlogMapper;
+    private final ReplyMapper replyMapper;
+    private final BlogMapper blogMapper;
+    private final BlogToForumPostPreview blogToForumPostPreview;
 
+    // 构造器注入
+    public ForumPostServiceImpl(
+            UserService userService,
+            UploadFileSystemService uploadFileSystemService,
+            LikeBlogMapper likeBlogMapper,
+            ReplyMapper replyMapper,
+            BlogMapper blogMapper,
+            BlogToForumPostPreview blogToForumPostPreview) {
+        this.userService = userService;
+        this.uploadFileSystemService = uploadFileSystemService;
+        this.likeBlogMapper = likeBlogMapper;
+        this.replyMapper = replyMapper;
+        this.blogMapper = blogMapper;
+        this.blogToForumPostPreview = blogToForumPostPreview;
+    }
 
     /**
      * 获取排序后的帖子列表，并附带每个帖子的点赞数、回复数及是否已点赞状态。
