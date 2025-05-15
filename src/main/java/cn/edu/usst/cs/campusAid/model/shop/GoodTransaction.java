@@ -29,7 +29,7 @@ public class GoodTransaction implements Serializable {
     private Long goodId;
 
     @Positive
-    private Float amount;
+    private Long amount;
     /**
      * 若指向商品表有效记录，则表示为下单操作<br/>
      * 若为空则为为补货操作

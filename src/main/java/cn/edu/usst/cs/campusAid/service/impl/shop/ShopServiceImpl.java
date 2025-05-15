@@ -69,7 +69,7 @@ public class ShopServiceImpl implements ShopService {
             );
             if (matchingCandidate == null)
                 throw new CampusAidException("商品不存在");
-            Long currentStock = transactionMapper.getStock(matchingCandidate);
+            Long currentStock = transactionMapper.getStock(matchingCandidate.getId());
             if (currentStock == null || currentStock < 0)
                 throw new CampusAidException("商品记录无效");
             if (currentStock < productTransaction.getAmount())

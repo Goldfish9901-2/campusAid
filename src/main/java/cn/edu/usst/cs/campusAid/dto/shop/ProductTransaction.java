@@ -15,5 +15,5 @@ public class ProductTransaction {
      * <p>可以为空，表示维持现价</p>
      */
     Float price;
-    float amount;
+    Long amount;
 }

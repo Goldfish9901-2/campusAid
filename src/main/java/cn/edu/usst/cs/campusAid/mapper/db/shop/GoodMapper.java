@@ -58,5 +58,6 @@ public interface GoodMapper {
      * @param shopName 商店名称
      * @return 返回该商店当前可购买商品的交易信息列表，包含商品名、价格、库存等信息
      */
-    List<ProductTransaction> selectAvalibleGoodsByShopName(String shopName);
+     List<ProductTransaction> selectAvalibleGoodsByShopName(String shopName);
+
 }

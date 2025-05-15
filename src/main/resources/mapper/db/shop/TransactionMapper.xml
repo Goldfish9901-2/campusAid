@@ -16,30 +16,64 @@
         SELECT COALESCE(MAX(id) + 1, 1) FROM good_transaction;
     </select>
 
-    <!-- 查询商店的所有商品 -->
-    <select id="selectGoodsByShop" parameterType="string" resultType="cn.edu.usst.cs.campusAid.dto.shop.ProductTransaction">
-        SELECT g.name AS name, g.price AS price, SUM(gt.amount) AS amount
-        FROM goods g
-                 LEFT JOIN good_transaction gt ON g.id = gt.good_id
-        WHERE g.shop = #{shopName}
-        GROUP BY g.name, g.price;
-    </select>
+<!--    &lt;!&ndash; 查询商店的所有商品 &ndash;&gt;-->
+<!--    <select id="selectGoodsByShop" parameterType="string" resultType="cn.edu.usst.cs.campusAid.dto.shop.ProductTransaction">-->
+<!--        SELECT g.name AS name, g.price AS price, SUM(gt.amount) AS amount-->
+<!--        FROM goods g-->
+<!--                 LEFT JOIN good_transaction gt ON g.id = gt.good_id-->
+<!--        WHERE g.shop = #{shopName}-->
+<!--        GROUP BY g.name, g.price;-->
+<!--    </select>-->
 
-    <!-- 获取指定商品的库存 -->
+    <!-- 获取指定商品的进货量 -->
     <select id="getStock" parameterType="cn.edu.usst.cs.campusAid.model.shop.Good" resultType="long">
         SELECT SUM(amount) FROM good_transaction
-        WHERE good_id = #{matchingCandidate.id} AND order_id IS NULL;
+        WHERE good_id = #{id} AND order_id IS NULL;
+    </select>
+    <!-- 获取指定商品的销售量 -->
+    <select id="getTotalSold" parameterType="cn.edu.usst.cs.campusAid.model.shop.Good" resultType="long">
+        SELECT COALESCE(SUM(amount), 0)
+        FROM good_transaction
+        WHERE good_id = #{id} AND order_id IS NOT NULL;
     </select>
 
+    <!-- 获取指定商品的库存量：进货量 - 销售量 -->
+    <select id="getAvailableStock" parameterType="cn.edu.usst.cs.campusAid.model.shop.Good" resultType="long">
+        SELECT
+            COALESCE((SELECT SUM(amount) FROM good_transaction WHERE good_id = #{id} AND order_id IS NULL), 0)
+                -
+            COALESCE((SELECT SUM(amount) FROM good_transaction WHERE good_id = #{id} AND order_id IS NOT NULL), 0)
+                AS availableStock;
+    </select>
+
+    <!-- 插入一条进货记录 -->
+    <insert id="restock">
+        INSERT INTO good_transaction (id, good_id, amount, order_id, time)
+        VALUES (
+        #{id},
+        #{goodId},
+        #{amount},
+        NULL,  <!-- 进货，无订单 -->
+        NOW()
+        );
+    </insert>
+
+
     <!-- 获取用户的历史订单 -->
-    <select id="getHistory" parameterType="string" resultType="cn.edu.usst.cs.campusAid.dto.shop.ProductTransaction">
-        SELECT g.name AS name, g.price AS price, SUM(gt.amount) AS amount
+    <select id="getHistory" resultType="cn.edu.usst.cs.campusAid.dto.shop.ProductTransaction">
+        SELECT
+            g.name AS name,
+            g.description AS description,
+            g.shop AS shopName,
+            g.price AS price,
+            SUM(gt.amount) AS amount
         FROM good_transaction gt
-                 INNER JOIN goods g ON gt.good_id = g.id
+                 INNER JOIN good g ON gt.good_id = g.id
         WHERE gt.order_id IN (
             SELECT id FROM shop_order WHERE shopper_id = #{userId}
         )
-        GROUP BY g.name, g.price;
+        GROUP BY g.name, g.description, g.shop, g.price;
     </select>
+
 
 </mapper>
