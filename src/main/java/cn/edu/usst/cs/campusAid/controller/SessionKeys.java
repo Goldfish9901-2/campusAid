@@ -12,4 +12,6 @@ public interface SessionKeys {
 
 
     String SHOP_NAME ="shop_name";
+
+    String PENDING_CHARGE_REQUEST = "pending_charge_request";
 }

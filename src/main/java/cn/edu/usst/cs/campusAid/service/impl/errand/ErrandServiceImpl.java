@@ -55,7 +55,7 @@ public class ErrandServiceImpl implements ErrandService {
 
     @Override
     public List<ErrandOrderPreview> listOrders(Long userId) {
-        return errandMapper.selectUnacceptedOrders(userId);
+        return errandMapper.selectUnacceptedOrderPreviews(userId);
     }
 
     @Override

@@ -38,4 +38,16 @@ public class UserServiceImpl implements UserService {
         User user = userMapper.getUserById(userId);
         return user != null && adminConfig.getAdmin().equals(userId.toString()); // 管理员id为2235062128
     }
+
+    @Override
+    public Long getTargetUserId(Long userId, Long targetUserId) {
+        try {
+            adminConfig.verifyIsAdmin(userId);
+            return targetUserId;
+        } catch (CampusAidException e) {
+            if (userId == targetUserId)
+                return userId;
+            return null;
+        }
+    }
 }

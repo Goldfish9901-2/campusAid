@@ -31,15 +31,12 @@ public class UserController {
         User targetUser = userService.getUserById(
                 userIdToQuery
         );
-        boolean hidePrivate = true;
-
-        try {
-            adminConfig.verifyIsAdmin(userId);
-            //不是管理员，假设用户查询自己隐私信息
-        } catch (CampusAidException e) {
-            if (!Objects.equals(userId, userIdToQuery)) {
-                hidePrivate = false;
-            }
+        boolean hidePrivate = userService.getTargetUserId(
+                userId,
+                targetUserId
+        )!=null;
+        if (hidePrivate) {
+            targetUser.setBalance(0);
         }
 
         return targetUser;
