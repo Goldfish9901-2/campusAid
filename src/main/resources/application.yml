@@ -75,5 +75,5 @@ campus_aid:
   admin: 2235032128
   delay_threads: 10
 
-app:
-  upload-dir: ${UPLOAD_DIR}/uploads
+#app:
+#  upload-dir: ${UPLOAD_DIR}/uploads

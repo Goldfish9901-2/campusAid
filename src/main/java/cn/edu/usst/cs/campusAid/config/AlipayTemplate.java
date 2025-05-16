@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 
+import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -74,8 +75,31 @@ public class AlipayTemplate {
         this.alipayConfigMapper = alipayConfigMapper;
     }
 
+    public static Charge getUserId(Long orderId) {
+        return orderToUser.get(orderId);
+    }
+
     @PostConstruct
     public void initAlipaySDK() {
+        for (Field field : getClass().getFields()) {
+            Value value = field.getAnnotation(Value.class);
+            if (value == null) {
+                log.debug("skipping field {}", field.getName());
+                continue;
+            }
+            try {
+                field.setAccessible(true);
+                log.info("loaded {} into field {} : {}",
+                        value.value(), field.getName(),
+                        field.get(this)
+                );
+            } catch (IllegalAccessException e) {
+                log.error("failed to load {} into field {}",
+                        value.value(), field.getName(),
+                        e
+                );
+            }
+        }
         Factory.setOptions(alipayConfigMapper.toConfig(this));
     }
 
@@ -94,10 +118,6 @@ public class AlipayTemplate {
 
     public void registerOrder(Long orderId, Charge charge) {
         orderToUser.put(orderId, charge);
-    }
-
-    public static Charge getUserId(Long orderId) {
-        return orderToUser.get(orderId);
     }
 
 

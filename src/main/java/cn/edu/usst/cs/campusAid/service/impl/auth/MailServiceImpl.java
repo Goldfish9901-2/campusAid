@@ -32,7 +32,7 @@ public class MailServiceImpl implements MailService {
         JavaMailSenderImpl mailSender = (JavaMailSenderImpl) javaMailSender;
 
         Properties mailProperties = mailSender.getJavaMailProperties();
-        mailProperties.put("mail.debug", "true");
+//        mailProperties.put("mail.debug", "true");
     }
 
     @Override
@@ -49,7 +49,7 @@ public class MailServiceImpl implements MailService {
             MimeMessageHelper helper = new MimeMessageHelper(javaMailSender.createMimeMessage(), true);
             helper.setTo(receiver_addr);
             helper.setFrom(sender_addr);
-            helper.setSubject("Campus Aid: Verification Message");
+            helper.setSubject("Campus Aid校园互助平台: 认证消息");
             String content;
 
             Context context = new Context();

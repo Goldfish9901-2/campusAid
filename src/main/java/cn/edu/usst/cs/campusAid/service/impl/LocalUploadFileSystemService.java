@@ -17,7 +17,14 @@ public class LocalUploadFileSystemService implements UploadFileSystemService {
 
     @Override
     public File getUploadRootDir() {
-        File rootDir = new File(uploadDir);
+        log.info("Upload dir: {}", uploadDir);
+        File rootDir;
+        if (uploadDir.startsWith(".")) {
+            // 如果是相对路径，则与项目工作目录拼接
+            rootDir = new File(System.getProperty("user.dir"), uploadDir);
+        } else {
+            rootDir = new File(uploadDir);
+        }
         ensureSubDir(rootDir);
         return rootDir;
     }
@@ -29,8 +36,15 @@ public class LocalUploadFileSystemService implements UploadFileSystemService {
 
     // 复用接口中的静态方法
     static void ensureSubDir(File dir) {
-        if (!dir.exists() && !dir.mkdirs()) {
-            throw new RuntimeException("无法创建上传目录: " + dir.getAbsolutePath());
+        if (!dir.exists()) {
+            // 创建目录前先检查父目录是否存在，逐级创建
+            File parentDir = dir.getParentFile();
+            if (parentDir != null && !parentDir.exists()) {
+                parentDir.mkdirs();
+            }
+            if (!dir.mkdirs()) {
+                throw new RuntimeException("无法创建上传目录: " + dir.getAbsolutePath());
+            }
         }
     }
 }

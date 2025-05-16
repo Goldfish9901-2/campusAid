@@ -17,8 +17,10 @@ import java.time.LocalDateTime;
 public class Charge implements Serializable {
     @BizContentField(key = "subject")
     public final long interfaceInfoId = 294389472934L;
+
     @BizContentField(key = "product_code")
-    public final String productCode = "FAST_INSTANT_TRADE_PAY";
+    public final String productCode = "WAP_FAST_LAND_ESCAPE"; // 修改为 WAP_FAST_LAND_ESCAPE 或 PAGE_PAY
+
     @BizContentField(key = "body")
     public final String paymentMethod = "支付宝";
     @BizContentField(key = "out_trade_info")
