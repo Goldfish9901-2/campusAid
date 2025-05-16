@@ -19,16 +19,6 @@ public class Complaint {
     @NonNull
     private Long senderId;
     /**
-     * 投诉的板块
-     */
-    @NonNull
-    private ComplaintBlock block;
-    /**
-     * 投诉内容在板块相应数据库中的id
-     */
-    @NonNull
-    private Long complainedID;
-    /**
      * 标题
      */
     @Size(min = 1, max = 20)
@@ -38,6 +28,17 @@ public class Complaint {
      */
     @NonNull
     private String description;
+    /**
+     * 投诉的板块
+     */
+    @NonNull
+    private ComplaintBlock block;
+    /**
+     * 投诉内容在板块相应数据库中的id
+     */
+    @NonNull
+    private Long complainedID;
+
     /**
      * 处理结果
      */

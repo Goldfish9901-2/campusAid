@@ -81,7 +81,7 @@ public class ComplaintServiceImpl
                     throw new CampusAidException("跑腿订单不存在");
                 }
                 break;
-            case BLOG:
+            case FORUM_BLOG:
                 try {
                     targetUserId = blogMapper.selectById(complaintSourceId).getCreator();
                     Objects.requireNonNull(targetUserId);
@@ -89,7 +89,7 @@ public class ComplaintServiceImpl
                     throw new CampusAidException("论坛帖子不存在");
                 }
                 break;
-            case REPLY:
+            case FORUM_REPLY:
                 try {
                     targetUserId = blogMapper.selectByReplyId(complaintSourceId).getCreator();
                     Objects.requireNonNull(targetUserId);
