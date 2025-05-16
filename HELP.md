@@ -3,9 +3,10 @@
 ### 本项目须另外
 * 在顶部(与src, pom.xml等平级)自行添加.env文本文件，填入邮箱信息、数据库密码等
 * 在src/main/resources 中自行添加 alipay.properties 文件，填入支付宝信息
-### 前端开发人员还需完成邮件界面和标准错误界面
-* 邮件界面： src/main/resources/templates/mail.html
-* 错误界面： src/main/resources/templates/error.html
+### 前端开发人员还需完成以下页面
+  * 邮件界面：          src/main/resources/templates/mail.html
+  * 错误界面：          src/main/resources/templates/error.html
+  * 支付宝回调跳转页面： src/main/resources/templates/alipay.html
 ### 静态页面可在 cn.edu.usst.cs.campusAid.config.WebConfig 类的 addViewControllers 方法中添加
 
 ### 支付板块需打开内网穿透
