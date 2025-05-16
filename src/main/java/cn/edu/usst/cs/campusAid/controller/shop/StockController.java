@@ -93,5 +93,13 @@ public class StockController {
                 : Arrays.stream(files).map(File::getName).toList();
         return ResponseEntity.ok(fileList);
     }
+    /**
+     * 登出
+     */
+    @PostMapping("/logout")
+    public ResponseEntity<String> logout(HttpSession session) {
+        session.removeAttribute(SessionKeys.SHOP_NAME);
+        return ResponseEntity.ok("登出成功");
+    }
 
 }

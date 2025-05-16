@@ -42,5 +42,14 @@ public class LoginController {
         session.setAttribute(SessionKeys.LOGIN_TIME, LocalTime.now());
         return ApiResponse.success("登录成功");
     }
+    /**
+     * 登出
+     */
+    @PostMapping("/logout")
+    public ApiResponse<String> logout(HttpSession session) {
+        session.removeAttribute(SessionKeys.LOGIN_ID);
+        session.removeAttribute(SessionKeys.LOGIN_TIME);
+        return ApiResponse.success("登出成功");
+    }
 }
 
