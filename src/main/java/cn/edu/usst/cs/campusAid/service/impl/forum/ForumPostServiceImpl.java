@@ -14,6 +14,7 @@ import cn.edu.usst.cs.campusAid.service.CampusAidException;
 import cn.edu.usst.cs.campusAid.service.forum.ForumPostService;
 import cn.edu.usst.cs.campusAid.service.UploadFileSystemService;
 import cn.edu.usst.cs.campusAid.service.auth.UserService;
+import com.github.houbb.sensitive.word.core.SensitiveWordHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -111,7 +112,10 @@ public class ForumPostServiceImpl implements ForumPostService {
     public void createPost(Long userId, ForumPostPreview post) {
         Blog blog = new Blog();
         blog.setTitle(post.getTitle());
-        blog.setContent(post.getContent());
+        blog.setContent(
+                SensitiveWordHelper.replace(post.getContent(),'*')
+        );
+
         blog.setCreator(userId);
         blog.setVisibility(Visibility.VISIBLE.getValue());
         blog.setSendTime(LocalDateTime.now());
@@ -187,7 +191,9 @@ public class ForumPostServiceImpl implements ForumPostService {
         Reply newReply = new Reply();
         newReply.setBlogId(postId);
         newReply.setSender(userId);
-        newReply.setContent(reply.getContent());
+        newReply.setContent(
+                SensitiveWordHelper.replace(reply.getContent(),'*')
+        );
         replyMapper.insertReply(newReply);
     }
 
