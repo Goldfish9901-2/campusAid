@@ -86,18 +86,113 @@
         .delete-link:hover {
             color: #c0392b;
         }
+
+        .pagination {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: white;
+            padding: 15px 20px;
+            box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            z-index: 1000;
+        }
+
+        .page-info {
+            margin: 0 15px;
+        }
+
+        .page-jump {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-left: 15px;
+        }
+
+        .page-jump input {
+            width: 50px;
+            padding: 5px;
+            text-align: center;
+        }
+
+        #prev-page, #next-page, #jump-btn {
+            padding: 5px 15px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        #prev-page:hover, #next-page:hover, #jump-btn:hover {
+            background-color: #2980b9;
+        }
+
+        #prev-page:disabled, #next-page:disabled {
+            background-color: #95a5a6;
+            cursor: not-allowed;
+        }
     </style>
     <script>
+        const pagination = {
+            currentPage: 0,
+            hasMore: true,
+            isLoading: false
+        };
+        let userId = null;
+
         document.addEventListener('DOMContentLoaded', function () {
             const backBtn = document.getElementById('back-home-btn');
             backBtn.addEventListener('click', function () {
                 window.location.href = '/forum';
             });
+
+            // 初始化分页控件事件
+            document.getElementById('prev-page').addEventListener('click', function() {
+                if (pagination.currentPage > 0) {
+                    pagination.currentPage--;
+                    loadMyPosts();
+                }
+            });
+
+            document.getElementById('next-page').addEventListener('click', function() {
+                if (pagination.hasMore) {
+                    pagination.currentPage++;
+                    loadMyPosts();
+                }
+            });
+
+            document.getElementById('jump-btn').addEventListener('click', function() {
+                const pageInput = document.getElementById('page-input');
+                let targetPage = parseInt(pageInput.value) - 1; // 转为0-based
+
+                if (isNaN(targetPage)) {
+                    alert('请输入有效的页码');
+                    return;
+                }
+                if (targetPage < 0) {
+                    targetPage = 0;
+                }
+                if (targetPage !== pagination.currentPage) {
+                    pagination.currentPage = targetPage;
+                    loadMyPosts();
+                }
+            });
+
+            document.getElementById('page-input').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    document.getElementById('jump-btn').click();
+                }
+            });
+
+            // 获取用户信息并加载帖子
             fetch('/api/user', {
                 method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
+                headers: { 'Content-Type': 'application/json' },
                 credentials: 'include'
             })
                 .then(response => {
@@ -105,27 +200,48 @@
                     return response.json();
                 })
                 .then(user => {
-                    const userId = user.id;
-
+                    userId = user.id;
                     document.getElementById('user-id').textContent = userId;
-
-                    return fetch(`/api/forum/posts?type=CREATOR&keyword=${userId}&sortBy=TIME&page=0`, {
-                        method: 'GET',
-                        credentials: 'include'
-                    });
+                    loadMyPosts();
                 })
+                .catch(error => {
+                    console.error('Error:', error);
+                    document.getElementById('user-id').textContent = '用户';
+                    document.getElementById('posts-container').innerHTML = `<p>加载用户信息时出错：${error.message}</p>`;
+                });
+        });
+
+        function loadMyPosts() {
+            if (pagination.isLoading || !userId) return;
+            pagination.isLoading = true;
+            document.getElementById('posts-container').innerHTML = '<p>加载中...</p>';
+
+            fetch(`/api/forum/posts?type=CREATOR&keyword=${userId}&sortBy=TIME&page=${pagination.currentPage}`, {
+                method: 'GET',
+                credentials: 'include'
+            })
                 .then(response => {
                     if (!response.ok) throw new Error('获取帖子失败');
                     return response.json();
                 })
                 .then(posts => {
+                    pagination.isLoading = false;
+
+                    if (posts.length < 10) {
+                        pagination.hasMore = false;
+                    } else {
+                        pagination.hasMore = true;
+                    }
+
                     renderPosts(posts);
+                    updatePaginationUI();
                 })
                 .catch(error => {
+                    pagination.isLoading = false;
                     console.error('Error:', error);
                     document.getElementById('posts-container').innerHTML = `<p>加载帖子时出错：${error.message}</p>`;
                 });
-        });
+        }
 
         function renderPosts(posts) {
             const container = document.getElementById('posts-container');
@@ -141,12 +257,12 @@
                 postCard.className = 'post-card';
 
                 postCard.innerHTML = `
-    <div class="post-title">
-        ${post.title}
-        <a href="javascript:void(0)" class="delete-link" data-post-id="${post.postId}">删除</a>
-    </div>
-    <div class="post-meta">发布时间：${formatTime(post.publishTime)} | 点赞数：${post.likeCount} | 回复数：${post.replyCount}</div>
-    <div class="post-content">${truncateText(post.content, 100)}</div>`;
+                <div class="post-title">
+                    ${post.title}
+                    <a href="javascript:void(0)" class="delete-link" data-post-id="${post.postId}">删除</a>
+                </div>
+                <div class="post-meta">发布时间：${formatTime(post.publishTime)} | 点赞数：${post.likeCount} | 回复数：${post.replyCount}</div>
+                <div class="post-content">${truncateText(post.content, 100)}</div>`;
 
                 container.appendChild(postCard);
 
@@ -157,6 +273,17 @@
                     }
                 });
             });
+        }
+
+        function updatePaginationUI() {
+            const currentPageElement = document.getElementById('current-page');
+            const pageInput = document.getElementById('page-input');
+
+            currentPageElement.textContent = pagination.currentPage + 1;
+            pageInput.value = pagination.currentPage + 1;
+
+            document.getElementById('prev-page').disabled = pagination.currentPage === 0;
+            document.getElementById('next-page').disabled = !pagination.hasMore;
         }
 
         function formatTime(timeStr) {
@@ -182,7 +309,7 @@
                 })
                 .then(() => {
                     alert("删除成功");
-                    window.location.reload(); // 刷新页面
+                    loadMyPosts(); // 重新加载当前页的帖子
                 })
                 .catch(error => {
                     console.error("Error:", error);
@@ -192,13 +319,24 @@
     </script>
 </head>
 <body>
-    <div class="header">
-        <h1>我的帖子</h1>
-        <h2>当前用户：</h2>
-        <div class="title"><span id="user-id"></span></div>
+<div class="header">
+    <h1>我的帖子</h1>
+    <h2>当前用户：</h2>
+    <div class="title"><span id="user-id"></span></div>
+</div>
+<div class="content-container" id="posts-container">
+</div>
+<div class="pagination">
+    <button id="prev-page" disabled>上一页</button>
+    <span class="page-info">第 <span id="current-page">1</span> 页</span>
+    <button id="next-page">下一页</button>
+    <div class="page-jump">
+        <span>跳至</span>
+        <input type="number" id="page-input" min="1" value="1">
+        <span>页</span>
+        <button id="jump-btn">跳转</button>
     </div>
-    <div class="content-container" id="posts-container">
-    </div>
-    <button id="back-home-btn">返回首页</button>
+</div>
+<button id="back-home-btn">返回首页</button>
 </body>
 </html>

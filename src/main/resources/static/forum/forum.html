@@ -11,16 +11,30 @@
 
         body {
             margin: 0;
-            font-family: Arial, sans-serif;
+            font-family: 'Arial', sans-serif;
             height: 100vh;
             display: flex;
             flex-direction: column;
+            background-image: url("/background2.jpg");
+            filter: saturate(50%);
+            background-size: cover;
+            background-position: center;
+            animation: fadein 1.2s ease-in-out forwards;
+        }
+
+        @keyframes fadein {
+            from {
+                opacity: 0.2;
+            }
+            to {
+                opacity: 1;
+            }
         }
 
         .header {
             display: flex;
             align-items: center;
-            background-color: #f1f1f1;
+            background-color: transparent;
             padding: 10px;
             position: sticky;
             top: 0;
@@ -38,8 +52,9 @@
 
         .title {
             flex-grow: 1;
-            text-align: center;
-            font-size: 24px;
+            text-align: left;
+            font-size: 38px;
+            padding-left: 180px;
         }
 
         .user-center {
@@ -55,11 +70,12 @@
             display: flex;
             flex: 1;
             overflow: hidden;
+            background-color: transparent;
         }
 
         .nav-bar {
             width: 200px;
-            background-color: #e1e1e1;
+            background-color: transparent;
             padding: 20px;
             position: sticky;
             top: 70px;
@@ -80,12 +96,13 @@
             display: flex;
             flex-direction: column;
             overflow: hidden;
+
         }
 
         .search-wrapper {
             padding: 10px;
-            background-color: white;
-            text-align: center;
+            background-color: transparent;
+            text-align: left;
             position: relative;
         }
 
@@ -96,6 +113,9 @@
             gap: 10px;
             max-width: 600px;
             width: 100%;
+            background-color: transparent;
+            padding: 10px;
+            border-radius: 8px;
         }
 
         .search-select,
@@ -143,6 +163,15 @@
             padding: 10px;
             border-radius: 8px;
             position: relative;
+            transition: all 0.3s ease;
+            transform-origin: center;
+            will-change: transform;
+        }
+
+        .post-card:hover {
+            transform: scale(1.03);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            z-index: 10;
         }
 
         .post-card h3 {
@@ -197,11 +226,12 @@
             transform: translateX(-50%);
             z-index: 1000;
             background-color: white;
-            padding: 8px 16px;
+            padding: 6px 12px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
             border-radius: 6px;
             display: flex;
             align-items: center;
+            font-size: 14px;
         }
 
         .pagination button {
@@ -277,20 +307,18 @@
         }
 
         .like-button:hover {
-            color: #3399ff;
+            color: #FF6666;
         }
 
-        .like-button img {
-            width: 16px;
-            height: 16px;
-            margin-right: 4px;
+        .like-button.liked {
+            color: #FF6666 !important;
         }
     </style>
 </head>
 <body>
 <div class="header">
     <div class="logo"></div>
-    <div class="title">欢迎您，<span id="user-id"></span>！</div>
+    <div class="title"><strong>欢迎您，<span id="user-id"></span>！</strong></div>
     <button class="user-center">举报</button>
     <button class="user-center">充值</button>
     <button class="user-center" onclick="window.location.href='/forum/information'">个人中心</button>
@@ -362,7 +390,6 @@
         type: "TITLE",
         sortBy: "TIME"
     };
-
     document.addEventListener('DOMContentLoaded', function () {
         fetch('/api/user', {
             method: 'GET',
@@ -489,20 +516,25 @@
             const postCard = document.createElement("div");
             postCard.className = "post-card";
             postCard.innerHTML = `
-                <h3>${post.title}<span class="post-id"> /${post.authorName} ${post.authorId}</span></h3>
-                <div class="post-time">${formatTime(post.publishTime)}</div>
-                <div class="post-content">${truncateText(post.content, 40)}</div>
-                <div class="post-like">
-                    <button class="like-button" data-post-id="${post.postId}">
-                        <img src="/like.png" alt="点赞">
-                        <span>${post.likeCount}</span>
-                    </button>
-                    <a href="/forum/reply?postId=${post.postId}">共${post.replyCount}条回复></a>
-                </div>
-            `;
+            <h3>${post.title}<span class="post-id"> /${post.authorName} ${post.authorId}</span></h3>
+            <div class="post-time">${formatTime(post.publishTime)}</div>
+            <div class="post-content">${truncateText(post.content, 40)}</div>
+            <div class="post-like">
+                <button class="like-button ${post.liked ? 'liked' : ''}" data-post-id="${post.postId}" data-liked="${post.liked}">
+                    点赞： <span>${post.likeCount}</span>
+                </button>
+                <a href="/forum/reply?postId=${post.postId}">共${post.replyCount}条回复></a>
+            </div>
+        `;
+
+            const likeButton = postCard.querySelector('.like-button');
+            likeButton.addEventListener('click', function() {
+                toggleLike(likeButton);
+            });
 
             postList.appendChild(postCard);
         });
+
         const count = posts.length;
         const remainder = count % 2;
         if (remainder !== 0) {
@@ -515,6 +547,54 @@
         }
     }
 
+    function toggleLike(button) {
+        const userId = document.getElementById('user-id').textContent;
+        if (!userId || userId === '用户') {
+            alert('请先登录');
+            return;
+        }
+
+        const postId = button.getAttribute('data-post-id');
+        const isLiked = button.getAttribute('data-liked') === 'true';
+        const action = isLiked ? 'unlike' : 'like';
+        const countSpan = button.querySelector('span');
+
+        button.disabled = true;
+
+        button.classList.toggle('liked');
+        button.setAttribute('data-liked', !isLiked);
+        countSpan.textContent = isLiked
+            ? parseInt(countSpan.textContent) - 1
+            : parseInt(countSpan.textContent) + 1;
+
+        fetch(`/api/forum/post/${postId}/${action}`, {
+            method: 'POST',
+            credentials: 'include'
+        })
+            .then(response => {
+                if (!response.ok) {
+                    return response.text().then(text => {
+                        throw new Error(text || '操作失败');
+                    });
+                }
+                return response.text();
+            })
+            .then(text => {
+                console.log(text);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                button.classList.toggle('liked');
+                button.setAttribute('data-liked', isLiked);
+                countSpan.textContent = isLiked
+                    ? parseInt(countSpan.textContent) + 1
+                    : parseInt(countSpan.textContent) - 1;
+                alert('操作失败: ' + error.message);
+            })
+            .finally(() => {
+                button.disabled = false;
+            });
+    }
     function updatePaginationUI() {
         const currentPageElement = document.getElementById('current-page');
         const pageInput = document.getElementById('page-input');
@@ -525,11 +605,9 @@
         document.getElementById('prev-page').disabled = pagination.currentPage === 0;
         document.getElementById('next-page').disabled = !pagination.hasMore;
     }
-
     function truncateText(text, maxLength) {
         return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
     }
-
     function formatTime(timeStr) {
         return timeStr.replace("T", " ").substring(0, 16);
     }

@@ -128,6 +128,18 @@ public class ForumController {
     }
 
     /**
+     * 取消点赞帖子
+     */
+    @PostMapping("/post/{postId}/unlike")
+    public ResponseEntity<String> unlikePost(
+            @PathVariable Long postId,
+            @SessionAttribute(SessionKeys.LOGIN_ID) Long userId
+    ) {
+        forumPostService.unlikePost(postId, userId);
+        return ResponseEntity.ok("取消点赞"); // 待实现
+    }
+
+    /**
      * 回复帖子
      */
     @PostMapping("/post/{postId}/reply")
