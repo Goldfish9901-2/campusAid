@@ -6,6 +6,7 @@ import cn.edu.usst.cs.campusAid.mapper.db.UserMapper;
 import cn.edu.usst.cs.campusAid.mapper.db.errand.ErrandMapper;
 import cn.edu.usst.cs.campusAid.mapper.db.shop.OrderMapper;
 import cn.edu.usst.cs.campusAid.mapper.db.shop.ShopMapper;
+import cn.edu.usst.cs.campusAid.mapper.db.shop.TransactionMapper;
 import cn.edu.usst.cs.campusAid.model.User;
 import cn.edu.usst.cs.campusAid.model.charge.Charge;
 import cn.edu.usst.cs.campusAid.model.errand.Errand;
@@ -27,14 +28,16 @@ public class UserServiceImpl implements UserService {
     private final ErrandMapper errandMapper;
     private final ShopMapper shopMapper;
     private final OrderMapper orderMapper;
+    private final TransactionMapper transactionMapper;
 
-    public UserServiceImpl(UserMapper userMapper, AdminConfig adminConfig, ChargeService chargeService, ErrandMapper errandMapper, ShopMapper shopMapper, OrderMapper orderMapper) {
+    public UserServiceImpl(UserMapper userMapper, AdminConfig adminConfig, ChargeService chargeService, ErrandMapper errandMapper, ShopMapper shopMapper, OrderMapper orderMapper, TransactionMapper transactionMapper) {
         this.userMapper = userMapper;
         this.adminConfig = adminConfig;
         this.chargeService = chargeService;
         this.errandMapper = errandMapper;
         this.shopMapper = shopMapper;
         this.orderMapper = orderMapper;
+        this.transactionMapper = transactionMapper;
     }
 
     @Override
@@ -81,7 +84,7 @@ public class UserServiceImpl implements UserService {
         acceptedErrands.forEach(errand -> errandIncome.addAndGet(errand.getFee()));
         List<Errand> publishedErrands = errandMapper.selectErrandsPublishedByUser(userId);
         publishedErrands.forEach(errand -> errandCost.addAndGet(errand.getFee()));
-        List<ProductTransaction> purchases = orderMapper.selectAllOrdersFromUser(userId);
+        List<ProductTransaction> purchases = transactionMapper.getHistory(userId);
         purchases.forEach(purchase -> shopCost.addAndGet(purchase.getPrice() * purchase.getAmount()));
         return chargeAmount.get() + errandIncome.get()
                 - errandCost.get() - shopCost.get();
