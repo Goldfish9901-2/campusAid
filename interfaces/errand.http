@@ -30,11 +30,11 @@ POST http://localhost:8090/api/errand/order/2/cancel
 POST http://localhost:8090/api/errand/order/1/accept
 
 ###
-POST http://localhost:8090/api/
+POST http://localhost:8090/api/errand/order/2/upload
 Content-Type: multipart/form-data; boundary=WebAppBoundary
 
 --WebAppBoundary
-Content-Disposition: form-data; name="postId"
+Content-Disposition: form-data; name="errandId"
 Content-Type: text/plain
 
 115
