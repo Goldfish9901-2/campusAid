@@ -28,19 +28,21 @@ public class UserController {
             @SessionAttribute(SessionKeys.LOGIN_ID) Long userId,
             @RequestParam(required = false) Long targetUserId
     ) {
-        User targetUser = userService.getUserById(
-                targetUserId == null ? userId : targetUserId
+        Long availableUserId = userService.getTargetUserId(userId, targetUserId);
+        User targetUser = userService.getUserById(availableUserId);
+        targetUser.setBalance(
+                Objects.equals(targetUserId, availableUserId)
+                ? userService.getBalance(availableUserId)
+                : -1
         );
-        if (!Objects.equals(userId, targetUserId)) // 非本人，隐藏余额
-            targetUser.setBalance(0);
         return targetUser;
     }
 
     /**
-     * 用户向已有的帖子追加图文附件
+     * 用户上传新头像
      *
-     * @param userId   用户id
-     * @param file      图文附件
+     * @param userId 用户id
+     * @param file   图文附件
      * @return 图文附件的映射uri
      */
     @PostMapping("/post/upload")
@@ -65,7 +67,6 @@ public class UserController {
                 .map(File::getName)
                 .toList());
     }
-
 
 
 }

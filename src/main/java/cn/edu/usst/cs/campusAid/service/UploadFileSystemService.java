@@ -1,6 +1,6 @@
 package cn.edu.usst.cs.campusAid.service;
 
-import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -116,13 +116,31 @@ public interface UploadFileSystemService {
         try {
             File targetLocation = new File(dir, fileName);
             file.transferTo(targetLocation);
-            String relative_location = targetLocation.getAbsolutePath().replace(
-                    getUploadRootDir().toString(), ""
-            ).replace("\\", "/");
+            String relative_location = toURI(targetLocation);
             return relative_location;
         } catch (Exception e) {
             throw new CampusAidException("上传文件失败", e);
         }
+    }
+
+    @NotNull
+    private String toURI(File targetLocation) {
+        return targetLocation.getAbsolutePath().replace(
+                getUploadRootDir().toString(), ""
+        ).replace("\\", "/");
+
+    }
+
+    /**
+     * return content in a directory in URI format
+     * @param contentDir the directory to list
+     * @return content in {@code contentDir} in URI format
+     */
+    default String[] listFiles(File contentDir){
+        String[] files = contentDir.getAbsoluteFile().list();
+        return Arrays.stream(files == null ? new String[0] : files)
+                .map(fileName->toURI(new File(contentDir,fileName)))
+                .toArray(String[]::new);
     }
 
 

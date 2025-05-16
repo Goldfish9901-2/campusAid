@@ -43,5 +43,5 @@ public class User {
      *     </ul>
      * </ul>
      */
-    float balance;
+    double balance;
 }

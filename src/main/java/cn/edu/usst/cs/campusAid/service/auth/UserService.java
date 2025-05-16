@@ -34,4 +34,13 @@ public interface UserService {
      */
     @Nullable
     Long getTargetUserId(Long userId,Long targetUserId);
+
+    /**
+     * 获取用户余额
+     *
+     * @param userId 用户ID
+     * @return 用户余额
+     * @see User#getBalance()
+     */
+    double getBalance(Long userId);
 }
