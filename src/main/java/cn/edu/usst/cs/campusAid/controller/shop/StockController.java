@@ -37,10 +37,10 @@ public class StockController {
      * @param shopName 商户名
      * @param password 密码(商户暂时没有办法通过邮箱验证)
      */
-    @PostMapping("/login")
+    @PostMapping("/login/{shopName}")
     public ResponseEntity<String> login(
-            @RequestParam String shopName,
-            @RequestParam String password,
+            @PathVariable String shopName,
+            @RequestBody String password,
             HttpSession session
     ) {
         session.setAttribute(

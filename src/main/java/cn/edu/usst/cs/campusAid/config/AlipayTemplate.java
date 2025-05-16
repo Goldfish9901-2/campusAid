@@ -89,7 +89,7 @@ public class AlipayTemplate {
             }
             try {
                 field.setAccessible(true);
-                log.info("loaded {} into field {} : {}",
+                log.debug("loaded {} into field {} : {}",
                         value.value(), field.getName(),
                         field.get(this)
                 );

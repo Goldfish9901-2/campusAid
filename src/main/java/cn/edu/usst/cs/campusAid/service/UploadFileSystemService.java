@@ -1,5 +1,6 @@
 package cn.edu.usst.cs.campusAid.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -115,7 +116,10 @@ public interface UploadFileSystemService {
         try {
             File targetLocation = new File(dir, fileName);
             file.transferTo(targetLocation);
-            return targetLocation.toURI().toString();
+            String relative_location = targetLocation.getAbsolutePath().replace(
+                    getUploadRootDir().toString(), ""
+            ).replace("\\", "/");
+            return relative_location;
         } catch (Exception e) {
             throw new CampusAidException("上传文件失败", e);
         }

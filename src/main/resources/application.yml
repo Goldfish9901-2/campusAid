@@ -39,6 +39,7 @@ spring:
   servlet:
     multipart:
       enabled: true
+      location: ${app.upload-dir}
       max-file-size: 10MB
 server:
   port: 8090
@@ -59,7 +60,7 @@ logging:
         template: debug
       mybatis: info
     # 自定义 Mapper 日志级别（与 org 同级）
-    cn.edu.usst.cs.campusAid.mapper: debug
+    cn.edu.usst.campusAid.mapper: debug
 
 
 mybatis:
@@ -74,6 +75,6 @@ mybatis:
 campus_aid:
   admin: 2235032128
   delay_threads: 10
+app:
+  upload-dir: uploads
 
-#app:
-#  upload-dir: ${UPLOAD_DIR}/uploads

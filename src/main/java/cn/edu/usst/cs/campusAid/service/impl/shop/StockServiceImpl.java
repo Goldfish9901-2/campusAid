@@ -21,13 +21,27 @@ public class StockServiceImpl implements StockService {
     TransactionMapper transactionMapper;
     OrderMapper orderMapper;
 
+    public StockServiceImpl(ShopMapper shopMapper,
+                            GoodMapper goodMapper,
+                            TransactionMapper transactionMapper,
+                            OrderMapper orderMapper) {
+        this.shopMapper = shopMapper;
+        this.goodMapper = goodMapper;
+        this.transactionMapper = transactionMapper;
+        this.orderMapper = orderMapper;
+    }
+
     @Override
     @NonNull
     public String verify(String name, String password) {
         try {
-            return Objects.requireNonNull(shopMapper.verify(name, password));
+
+            String message = shopMapper.verify(name, password);
+            return Objects.requireNonNull(message);
         } catch (NullPointerException e) {
-            throw new CampusAidException("用户名或密码错误");
+            if (shopMapper != null)
+                throw new CampusAidException("用户名或密码错误");
+            throw e;
         }
     }
 
