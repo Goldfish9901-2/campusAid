@@ -25,7 +25,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler({CampusAidException.class})
     public ApiResponse<?> handleCampusAidException(CampusAidException e) {
-        log.error("CampusAidException: {}", e.getMessage());
+        log.error("CampusAidException:", e);
         return ApiResponse.badRequest(e.getMessage());
     }
     @ExceptionHandler({ServletRequestBindingException.class})

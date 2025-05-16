@@ -9,17 +9,14 @@ Content-Type: application/json
     "id": 2235062316
 }
 ###
-
-
 # 核对验证码
 # code 验证码
 POST http://localhost:8090/api/login/verify
 Content-Type: application/json
 
 {
-    "code": "789965"
+    "code": "229451"
 }
 ###
 
-GET http://localhost:8090/api/alipay/pay?price=2.2
 

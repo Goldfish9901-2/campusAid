@@ -34,4 +34,3 @@ build/
 config/**
 logs/
 .env
-/alipayPublicKey_RSA2.txt

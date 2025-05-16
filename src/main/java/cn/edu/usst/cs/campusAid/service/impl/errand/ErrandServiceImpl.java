@@ -1,5 +1,6 @@
 package cn.edu.usst.cs.campusAid.service.impl.errand;
 
+import cn.edu.usst.cs.campusAid.config.AdminConfig;
 import cn.edu.usst.cs.campusAid.dto.errand.ErrandOrderPreview;
 import cn.edu.usst.cs.campusAid.dto.errand.ErrandOrderRequest;
 import cn.edu.usst.cs.campusAid.dto.errand.ErrandOrderStatus;
@@ -28,22 +29,52 @@ public class ErrandServiceImpl implements ErrandService {
     private final ErrandMapper errandMapper;
     private final UserMapper userMapper;
     private final ScheduledExecutorService executorService;
+    private final AdminConfig adminConfig;
 
     public ErrandServiceImpl(ErrandViewsMapper errandViewsMapper,
                              ErrandMapper errandMapper,
                              UserMapper userMapper,
-                             ScheduledExecutorService executorService) {
+                             ScheduledExecutorService executorService, AdminConfig adminConfig) {
         this.errandViewsMapper = errandViewsMapper;
         this.errandMapper = errandMapper;
         this.userMapper = userMapper;
         this.executorService = executorService;
+        this.adminConfig = adminConfig;
+    }
+
+    /**
+     * 检验订单状态
+     *
+     * @param userId 用户id
+     * @param errand 跑腿订单
+     */
+
+    private static void verifyState(Long userId, @Nullable Errand errand) {
+        if (errand == null) throw new CampusAidException("跑腿订单不存在");
+        if (errand.getStatus() != ErrandOrderStatus.NORMAL) {
+            throw new CampusAidException(userId + "：跑腿订单状态异常，您的确认无法接受");
+        }
+    }
+
+    /**
+     * 验证订单是不是该用户提交的
+     *
+     * @param userId 待验证的用户
+     * @param errand 跑腿订单
+     * @throws CampusAidException 订单不存在，或者订单不是该用户提交的
+     */
+    private static void verifyPublisher(Long userId, @Nullable Errand errand) {
+        if (errand == null) throw new CampusAidException("跑腿订单不存在");
+        if (!errand.getSenderId().equals(userId)) throw new CampusAidException("您无权修改此订单");
     }
 
     @Override
     public Long publishOrder(ErrandOrderRequest request, Long userId) {
         request.setSenderId(userId);
-        Errand errand = errandViewsMapper.wrapIntoErrand(request);
         Long targetID = errandMapper.minFreeId();
+        request.setId(targetID);
+        Errand errand = errandViewsMapper.wrapIntoErrand(request);
+
         if (targetID != null) {
             errand.setId(targetID);
             errandMapper.insert(errand);
@@ -62,13 +93,15 @@ public class ErrandServiceImpl implements ErrandService {
     public Errand getOrderDetail(Long id, Long userId) {
         Errand errand = getErrand(id, userId);
         if (errand.getSenderId().equals(userId) || Objects.equals(errand.getAcceptorId(), userId)) return errand;
-        throw new CampusAidException("跑腿订单无权限查看");
+        adminConfig.verifyIsAdmin(userId);
+        return errand;
     }
 
     @Override
     public String acceptOrder(Long id, Long runnerId) {
         Errand errand = getErrand(id, runnerId);
-        User user = userMapper.getUserById(runnerId);
+        User user = (errand.getAcceptorId() != null)
+                ? userMapper.getUserById(errand.getAcceptorId()) : null;
         if (user != null) {
             throw new CampusAidException("已有用户接单，您的接单无法接受");
         }
@@ -120,7 +153,6 @@ public class ErrandServiceImpl implements ErrandService {
         return userId + "--确认成功 单号--" + id;
     }
 
-
     @Override
     public String cancelOrder(Long id, Long userId) {
         Errand errand = getErrand(id, userId);
@@ -140,32 +172,6 @@ public class ErrandServiceImpl implements ErrandService {
         Errand errand = errandMapper.selectById(id);
         verifyState(userId, errand);
         return errand;
-    }
-
-    /**
-     * 检验订单状态
-     *
-     * @param userId 用户id
-     * @param errand 跑腿订单
-     */
-
-    private static void verifyState(Long userId, @Nullable Errand errand) {
-        if (errand == null) throw new CampusAidException("跑腿订单不存在");
-        if (errand.getStatus() != ErrandOrderStatus.NORMAL) {
-            throw new CampusAidException(userId + "：跑腿订单状态异常，您的确认无法接受");
-        }
-    }
-
-    /**
-     * 验证订单是不是该用户提交的
-     *
-     * @param userId 待验证的用户
-     * @param errand 跑腿订单
-     * @throws CampusAidException 订单不存在，或者订单不是该用户提交的
-     */
-    private static void verifyPublisher(Long userId, @Nullable Errand errand) {
-        if (errand == null) throw new CampusAidException("跑腿订单不存在");
-        if (!errand.getSenderId().equals(userId)) throw new CampusAidException("您无权修改此订单");
     }
 
     private void scheduleAutoConfirmTask(Errand errand, long userId) {
