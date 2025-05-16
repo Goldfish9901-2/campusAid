@@ -164,12 +164,10 @@
 <script>
     const urlParams = new URLSearchParams(window.location.search);
     const postId = urlParams.get('postId');
-
     if (!postId) {
         document.getElementById('post-detail').innerHTML = '<p>未指定帖子ID</p>';
         throw new Error("缺少 postId");
     }
-
     fetch(`/api/forum/post/${postId}`, {
         method: 'GET',
         credentials: 'include'
@@ -185,8 +183,6 @@
             console.error("Error:", error);
             document.getElementById('post-detail').innerHTML = `<p>加载帖子时出错：${error.message}</p>`;
         });
-
-    // 加载回复列表
     function loadReplies() {
         fetch(`/api/forum/post/${postId}/replies`, {
             method: 'GET',
@@ -208,29 +204,23 @@
                     `<p class="no-replies">加载回复失败：${error.message}</p>`;
             });
     }
-
     loadReplies();
-
     document.getElementById('send-reply-btn').addEventListener('click', sendReply);
     document.getElementById('reply-input').addEventListener('keypress', function(e) {
         if (e.key === 'Enter') {
             sendReply();
         }
     });
-
     function sendReply() {
         const replyInput = document.getElementById('reply-input');
         const content = replyInput.value.trim();
-
         if (!content) {
             alert('回复内容不能为空');
             return;
         }
-
         const replyData = {
             content: content
         };
-
         fetch(`/api/forum/post/${postId}/reply`, {
             method: 'POST',
             headers: {
@@ -244,9 +234,7 @@
                 return response.text();
             })
             .then(() => {
-                // 清空输入框
                 replyInput.value = '';
-                // 重新加载回复列表
                 loadReplies();
             })
             .catch(error => {
@@ -254,7 +242,6 @@
                 alert('回复失败: ' + error.message);
             });
     }
-
     function renderPost(post) {
         console.log('当前帖子数据:', post);
         const container = document.getElementById('post-detail');
@@ -264,17 +251,14 @@
         <div class="post-content">${post.content}</div>
     `;
     }
-
     function renderReplies(replies) {
         console.log('当前回复数据:', replies);
         const container = document.getElementById('replies-container');
         container.innerHTML = '';
-
         if (replies.length === 0) {
             container.innerHTML = '<p class="no-replies">暂无回复</p>';
             return;
         }
-
         replies.forEach(reply => {
             const replyCard = document.createElement('div');
             replyCard.className = 'reply-card';
@@ -288,7 +272,6 @@
             container.appendChild(replyCard);
         });
     }
-
     function formatTime(timeStr) {
         return timeStr ? timeStr.replace("T", " ").substring(0, 16) : "";
     }
