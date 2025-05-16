@@ -10,5 +10,8 @@ import java.util.List;
 public class ShopInfo {
     private String name;
     private String description;
+    /**
+     * 商户所能提供的所有商品信息
+     */
     private List<ProductTransaction> products;
 }

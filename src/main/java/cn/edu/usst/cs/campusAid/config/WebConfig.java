@@ -3,10 +3,14 @@ package cn.edu.usst.cs.campusAid.config;
 import cn.edu.usst.cs.campusAid.interceptor.AuthInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import java.util.List;
 
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
@@ -18,7 +22,7 @@ public class WebConfig implements WebMvcConfigurer {
      */
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
-        // 配置视图控制器
+
         registry.addViewController("/forum").setViewName("forward:/forum/forum.html");
         registry.addViewController("/forum/post").setViewName("forward:/forum/post.html");
         registry.addViewController("/forum/information").setViewName("forward:/forum/information.html");
@@ -31,8 +35,7 @@ public class WebConfig implements WebMvcConfigurer {
     }
 
     /**
-     * 配置静态资源路径
-     * @param registry
+     * 指定用户上传资源的路径
      */
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
@@ -55,7 +58,27 @@ public class WebConfig implements WebMvcConfigurer {
         // 配置拦截器
         registry
                 .addInterceptor(authInterceptor)
+
+//                论坛页面
+                .addPathPatterns("/forum/**")
+
+//                论坛后端支持
+                .addPathPatterns("/api/forum/**")
+
+                .addPathPatterns("/api/errand/**")
+
+                // 商店页面只有结账和历史订单需要访问者为一般用户
+                .addPathPatterns("/api/shop/checkout")
+                .addPathPatterns("/api/shop/history")
+
+                .addPathPatterns("/forum/**") // 论坛页面
+                .addPathPatterns("/api/forum/**") // 论坛后端支持
                 .addPathPatterns("/forum/**") // 论坛页面
                 .addPathPatterns("/api/forum/**"); // 论坛后端支持
     }
+    @Override
+    public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
+        converters.add(new MappingJackson2HttpMessageConverter());
+    }
+
 }

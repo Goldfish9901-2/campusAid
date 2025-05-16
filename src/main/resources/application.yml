@@ -6,7 +6,7 @@ spring:
     url: ${DB_URL}
     password: ${DB_PASSWORD}
     username: campus_aid
-  #    url: jdbc:mysql://10.100.164.51:3306/campus_aid?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC
+#    url: jdbc:mysql://10.100.164.51:3306/campus_aid?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC
   thymeleaf:
     mode: HTML
     prefix: classpath:/templates/
@@ -39,6 +39,7 @@ spring:
   servlet:
     multipart:
       enabled: true
+      location: ${app.upload-dir}
       max-file-size: 10MB
 server:
   port: 8090
@@ -58,17 +59,22 @@ logging:
       thymeleaf:
         template: debug
       mybatis: info
+    # 自定义 Mapper 日志级别（与 org 同级）
+    cn.edu.usst.campusAid.mapper: debug
+
 
 mybatis:
-  mapper-locations: classpath:mapper/db/*.xml
+  mapper-locations: classpath:mapper/db/**/*.xml
   configuration:
     map-underscore-to-camel-case: true
-  type-aliases-package: cn.edu.usst.campusAid.model
+  type-aliases-package:
+    cn.edu.usst.campusAid.model
+    cn.edu.usst.campusAid.model.forum
+    cn.edu.usst.campusAid.model.shop
 
-alipay:
-  appId: ${ALIPAY_APP_ID}
-  privateKey: ${ALIPAY_PRIVATE_KEY}
-  publicKey: ${ALIPAY_PUBLIC_KEY}
+campus_aid:
+  admin: 2235032128
+  delay_threads: 10
+app:
+  upload-dir: uploads
 
-  gatewayUrl: a
-  notifyUrl: http://m6626a.natappfree.cc

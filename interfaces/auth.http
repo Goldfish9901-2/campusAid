@@ -6,17 +6,18 @@ POST http://localhost:8090/api/login
 Content-Type: application/json
 
 {
-    "id": 2235062121
+    "id": 2235062316
 }
 ###
-
-
 # 核对验证码
 # code 验证码
 POST http://localhost:8090/api/login/verify
 Content-Type: application/json
 
 {
-    "code": "683010"
+    "code": "498704"
 }
 ###
+
+GET http://localhost:8090/api/user?targetUserId=2235062316
+

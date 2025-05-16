@@ -1,18 +1,20 @@
 package cn.edu.usst.cs.campusAid.interceptor;
 
 import cn.edu.usst.cs.campusAid.controller.SessionKeys;
-import cn.edu.usst.cs.campusAid.service.LoginService;
+import cn.edu.usst.cs.campusAid.service.auth.LoginService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import org.json.JSONObject;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
+import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.io.IOException;
 import java.time.LocalTime;
+
 
 @Component
 public class AuthInterceptor implements HandlerInterceptor {
@@ -29,26 +31,37 @@ public class AuthInterceptor implements HandlerInterceptor {
 
         response.setContentType("application/json;charset=UTF-8");
 
+
         if (session == null) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.getWriter().write("{\"code\":401,\"message\":\"未登录或会话已失效\",\"data\":null}");
+            response.getWriter().write(buildJsonResponse(401, "未登录或会话已失效"));
             return false;
         }
+
 
         Object obj = session.getAttribute(SessionKeys.LOGIN_TIME);
         if (!(obj instanceof LocalTime time)) {
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-            response.getWriter().write("{\"code\":403,\"message\":\"未完成验证，禁止访问\",\"data\":null}");
+            response.getWriter().write(buildJsonResponse(403, "未完成验证，禁止访问"));
             return false;
         }
 
         if (time.plusMinutes(30).isBefore(LocalTime.now())) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.getWriter().write("{\"code\":401,\"message\":\"登录已过期，请重新登录\",\"data\":null}");
+            response.getWriter().write(buildJsonResponse(401, "登录已过期，请重新登录"));
             return false;
         }
 
+
         return true;
+    }
+
+    private String buildJsonResponse(int code, String message) {
+        JSONObject json = new JSONObject();
+        json.put("code", code);
+        json.put("message", message);
+        json.put("data", JSONObject.NULL);
+        return json.toString();
     }
 
 

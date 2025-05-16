@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.edu.usst.cs.campusAid.mapper.db.shop.GoodMapper">
+    <resultMap id="productTransactionMap" type="cn.edu.usst.cs.campusAid.dto.shop.ProductTransaction">
+        <result property="shopName" column="shopName"/>
+        <result property="name" column="name"/>
+        <result property="description" column="description"/>
+        <result property="price" column="price"/>
+        <result property="amount" column="amount"/>
+    </resultMap>
+    <!-- 根据商品ID查询商品信息 -->
+    <select id="selectGoodByID" parameterType="long" resultType="cn.edu.usst.cs.campusAid.model.shop.Good">
+        SELECT * FROM good WHERE id = #{targetGoodID};
+    </select>
+
+    <!-- 根据商店名称和商品名称查询商品信息 -->
+    <select id="selectGoodByShopAndProductName" parameterType="map" resultType="cn.edu.usst.cs.campusAid.model.shop.Good">
+        SELECT * FROM good WHERE shop = #{shopName} AND name = #{name};
+    </select>
+
+    <!-- 插入一个新的商品记录 -->
+    <insert id="insert">
+        INSERT INTO good (id, name, description, price, shop)
+        VALUES (#{id}, #{name}, #{description}, #{price}, #{shop});
+    </insert>
+
+    <!-- 获取当前系统中商品ID的最小可用值 -->
+    <select id="minFreeId" resultType="long">
+        SELECT COALESCE(MAX(id) + 1, 1) FROM good;
+    </select>
+<!--查找该商店所有已经上架过的商品-->
+    <select id="selectGoodsByShopName" parameterType="string" resultType="cn.edu.usst.cs.campusAid.dto.shop.ProductTransaction">
+        SELECT
+            g.shop AS shopName,
+            g.name AS name,
+            g.description AS description,
+            g.price AS price,
+            IFNULL(SUM(gt.amount), 0) AS amount -- ✅ 避免 NULL
+        FROM good g
+                 LEFT JOIN good_transaction gt ON g.id = gt.good_id AND gt.order_id IS NULL
+        WHERE g.shop = #{shopName}
+        GROUP BY g.shop, g.name, g.description, g.price;
+
+    </select>
+
+
+<!--     查找该商店当前可购买的商品-->
+    <select id="selectAvalibleGoodsByShopName" parameterType="string"
+            resultType="cn.edu.usst.cs.campusAid.dto.shop.ProductTransaction">
+        SELECT
+            g.shop AS shopName,
+            g.name AS name,
+            g.description AS description,
+            g.price AS price,
+            COALESCE(stock.totalInStock, 0) - COALESCE(stock.totalSold, 0) AS amount
+        FROM good g
+                 LEFT JOIN (
+            SELECT
+                good_id,
+                COALESCE(SUM(CASE WHEN order_id IS NULL THEN amount ELSE 0 END), 0) AS totalInStock,
+                COALESCE(SUM(CASE WHEN order_id IS NOT NULL THEN amount ELSE 0 END), 0) AS totalSold
+            FROM good_transaction
+            GROUP BY good_id
+        ) stock ON g.id = stock.good_id
+        WHERE g.shop = #{shopName}
+          AND (COALESCE(stock.totalInStock, 0) - COALESCE(stock.totalSold, 0)) > 0;
+    </select>
+
+
+
+</mapper>

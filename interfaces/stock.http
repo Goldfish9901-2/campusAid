@@ -1,0 +1,25 @@
+### GET request to example server
+GET https://examples.http-client.intellij.net/get?generated-in=IntelliJ IDEA
+
+###
+###
+POST http://localhost:8090/api/stock/login/TestShop
+Content-Type: application/json
+
+"password123"
+###
+
+POST http://localhost:8090/api/stock/supply
+Content-Type: application/json
+
+{
+    "name": "misaka 3",
+    "price": 10,
+    "amount": 99,
+    "description": "common misaka"
+}
+
+###
+
+
+

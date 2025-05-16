@@ -22,7 +22,7 @@ public class Blog {
     private Long creator;
 
     /**
-     * 博客标题，最大长度50字符，不能为空
+     * 博客标题，最大长度50个字符，不能为空
      */
     private String title;
 

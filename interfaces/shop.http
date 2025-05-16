@@ -1,0 +1,22 @@
+GET localhost:8090/api/shop/info/TestShop
+###
+
+POST localhost:8090/api/shop/checkout
+Content-Type: application/json
+
+{
+    "shopName": "TestShop",
+    "userId": 2235062316,
+    "items": [
+        {
+            "shopName": "TestShop",
+            "name": "misaka 3",
+            "amount": 10
+        }
+    ]
+}
+
+
+###
+GET localhost:8090/api/shop/history
+

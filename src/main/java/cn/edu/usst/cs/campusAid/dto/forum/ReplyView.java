@@ -13,7 +13,7 @@ public class ReplyView {
     private String content;
     private String sendTime;
     // 确保有 setter 方法，否则 MapStruct 会报错
-    private List<ReplyView> replies;
+//    private List<ReplyView> replies;
     @Nullable
     private Long parentId;
 

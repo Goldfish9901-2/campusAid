@@ -2,12 +2,10 @@ package cn.edu.usst.cs.campusAid.util;
 
 import cn.edu.usst.cs.campusAid.dto.forum.ReplyView;
 import cn.edu.usst.cs.campusAid.model.forum.Reply;
-import cn.edu.usst.cs.campusAid.mapper.ReplyMapperStruct;
-import lombok.Builder;
+import cn.edu.usst.cs.campusAid.mapper.mapstruct.ReplyMapperStruct;
 import lombok.Data;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * 回复树结构转换工具类
