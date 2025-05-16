@@ -16,4 +16,8 @@
         VALUES (#{id}, #{shop}, #{shopperId});
     </insert>
 
+    <select id="selectAllOrdersFromUser" resultType="cn.edu.usst.cs.campusAid.dto.shop.ProductTransaction">
+        SELECT * FROM shop_order WHERE shopper_id = #{userId};
+    </select>
+
 </mapper>

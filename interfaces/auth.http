@@ -15,8 +15,9 @@ POST http://localhost:8090/api/login/verify
 Content-Type: application/json
 
 {
-    "code": "552908"
+    "code": "498704"
 }
 ###
 
+GET http://localhost:8090/api/user?targetUserId=2235062316
 

@@ -45,7 +45,10 @@ public class StockController {
     ) {
         session.setAttribute(
                 SessionKeys.SHOP_NAME,
-                stockService.verify(shopName, password)
+                stockService.verify(
+                        shopName.replace("\"",""),
+                        password.replace("\"","")
+                )
         );
         return ResponseEntity.ok("登录成功");
     }
@@ -69,9 +72,9 @@ public class StockController {
     /**
      * 上传商品图片
      */
-    @PostMapping("/extra/upload")
+    @PostMapping("/upload/{goodName}")
     public ResponseEntity<String> uploadPost(
-            @RequestParam String goodName,
+            @PathVariable String goodName,
             @RequestParam("file") MultipartFile file,
             @SessionAttribute(SessionKeys.SHOP_NAME) String shopName
     ) {
@@ -81,10 +84,10 @@ public class StockController {
         var loc = uploadFileSystemService.uploadFile(dir, file);
         return ResponseEntity.ok(loc);
     }
-    @GetMapping("/post/uploaded")
+    @GetMapping("/upload/{goodName}")
     public ResponseEntity<List<String>> getUploadedPosts(
             @SessionAttribute(SessionKeys.SHOP_NAME) String shopName,
-            @RequestParam String goodName
+            @PathVariable String goodName
     ) {
         var dir = uploadFileSystemService.getProductDir(shopName, goodName);
         var files = dir.listFiles();

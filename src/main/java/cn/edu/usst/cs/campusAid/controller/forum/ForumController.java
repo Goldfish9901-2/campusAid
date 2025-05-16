@@ -165,8 +165,7 @@ public class ForumController {
         ))
             throw new CampusAidException("无权限");
         File contentDir = uploadFileSystemService.getBlogsUploadDir(postId);
-        String[] files = contentDir.list();
-        var contents = Arrays.asList(files == null ? new String[0] : files);
-        return ResponseEntity.ok(contents);
+        String[] files = uploadFileSystemService.listFiles(contentDir);
+        return ResponseEntity.ok(Arrays.asList(files));
     }
 }

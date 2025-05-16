@@ -42,6 +42,16 @@ public interface ErrandMapper {
     }
 
     /**
+     * 查询用户已接受的跑腿订单列表
+     */
+    List<Errand> selectErrandsAcceptedByUser(Long userId);
+
+    /**
+     * 查询用户发布的所有跑腿订单列表
+     */
+    List<Errand> selectErrandsPublishedByUser(Long userId);
+
+    /**
      * 更新跑腿订单的状态
      */
     void updateErrand(Long id, ErrandOrderStatus status);

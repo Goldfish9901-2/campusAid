@@ -9,16 +9,14 @@ Content-Type: application/json
     "startLocation": "餐桌",
     "endLocation": "鱼缸",
     "latestArrivalTime": "2025-05-25T08:00:00",
-    "fee": 0.01
+    "fee": 0.03
 }
 
 ###
 # 假设上面得到的单号为2
 ###
+#  查询单号2
 
-GET http://localhost:8090/api/errand/orders
-
-###
 GET http://localhost:8090/api/errand/order/2
 
 ###
@@ -30,6 +28,7 @@ POST http://localhost:8090/api/errand/order/2/cancel
 POST http://localhost:8090/api/errand/order/1/accept
 
 ###
+# 上传单号2的描述图片
 POST http://localhost:8090/api/errand/order/2/upload
 Content-Type: multipart/form-data; boundary=WebAppBoundary
 
@@ -46,3 +45,6 @@ Content-Type: image/jpeg
 --WebAppBoundary--
 
 ###
+# 查询单号2的图片
+GET http://localhost:8090/api/errand/order/2/uploaded
+

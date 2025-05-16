@@ -1,11 +1,11 @@
 package cn.edu.usst.cs.campusAid.controller.shop;
 
-import cn.edu.usst.cs.campusAid.config.AdminConfig;
 import cn.edu.usst.cs.campusAid.controller.SessionKeys;
 import cn.edu.usst.cs.campusAid.dto.shop.OrderDTO;
 import cn.edu.usst.cs.campusAid.dto.shop.ProductTransaction;
 import cn.edu.usst.cs.campusAid.dto.shop.ShopInfo;
 import cn.edu.usst.cs.campusAid.service.CampusAidException;
+import cn.edu.usst.cs.campusAid.service.auth.UserService;
 import cn.edu.usst.cs.campusAid.service.shop.ShopService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,12 +18,12 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/shop")
 public class ShopController {
-    private final AdminConfig adminConfig;
+    private final UserService userService;
     private ShopService shopService;
 
-    public ShopController(ShopService shopService, AdminConfig adminConfig) {
+    public ShopController(ShopService shopService, UserService userService) {
         this.shopService = shopService;
-        this.adminConfig = adminConfig;
+        this.userService = userService;
     }
 
     /**
@@ -34,10 +34,10 @@ public class ShopController {
      * @return 商户信息
      */
 
-    @PostMapping("/")
+    @GetMapping("/info/{shopName}")
     public ResponseEntity<ShopInfo> getShopInfo(
             @SessionAttribute(value = SessionKeys.SHOP_NAME, required = false) String shopNameStored,
-            @RequestParam String shopName
+            @PathVariable String shopName
     ) {
         return ResponseEntity.ok(shopService.getShopInfo(shopName, shopNameStored));
     }
@@ -49,7 +49,9 @@ public class ShopController {
      * <h1>前端发送请求前 务必让用户确认</h1>
      *
      * @param userId   用户ID
-     * @param orderDTO 所购买的商品
+     * @param orderDTO 所购买的商品 {@link OrderDTO#getItems()} (也就是{@link ProductTransaction})
+     *                 <p></p>只需填写商品名{@link ProductTransaction#getName()}
+     *                 <p></p>和数量{@link ProductTransaction#getAmount()}
      * @return 结算结果
      */
     @PostMapping("/checkout")
@@ -68,13 +70,9 @@ public class ShopController {
     @GetMapping("/history")
     List<ProductTransaction> getHistory(
             @SessionAttribute(SessionKeys.LOGIN_ID) Long userId,
-            @RequestParam(required = false, defaultValue = "") Long targetUserId
+            @RequestParam(required = false) Long targetUserId
     ) {
-        Long userIdToSearch = userId;
-        if (targetUserId != null) {
-            adminConfig.verifyIsAdmin(userId);
-            userIdToSearch = targetUserId;
-        }
+        Long userIdToSearch = userService.getTargetUserId(userId, targetUserId);
         return shopService.getHistory(userIdToSearch);
     }
 }

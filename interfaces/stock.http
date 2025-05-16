@@ -6,20 +6,20 @@ GET https://examples.http-client.intellij.net/get?generated-in=IntelliJ IDEA
 POST http://localhost:8090/api/stock/login/TestShop
 Content-Type: application/json
 
-password123
-###
-# 上面这个密码可能会红色高亮 不要加引号 加引号就跑不了了
+"password123"
 ###
 
 POST http://localhost:8090/api/stock/supply
 Content-Type: application/json
 
 {
-    "name": "misaka",
-    "price": 1000,
-    "amount": 1,
-    "description": "rare misaka"
+    "name": "misaka 3",
+    "price": 10,
+    "amount": 99,
+    "description": "common misaka"
 }
 
 ###
+
+
 
