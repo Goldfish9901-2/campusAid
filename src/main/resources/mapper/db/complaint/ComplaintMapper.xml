@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.edu.usst.cs.campusAid.mapper.db.complaint.ComplaintMapper">
+    <!-- 自定义 ResultMap 映射 -->
+    <resultMap id="ComplaintResultMap" type="cn.edu.usst.cs.campusAid.model.complaint.Complaint">
+        <id property="id" column="id" />
+        <result property="senderId" column="sender_id" />
+        <result property="title" column="title" />
+        <result property="description" column="description" />
+        <result property="block" column="complaint_block"/>
+        <result property="complainedID" column="complained_id" />
+        <result property="result" column="result" />
+    </resultMap>
+    <!-- 查询最小可用的投诉ID -->
+    <select id="minFreeId" resultType="long">
+        SELECT COALESCE(MAX(id) + 1, 1) FROM complaint;
+    </select>
+
+    <!-- 插入新的投诉记录 -->
+    <insert id="insert">
+        INSERT INTO complaint (
+        id,
+        sender_id,
+        title,
+        description,
+        complaint_block,
+        complained_id,
+        result
+        )
+        VALUES (
+        #{id},
+        #{senderId},
+        #{title},
+        #{description},
+        #{block},           <!-- enum 类型自动转换 -->
+        #{complainedID},
+        #{result}
+        );
+    </insert>
+
+    <!-- 获取所有投诉记录 -->
+    <select id="listAllComplaints" resultType="cn.edu.usst.cs.campusAid.model.complaint.Complaint">
+        SELECT
+            id,
+            sender_id AS senderId,
+            title,
+            description,
+            complaint_block AS block,
+            complained_id AS complainedID,
+            result
+        FROM complaint;
+    </select>
+
+    <!-- 使用 resultMap 的查询语句 -->
+    <select id="getComplaintById" parameterType="long" resultMap="ComplaintResultMap">
+        SELECT
+            id,
+            sender_id,
+            title,
+            description,
+            complaint_block,
+            complained_id,
+            result
+        FROM complaint
+        WHERE id = #{complaintId}
+    </select>
+
+    <!-- 更新投诉处理结果 -->
+    <update id="submitResult">
+        UPDATE complaint
+        SET result = #{result}
+        WHERE id = #{complaintId};
+    </update>
+
+</mapper>
