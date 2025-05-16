@@ -4,11 +4,14 @@ import cn.edu.usst.cs.campusAid.controller.SessionKeys;
 import cn.edu.usst.cs.campusAid.dto.errand.ErrandOrderPreview;
 import cn.edu.usst.cs.campusAid.dto.errand.ErrandOrderRequest;
 import cn.edu.usst.cs.campusAid.model.errand.Errand;
+import cn.edu.usst.cs.campusAid.service.UploadFileSystemService;
 import cn.edu.usst.cs.campusAid.service.errand.ErrandService;
 import cn.edu.usst.cs.campusAid.dto.ApiResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.util.List;
 
 /**
@@ -20,9 +23,11 @@ import java.util.List;
 public class ErrandController {
 
     private final ErrandService errandService;
+    private final UploadFileSystemService uploadFileSystemService;
 
-    public ErrandController(ErrandService errandService) {
+    public ErrandController(ErrandService errandService, UploadFileSystemService uploadFileSystemService) {
         this.errandService = errandService;
+        this.uploadFileSystemService = uploadFileSystemService;
     }
 
     /**
@@ -111,5 +116,18 @@ public class ErrandController {
             @SessionAttribute(SessionKeys.LOGIN_ID) Long userId) {
         String message = errandService.cancelOrder(id, userId);
         return ResponseEntity.ok(ApiResponse.success("取消成功"+ message));
+    }
+
+
+    @PostMapping("/order/{errandId}/upload")
+    public ResponseEntity<String> uploadImage(
+            @RequestParam("file") MultipartFile file,
+            @SessionAttribute(SessionKeys.LOGIN_ID) Long userId,
+            @PathVariable Long errandId
+    ){
+        File uri = uploadFileSystemService.getErrandDir(errandId);
+        errandService.verifyPublisher(userId, errandId);
+        var location = uploadFileSystemService.uploadFile(uri, file);
+        return ResponseEntity.ok("上传成功 可在 " + location + " 查看");
     }
 }

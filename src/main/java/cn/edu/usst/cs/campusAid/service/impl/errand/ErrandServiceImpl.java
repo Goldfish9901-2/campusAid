@@ -101,7 +101,8 @@ public class ErrandServiceImpl implements ErrandService {
     public String acceptOrder(Long id, Long runnerId) {
         Errand errand = getErrand(id, runnerId);
         User user = (errand.getAcceptorId() != null)
-                ? userMapper.getUserById(errand.getAcceptorId()) : null;
+                ? userMapper.getUserById(errand.getAcceptorId())
+                : null;
         if (user != null) {
             throw new CampusAidException("已有用户接单，您的接单无法接受");
         }
@@ -113,14 +114,7 @@ public class ErrandServiceImpl implements ErrandService {
         return runnerId + "--接单成功 单号--" + id;
     }
 
-    /**
-     * 确认订单
-     * <h2>跑腿员完成跑腿，用户手动确认（在待确认之后30分钟未确认的订单由平台自动确认）</h2>
-     *
-     * @param id
-     * @param userId
-     * @return
-     */
+
     @Override
     public String confirmOrder(Long id, Long userId) {
         Errand errand = getErrand(id, userId);

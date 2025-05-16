@@ -53,6 +53,18 @@ public interface UploadFileSystemService {
         return productDir;
     }
 
+    default File getErrandsUploadDir() {
+        File rootDir = getUploadRootDir();
+        File errandsDir = new File(rootDir, "errands");
+        ensureSubDir(errandsDir);
+        return errandsDir;
+    }
+    default File getErrandDir(Long errandId) {
+        File errandDir = new File(getErrandsUploadDir(), String.valueOf(errandId));
+        ensureSubDir(errandDir);
+        return errandDir;
+    }
+
     default File getUserDir(Long userId) {
         File userDir = new File(getUploadRootDir(), String.valueOf(userId));
         ensureSubDir(userDir);

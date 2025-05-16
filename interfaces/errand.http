@@ -28,3 +28,21 @@ POST http://localhost:8090/api/errand/order/2/cancel
 # 还有别人发的单号1
 ###
 POST http://localhost:8090/api/errand/order/1/accept
+
+###
+POST http://localhost:8090/api/
+Content-Type: multipart/form-data; boundary=WebAppBoundary
+
+--WebAppBoundary
+Content-Disposition: form-data; name="postId"
+Content-Type: text/plain
+
+115
+--WebAppBoundary
+Content-Disposition: form-data; name="file"; filename="D:\iCloudPhotos\IMG_0354.JPG"
+Content-Type: image/jpeg
+
+< D:\iCloudPhotos\IMG_0354.JPG
+--WebAppBoundary--
+
+###
