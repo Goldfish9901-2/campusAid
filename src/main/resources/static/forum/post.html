@@ -88,13 +88,38 @@
         button:hover {
             background-color: #0056b3;
             transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        #back-home-btn {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            z-index: 1001;
+            padding: 10px 20px;
+            background-color: transparent;
+            color: black;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 22px;
+            transition: all 0.3s ease;
+        }
+
+        #back-home-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        #back-home-btn:active {
+            transform: translateY(0);
         }
     </style>
 </head>
 <body>
 <div class="container">
     <h1>新增帖子</h1>
+    <div class="user-info">
+        当前用户：<span id="user-id">加载中...</span>
+    </div>
     <form id="post-form">
         <label for="title">标题：</label>
         <input type="text" id="title" name="title" placeholder="请输入标题" required />
@@ -105,8 +130,29 @@
         <button type="submit">发布帖子</button>
     </form>
 </div>
+<button id="back-home-btn"><strong>返回首页</strong></button>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
+        let userId = null;
+
+        fetch('/api/user', {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include'
+        })
+            .then(response => {
+                if (!response.ok) throw new Error('获取用户失败');
+                return response.json();
+            })
+            .then(user => {
+                userId = user.id;
+                document.getElementById('user-id').textContent = user.id;
+            })
+            .catch(error => {
+                alert('请先登录');
+                window.location.href = '/auth/index.html';
+            });
+
         document.getElementById('post-form').addEventListener('submit', function (e) {
             e.preventDefault();
 
@@ -148,6 +194,11 @@
                     console.error('Error:', error);
                     alert('发帖失败，请重试');
                 });
+        });
+
+        const backBtn = document.getElementById('back-home-btn');
+        backBtn.addEventListener('click', function () {
+            window.location.href = '/forum';
         });
     });
 </script>
