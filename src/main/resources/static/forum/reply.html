@@ -8,17 +8,30 @@
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #f4f4f9; /* 统一背景色 */
+            background-color: #f4f4f9;
             height: 100vh;
             display: flex;
             flex-direction: column;
+            background-image: url("/background2.jpg");
+            filter: saturate(50%);
+            background-size: cover;
+            background-position: center;
+            animation: fadein 1.5s ease-in-out forwards;
+        }
+
+        @keyframes fadein {
+            from {
+                opacity: 0.2;
+            }
+            to {
+                opacity: 1;
+            }
         }
 
         .content-wrapper {
             flex: 1;
             overflow-y: auto;
             padding: 20px;
-            background-color: #f4f4f9; /* 与body背景一致 */
         }
 
         .post-container {
@@ -57,7 +70,7 @@
         }
 
         .replies-container {
-            max-height: 450px; /* 增加高度 */
+            max-height: 450px;
             overflow-y: auto;
             margin-bottom: 15px;
         }
@@ -84,24 +97,29 @@
 
         #back-home-btn {
             position: fixed;
-            top: 20px;
-            right: 20px;
+            top: 30px;
+            right: 30px;
             z-index: 1000;
-            background-color: #3498db;
-            color: white;
+            background-color: transparent;
+            color: black;
             border: none;
             padding: 10px 20px;
-            font-size: 14px;
+            font-size: 22px;
             border-radius: 5px;
             cursor: pointer;
+            transition: all 0.3s ease;
         }
 
         #back-home-btn:hover {
-            background-color: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        #back-home-btn:active {
+            transform: translateY(0);
         }
 
         .bottom-reply-box {
-            background-color: #f4f4f9; /* 与整体背景一致 */
+            background-color: #f4f4f9;
             padding: 15px 0;
             border-top: 1px solid #ddd;
         }
@@ -146,7 +164,7 @@
     </style>
 </head>
 <body>
-<button id="back-home-btn" onclick="window.location.href='/forum'">返回首页</button>
+<button id="back-home-btn" onclick="window.location.href='/forum'"><strong>返回首页</strong></button>
 <div class="content-wrapper">
     <div class="post-container">
         <div id="post-detail">

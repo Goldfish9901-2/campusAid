@@ -301,15 +301,24 @@
             text-decoration: underline;
             color: #0056b3;
         }
+
+        .disabled {
+            background-color: #cccccc !important;
+            cursor: not-allowed;
+            pointer-events: auto;
+        }
     </style>
     <script>
         function fetchVerificationCode() {
+            const getCodeBtn = document.getElementById("getCodeBtn");
             const studentId = document.querySelector("input[name='id']").value;
 
             if (!studentId) {
                 alert("请输入学号");
                 return;
             }
+
+            getCodeBtn.classList.add("disabled");
 
             fetch('/api/login', {
                 method: 'POST',
