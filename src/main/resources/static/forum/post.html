@@ -2,14 +2,36 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>发帖</title>
+    <title>CampusAid-新增帖子</title>
     <style>
         body {
             font-family: 'Arial', sans-serif;
-            margin: 40px auto;
-            max-width: 600px;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             background-color: #f9f9f9;
-            padding: 20px;
+            background-image: url("/background2.jpg");
+            background-size: cover;
+            background-position: center;
+            animation: fadein 1.2s ease-in-out forwards;
+        }
+
+        @keyframes fadein {
+            from {
+                opacity: 0.2;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .container {
+            width: 600px;
+            background-color: white;
+            padding: 30px;
             border-radius: 8px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
@@ -17,6 +39,14 @@
         h1 {
             text-align: center;
             color: #333;
+            margin-top: 0;
+        }
+
+        .user-info {
+            text-align: right;
+            font-size: 14px;
+            color: #777;
+            margin-bottom: 20px;
         }
 
         label {
@@ -33,79 +63,50 @@
             border: 1px solid #ccc;
             border-radius: 4px;
             resize: vertical;
+            box-sizing: border-box;
         }
 
         textarea {
             height: 150px;
         }
 
-        input[type="file"] {
-            margin-top: 5px;
-        }
-
         button {
-            margin-top: 20px;
-            padding: 10px 20px;
+            margin: 25px auto 0 auto;
+            padding: 12px 30px;
             background-color: #3399ff;
             color: white;
             border: none;
-            border-radius: 4px;
+            border-radius: 25px;
             cursor: pointer;
             font-size: 16px;
+            display: block;
+            width: auto;
+            min-width: 150px;
+            transition: all 0.3s ease;
         }
 
         button:hover {
             background-color: #0056b3;
-        }
-
-        .user-info {
-            text-align: right;
-            font-size: 14px;
-            color: #777;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
     </style>
 </head>
 <body>
-<h1>新增帖子</h1>
+<div class="container">
+    <h1>新增帖子</h1>
+    <form id="post-form">
+        <label for="title">标题：</label>
+        <input type="text" id="title" name="title" placeholder="请输入标题" required />
 
-<div class="user-info">
-    当前用户：<span id="user-id">加载中...</span>
+        <label for="content">内容：</label>
+        <textarea id="content" name="content" placeholder="写下你的帖子内容..." required></textarea>
+
+        <button type="submit">发布帖子</button>
+    </form>
 </div>
-
-<form id="post-form">
-    <label for="title">标题：</label>
-    <input type="text" id="title" name="title" placeholder="请输入标题" required />
-
-    <label for="content">内容：</label>
-    <textarea id="content" name="content" placeholder="写下你的帖子内容..." required></textarea>
-
-    <button type="submit">发布帖子</button>
-</form>
-
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        let userId = null;
-
-        // 获取用户信息
-        fetch('/api/user', {
-            method: 'GET',
-            headers: { 'Content-Type': 'application/json' },
-            credentials: 'include'
-        })
-            .then(response => {
-                if (!response.ok) throw new Error('获取用户失败');
-                return response.json();
-            })
-            .then(user => {
-                userId = user.id;
-                document.getElementById('user-id').textContent = user.id;
-            })
-            .catch(error => {
-                alert('请先登录');
-                window.location.href = '/auth/index.html';
-            });
-
-        // 表单提交处理
         document.getElementById('post-form').addEventListener('submit', function (e) {
             e.preventDefault();
 
@@ -117,7 +118,6 @@
                 return;
             }
 
-            // 构造请求体
             const post = {
                 title,
                 content,
@@ -128,7 +128,6 @@
                 liked: false
             };
 
-            // 发送发帖请求
             fetch('/api/forum/post/submit', {
                 method: 'POST',
                 headers: {
