@@ -471,7 +471,7 @@
                 return response.json();
             })
             .then(user => {
-                document.getElementById('user-id').textContent = user.id;
+                document.getElementById('user-id').textContent = user["name"];
             })
             .catch(error => {
                 console.error('Error:', error);

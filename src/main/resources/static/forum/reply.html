@@ -286,9 +286,33 @@
                 <div>${reply.content}</div>
                 <small>${formatTime(reply.sendTime)}</small>
             `;
+            const strong = replyCard.querySelector('strong');
+            fetchUserData(strong, reply.senderId);
 
             container.appendChild(replyCard);
         });
+    }
+    function fetchUserData(element,id){
+        fetch(`/api/user?targetUserId=${id}`)
+            .then(response=>{
+                let content=response.json();
+                console.log(
+                    'Response status:',
+                    response.status
+                )
+                console.log(
+                    'Response data:',
+                    content
+                )
+                return content;
+            })
+            .then(content=>{
+                console.log(content)
+                element.innerText=content["name"]
+            })
+            .catch(error=>{
+                console.error("获取用户信息失败:", error);
+            })
     }
     function formatTime(timeStr) {
         return timeStr ? timeStr.replace("T", " ").substring(0, 16) : "";
