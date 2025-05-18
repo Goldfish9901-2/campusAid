@@ -19,7 +19,7 @@ import java.util.List;
 @RequestMapping("/api/shop")
 public class ShopController {
     private final UserService userService;
-    private ShopService shopService;
+    private final ShopService shopService;
 
     public ShopController(ShopService shopService, UserService userService) {
         this.shopService = shopService;
