@@ -15,9 +15,21 @@ POST http://localhost:8090/api/login/verify
 Content-Type: application/json
 
 {
-    "code": "498704"
+    "code": "429159"
 }
 ###
 
 GET http://localhost:8090/api/user?targetUserId=2235062316
 
+###
+POST http://localhost:8090/api/user/post/upload
+Content-Type: multipart/form-data; boundary=WebAppBoundary
+
+
+--WebAppBoundary
+Content-Disposition: form-data; name="file"; filename="D:\iCloudPhotos\IMG_0354.JPG"
+Content-Type: image/jpeg
+
+< D:\iCloudPhotos\IMG_0354.JPG
+--WebAppBoundary--
+###
