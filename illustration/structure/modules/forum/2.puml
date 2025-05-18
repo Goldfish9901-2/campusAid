@@ -1,0 +1,55 @@
+@startuml
+skinparam componentStyle rectangle
+top to bottom direction
+
+[用户界面] as user_interface
+
+rectangle "论坛核心功能" {
+  [发帖与编辑] as create_post
+  [回帖与评论] as reply_post
+  [帖子浏览与筛选] as view_posts
+  [点赞] as like_favorite
+}
+
+note top of create_post
+  发布、修改、删除帖子
+end note
+
+rectangle "内容管理" {
+  [敏感词过滤] as filter
+}
+note top of filter
+  内容合规性检查（在发帖前触发）
+end note
+
+'rectangle "互动与通知" {
+'  [消息通知] as notification
+'}
+
+user_interface --> create_post
+create_post --> filter
+filter --> "帖子数据库"
+user_interface --> reply_post
+user_interface --> view_posts
+user_interface --> like_favorite
+
+reply_post --> "评论数据库"
+view_posts --> "帖子数据库"
+like_favorite --> "点赞记录"
+'notification --> "消息队列"
+
+note bottom of view_posts
+  按分类/关键词搜索
+end note
+
+note bottom of like_favorite
+'  收藏夹、
+  点赞状态维护
+end note
+
+'note right of notification
+'  实时推送新回复/点赞
+'end note
+
+'title 图3 论坛子系统
+@enduml

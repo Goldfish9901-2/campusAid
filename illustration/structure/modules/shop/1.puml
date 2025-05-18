@@ -1,0 +1,52 @@
+@startuml
+skinparam componentStyle rectangle
+top to bottom direction
+
+[用户界面] as user_interface
+
+rectangle "普通用户功能" {
+  [订单处理与结算] as order_process
+}
+
+note top of order_process
+  用户提交订单、查看购买历史
+end note
+
+rectangle "商户核心功能" {
+  [商户登录认证] as merchant_login
+  [商品上架与库存管理] as product_stock
+  [图片上传与管理] as image_management
+}
+
+note top of merchant_login
+  登录验证、会话建立
+end note
+
+note top of product_stock
+  商品添加、库存更新
+end note
+
+note top of image_management
+  商品图片上传与展示
+end note
+
+rectangle "数据存储" {
+  [商户数据库] as merchant_db
+  [商品数据库] as product_db
+  [订单数据库] as order_db
+  [文件存储系统] as file_system
+}
+
+user_interface --> order_process
+user_interface --> merchant_login
+user_interface --> product_stock
+user_interface --> image_management
+
+order_process --> order_db
+
+merchant_login --> merchant_db
+product_stock --> product_db
+image_management --> file_system
+
+'title 图X 商户子系统（角色分离版）
+@enduml
