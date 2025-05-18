@@ -15,4 +15,8 @@ public interface ShopMapper {
     String verify(String name, String password);
 
     Shop getShopByName(String shopName);
+
+    void insert(Shop shop);
+
+    void deleteByName(String name);
 }
