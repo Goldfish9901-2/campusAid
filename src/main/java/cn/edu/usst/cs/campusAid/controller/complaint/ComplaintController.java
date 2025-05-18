@@ -14,10 +14,11 @@ import java.util.List;
 @RequestMapping("/api/complaint")
 public class ComplaintController {
 
-    private ComplaintService complaintService;
-    private AdminConfig adminConfig;
+    private final ComplaintService complaintService;
+    private final AdminConfig adminConfig;
 
-    public ComplaintController(AdminConfig adminConfig) {
+    public ComplaintController(ComplaintService complaintService, AdminConfig adminConfig) {
+        this.complaintService = complaintService;
         this.adminConfig = adminConfig;
     }
 
