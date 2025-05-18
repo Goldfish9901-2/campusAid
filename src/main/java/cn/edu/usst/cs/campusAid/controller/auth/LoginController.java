@@ -45,7 +45,7 @@ public class LoginController {
     /**
      * 登出
      */
-    @PostMapping("/logout")
+    @GetMapping("/logout")
     public ApiResponse<String> logout(HttpSession session) {
         session.removeAttribute(SessionKeys.LOGIN_ID);
         session.removeAttribute(SessionKeys.LOGIN_TIME);
