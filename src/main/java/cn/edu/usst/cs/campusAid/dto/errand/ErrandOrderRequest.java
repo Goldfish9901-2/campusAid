@@ -3,11 +3,17 @@ package cn.edu.usst.cs.campusAid.dto.errand;
 import jakarta.mail.Multipart;
 import lombok.Data;
 import lombok.NonNull;
+import lombok.Builder;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class ErrandOrderRequest {
     /**
      * 订单ID，后端生成，请求不必填写

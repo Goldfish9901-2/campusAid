@@ -33,7 +33,7 @@ public interface ForumPostService {
      * @return 返回经过筛选、排序和补充信息后的帖子预览列表
      */
     List<ForumPostPreview> getPostsSorted(Long userId, KeywordType type, String keyword, PostSortOrder sortBy, RowBounds rowBounds);
-    public ForumPostPreview getPostById(Long postId) ;
+    ForumPostPreview getPostById(Long postId) ;
 
 
     /**
@@ -184,6 +184,15 @@ public interface ForumPostService {
     }
 
     Long getAuthorID(Long postId);
+
+    /**
+     * 修改帖子可见性
+     * @param userId 当前用户ID，用于权限校验
+     * @param postId 常量帖子ID
+     * @param visibility 新的可见性状态（枚举类型）
+     */
+    void updatePostVisibility(Long userId, Long postId, Visibility visibility);
+
 }
 
 
