@@ -67,7 +67,9 @@ public interface UploadFileSystemService {
     }
 
     default File getUserDir(Long userId) {
-        File userDir = new File(getUploadRootDir(), String.valueOf(userId));
+        File userInfoMainDir=new File(getUploadRootDir(),"userInfo");
+        ensureSubDir(userInfoMainDir);
+        File userDir = new File(userInfoMainDir, String.valueOf(userId));
         ensureSubDir(userDir);
         return userDir;
     }

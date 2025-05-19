@@ -3,6 +3,7 @@ def replace(fileName:str|pathlib.Path, old:str, new:str):
     file = fileName if type(fileName)==pathlib.Path else pathlib.Path(fileName)
     if not file.exists():
         raise FileNotFoundError(f"File {file} does not exist.")
+    print(f"Replacing {old} with {new} in {file}")
     with file.open('r') as f:
         content = f.read()
     content  = content.replace(old, new)

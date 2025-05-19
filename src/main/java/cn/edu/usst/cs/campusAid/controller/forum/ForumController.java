@@ -65,15 +65,6 @@ public class ForumController {
             @PathVariable Long postId,
             @SessionAttribute(SessionKeys.LOGIN_ID) Long userId
     ) {
-//        if (!Objects.equals(
-//                forumPostService.getAuthorID(postId),
-//                userId
-//        ))
-//            throw new CampusAidException("无权限");
-//        List<ReplyView> replyTree = ReplyTreeConverter.buildTree(
-//                forumPostService.getRepliesByPostId(postId)
-//        );
-//        return ResponseEntity.ok(replyTree);
         List<ReplyView> replies = forumPostService.getRepliesByPostId(userId, postId);
         return ResponseEntity.ok(replies);
     }

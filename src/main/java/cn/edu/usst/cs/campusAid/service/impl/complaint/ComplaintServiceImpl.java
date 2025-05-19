@@ -33,15 +33,24 @@ public class ComplaintServiceImpl
     private final BlogMapper blogMapper;
     private BanMapper banMapper;
 
-    public ComplaintServiceImpl(ComplaintDTOMapper complaintDTOMapper, ComplaintMapper complaintMapper, AdminConfig adminConfig, ErrandMapper errandMapper, ShopMapper shopMapper, OrderMapper orderMapper, TransactionMapper transactionMapper, BlogMapper blogMapper) {
-        this.complaintDTOMapper = complaintDTOMapper;
-        this.complaintMapper = complaintMapper;
-        this.adminConfig = adminConfig;
-        this.errandMapper = errandMapper;
-        this.shopMapper = shopMapper;
-        this.orderMapper = orderMapper;
-        this.transactionMapper = transactionMapper;
+    public ComplaintServiceImpl(BanMapper banMapper,
+                                BlogMapper blogMapper,
+                                TransactionMapper transactionMapper,
+                                OrderMapper orderMapper,
+                                ShopMapper shopMapper,
+                                ErrandMapper errandMapper,
+                                AdminConfig adminConfig,
+                                ComplaintMapper complaintMapper,
+                                ComplaintDTOMapper complaintDTOMapper) {
+        this.banMapper = banMapper;
         this.blogMapper = blogMapper;
+        this.transactionMapper = transactionMapper;
+        this.orderMapper = orderMapper;
+        this.shopMapper = shopMapper;
+        this.errandMapper = errandMapper;
+        this.adminConfig = adminConfig;
+        this.complaintMapper = complaintMapper;
+        this.complaintDTOMapper = complaintDTOMapper;
     }
 
     @Override

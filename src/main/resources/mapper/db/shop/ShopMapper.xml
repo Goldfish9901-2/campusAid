@@ -15,4 +15,12 @@
         SELECT * FROM shop WHERE name = #{shopName};
     </select>
 
+    <insert id="insert" parameterType="cn.edu.usst.cs.campusAid.model.shop.Shop">
+        INSERT INTO shop (name, description, password) VALUES (#{name}, #{description}, #{password})
+    </insert>
+
+    <delete id="deleteByName" parameterType="String">
+        DELETE FROM shop WHERE name = #{name}
+    </delete>
+
 </mapper>
