@@ -45,6 +45,10 @@ public class ErrandMapperTest {
 
         LocalDateTime now = LocalDateTime.now().plusHours(2);
 
+        // 获取一个可用的ID
+        testOrderId = errandMapper.minFreeId();
+        assertNotNull(testOrderId, "没有可用的订单ID");
+
         Errand errand = Errand.builder()
                 .id(testOrderId)
                 .senderId(testUserId)
@@ -58,7 +62,6 @@ public class ErrandMapperTest {
                 .build();
 
         errandMapper.insert(errand);
-        testOrderId = errand.getId();
 
         assertNotNull(testOrderId, "插入失败，订单ID为空");
         log.info("【测试结果】插入订单成功，ID: {}", testOrderId);

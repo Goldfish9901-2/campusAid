@@ -1,6 +1,7 @@
 package cn.edu.usst.cs.campusAid.service.impl.complaint;
 
 import cn.edu.usst.cs.campusAid.config.AdminConfig;
+import cn.edu.usst.cs.campusAid.dto.complaint.ComplaintBlock;
 import cn.edu.usst.cs.campusAid.dto.complaint.ComplaintRequest;
 import cn.edu.usst.cs.campusAid.mapper.db.complaint.BanMapper;
 import cn.edu.usst.cs.campusAid.mapper.db.complaint.ComplaintMapper;
@@ -11,6 +12,7 @@ import cn.edu.usst.cs.campusAid.mapper.db.shop.ShopMapper;
 import cn.edu.usst.cs.campusAid.mapper.db.shop.TransactionMapper;
 import cn.edu.usst.cs.campusAid.mapper.mapstruct.ComplaintDTOMapper;
 import cn.edu.usst.cs.campusAid.model.complaint.Ban;
+import cn.edu.usst.cs.campusAid.model.complaint.BanBlock;
 import cn.edu.usst.cs.campusAid.model.complaint.Complaint;
 import cn.edu.usst.cs.campusAid.service.CampusAidException;
 import cn.edu.usst.cs.campusAid.service.complaint.ComplaintService;
@@ -112,8 +114,8 @@ public class ComplaintServiceImpl
         banBuilder
                 .userId(targetUserId)
                 .lengthByDay(banLength)
-                .reason(result);
-        banBuilder
+                .reason(result)
+                .block(complaint.getBlock() == ComplaintBlock.ERRAND ? BanBlock.ERRAND : BanBlock.FORUM)
                 .releaseTime(banReleaseTime);
         banMapper.insert(banBuilder.build());
         return String.format(

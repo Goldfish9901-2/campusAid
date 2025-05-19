@@ -5,6 +5,7 @@ import cn.edu.usst.cs.campusAid.service.auth.MailService;
 import jakarta.mail.MessagingException;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.*;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
@@ -29,10 +30,8 @@ public class MailServiceImpl implements MailService {
     }
 
     private void configureMailSender() {
-        JavaMailSenderImpl mailSender = (JavaMailSenderImpl) javaMailSender;
-
-        Properties mailProperties = mailSender.getJavaMailProperties();
-//        mailProperties.put("mail.debug", "true");
+        // 移除不必要的类型转换和配置
+        // 邮件配置已经在application.yml中完成
     }
 
     @Override
@@ -59,7 +58,7 @@ public class MailServiceImpl implements MailService {
             helper.setText(content, true);
 
             javaMailSender.send(helper.getMimeMessage());
-        } catch (MessagingException e) {
+        } catch (MessagingException | MailException e) {
             throw new CampusAidException(e);
         }
     }
