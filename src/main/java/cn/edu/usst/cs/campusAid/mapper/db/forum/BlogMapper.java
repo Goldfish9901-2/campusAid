@@ -1,15 +1,16 @@
 package cn.edu.usst.cs.campusAid.mapper.db.forum;
 
+import cn.edu.usst.cs.campusAid.dto.forum.Visibility;
 import cn.edu.usst.cs.campusAid.model.forum.Blog;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.session.RowBounds;
 
 import java.util.List;
 
 /**
  * 博客数据访问接口，提供对博客的增删改查操作。
+ *
  * @since 2025-04-06
  */
 @Mapper
@@ -20,12 +21,13 @@ public interface BlogMapper {
      * @return 所有博客列表
      */
     List<Blog> selectAll();
+
     /**
      * 综合搜索并排序博客列表
      *
-     * @param type 关键词类型（TITLE/TAG/CREATOR）
-     * @param keyword 搜索关键词
-     * @param sortBy 排序方式（TIME/LIKE_COUNT/REPLY_COUNT）
+     * @param type      关键词类型（TITLE/TAG/CREATOR）
+     * @param keyword   搜索关键词
+     * @param sortBy    排序方式（TIME/LIKE_COUNT/REPLY_COUNT）
      * @param rowBounds 分页参数
      * @return 博客列表
      */
@@ -37,10 +39,11 @@ public interface BlogMapper {
     );
 //    @Select("SELECT * FROM blog WHERE id = #{postId}")
 //    Blog selectById(@Param("postId") Long postId);
+
     /**
      * 根据标题模糊查询博客列表
      *
-     * @param keyword 搜索关键词
+     * @param keyword   搜索关键词
      * @param rowBounds 分页参数
      * @return 博客列表
      */
@@ -49,7 +52,7 @@ public interface BlogMapper {
     /**
      * 根据发帖人ID查询博客列表
      *
-     * @param keyword 发帖人ID（字符串形式）
+     * @param keyword   发帖人ID（字符串形式）
      * @param rowBounds 分页参数
      * @return 博客列表
      */
@@ -58,7 +61,7 @@ public interface BlogMapper {
     /**
      * 根据内容中的标签（以 # 开头的词）查询博客列表
      *
-     * @param keyword 标签名称
+     * @param keyword   标签名称
      * @param rowBounds 分页参数
      * @return 博客列表
      */
@@ -136,6 +139,13 @@ public interface BlogMapper {
      */
     Blog selectById(Long id);
 
+    /**
+     * 更新帖子可见性
+     *
+     * @param postId     帖子ID
+     * @param visibility 新的可见性状态（枚举类型）
+     */
+    void updateVisibility(@Param("postId") Long postId, @Param("visibility") Visibility visibility);
 
     Blog selectByReplyId(Long complaintSourceId);
 }

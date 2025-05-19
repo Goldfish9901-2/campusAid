@@ -161,6 +161,42 @@ public class ForumController {
     }
 
     /**
+     * 管理员修改帖子可见性
+     */
+    @PostMapping("/post/{postId}/admin-visibility")
+    public ResponseEntity<String> updatePostVisibilityByAdmin(
+            @PathVariable Long postId,
+            @RequestParam Visibility visibility,
+            @SessionAttribute(SessionKeys.LOGIN_ID) Long userId
+    ) {
+        // 验证参数合法性
+        if (visibility != Visibility.ADMIN) {
+            throw new CampusAidException("管理员只能设置为隐藏状态");
+        }
+        
+        forumPostService.updatePostVisibility(userId, postId, visibility);
+        return ResponseEntity.ok("管理员可见性修改成功");
+    }
+
+    /**
+     * 发帖人修改帖子可见性
+     */
+    @PostMapping("/post/{postId}/sender-visibility")
+    public ResponseEntity<String> updatePostVisibilityBySender(
+            @PathVariable Long postId,
+            @RequestParam Visibility visibility,
+            @SessionAttribute(SessionKeys.LOGIN_ID) Long userId
+    ) {
+        // 验证参数合法性
+        if (visibility != Visibility.SENDER && visibility != Visibility.VISIBLE) {
+            throw new CampusAidException("发帖人只能设置为本人隐藏或公开");
+        }
+        
+        forumPostService.updatePostVisibility(userId, postId, visibility);
+        return ResponseEntity.ok("发帖人可见性修改成功");
+    }
+
+    /**
      * 获取帖子附件
      *
      * @param userId 用户ID 校验用
