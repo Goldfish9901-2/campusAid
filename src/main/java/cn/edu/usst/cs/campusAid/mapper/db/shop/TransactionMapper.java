@@ -32,10 +32,11 @@ public interface TransactionMapper {
     Long getAvailableStock(Long id);
     /**
      * 执行一次进货操作（即插入一条 order_id 为 null 的交易记录）
+     * @param id 交易记录ID
      * @param goodId 商品ID
      * @param amount 进货数量
      */
-    void restock(@Param("goodId") Long goodId, @Param("amount") Float amount);
+    void restock(@Param("id") Long id, @Param("goodId") Long goodId, @Param("amount") Float amount);
 
     /**
      *    获取用户的历史订单

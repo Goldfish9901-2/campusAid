@@ -124,10 +124,9 @@
     </select>
 
     <!-- 插入一篇新博客 -->
-    <insert id="insertBlog">
+    <insert id="insertBlog" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO blog (creator, title, content, visibility, send_time)
         VALUES (#{creator}, #{title}, #{content}, #{visibility}, NOW())
-        ;
     </insert>
 
 
