@@ -21,8 +21,8 @@ public interface BlogToForumPostPreview {
     @Mapping(source = "title", target = "title")
     @Mapping(source = "content", target = "content")
     @Mapping(source = "sendTime", target = "publishTime")
-    @Mapping(target = "likeCount", constant = "0")//后续service中赋值
-    @Mapping(target = "replyCount", constant = "0")//后续service中赋值
+    @Mapping(target = "likeCount", constant = "0") // 后续service中赋值
+    @Mapping(target = "replyCount", constant = "0") // 后续service中赋值
     @Mapping(target = "liked", constant = "false")
     @Mapping(target = "tags", ignore = true)
     @Mapping(source = "visibility", target = "visibility", qualifiedByName = "stringToVisibility")

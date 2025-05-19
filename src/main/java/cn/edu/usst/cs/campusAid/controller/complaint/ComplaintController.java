@@ -14,21 +14,32 @@ import java.util.List;
 @RequestMapping("/api/complaint")
 public class ComplaintController {
 
-    private ComplaintService complaintService;
-    private AdminConfig adminConfig;
+    private final ComplaintService complaintService;  // 构造函数注入
+    private final AdminConfig adminConfig;
 
-    public ComplaintController(AdminConfig adminConfig) {
+    // 构造函数注入
+    public ComplaintController(ComplaintService complaintService, AdminConfig adminConfig) {
+        this.complaintService = complaintService;
         this.adminConfig = adminConfig;
     }
 
+    /**
+     * 获取所有投诉列表，只有管理员可以查看
+     */
     @GetMapping
     public List<Complaint> listComplaints(
             @SessionAttribute(SessionKeys.LOGIN_ID) Long userId
     ) {
-        adminConfig.verifyIsAdmin(userId);
-        return complaintService.listComplaints(userId);
+        adminConfig.verifyIsAdmin(userId); // 验证管理员权限
+        return complaintService.listComplaints(userId);  // 获取投诉列表
     }
 
+    /**
+     * 用户提交投诉
+     * @param userId 用户ID
+     * @param complaint 投诉内容
+     * @return 提交结果
+     */
     @PostMapping
     public ResponseEntity<String> postComplaint(
             @SessionAttribute(SessionKeys.LOGIN_ID) Long userId,
@@ -36,19 +47,16 @@ public class ComplaintController {
     ) {
         complaint.setUserId(userId);
         var id = complaintService.postComplaint(complaint);
-        return ResponseEntity.ok("提交成功。系统内编号：" + id);
+        return ResponseEntity.ok("提交成功。系统内编号：" + id);  // 返回投诉提交成功消息
     }
 
     /**
-     * 处理投诉的控制器方法
-     * 该方法用于处理用户提交的投诉，由管理员执行
-     * 它依赖于用户的身份验证，确保只有管理员可以处理投诉
-     *
-     * @param userId      从会话属性中获取的用户ID，用于验证用户是否为管理员
-     * @param complaintId 投诉的ID，标识特定的投诉事件
-     * @param result      处理投诉的结果，描述投诉处理的结局
-     * @param banLength   封禁时长（如果适用），默认为0，表示不进行封禁
-     * @return 返回处理结果的HTTP响应，包括一个表示处理成功的消息
+     * 处理投诉
+     * @param userId 用户ID
+     * @param complaintId 投诉ID
+     * @param result 处理结果
+     * @param banLength 封禁时长（默认0，不封禁）
+     * @return 处理结果
      */
     @PostMapping("/process")
     public ResponseEntity<String> processComplaint(
@@ -59,11 +67,17 @@ public class ComplaintController {
     ) {
         // 验证用户是否为管理员
         adminConfig.verifyIsAdmin(userId);
-        // 处理投诉，包括更新投诉状态和执行相应的处理措施
+
+        // 验证封禁时长是否大于0才执行封禁（防止无效封禁）
+        if (banLength > 0) {
+            // 执行封禁逻辑（例如记录封禁时长）
+        }
+
+        // 处理投诉
         var submitResult = complaintService.processComplaint(userId, complaintId, result, banLength);
+
         // 返回处理成功的响应
         return ResponseEntity.ok(submitResult);
     }
-
-
 }
+

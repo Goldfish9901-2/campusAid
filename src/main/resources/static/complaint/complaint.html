@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>投诉提交 - CampusAid</title>
+</head>
+<body>
+<h2>投诉表单</h2>
+<form id="complaint-form">
+    <label for="target">被投诉对象（ID或名称）:</label><br>
+    <input type="text" id="target" name="target" required><br><br>
+
+    <label for="reason">投诉理由：</label><br>
+    <textarea id="reason" name="reason" rows="4" cols="50" required></textarea><br><br>
+
+    <button type="submit">提交投诉</button>
+</form>
+
+<div id="result"></div>
+
+<script>
+    document.getElementById("complaint-form").addEventListener("submit", function (e) {
+        e.preventDefault();
+        const data = {
+            target: document.getElementById("target").value,
+            reason: document.getElementById("reason").value
+        };
+
+        fetch("/api/complaint", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        }).then(res => res.text())
+            .then(msg => {
+                document.getElementById("result").innerText = msg;
+                alert("提交成功！");
+            }).catch(err => {
+            console.error("提交失败", err);
+            alert("提交失败");
+        });
+    });
+</script>
+</body>
+</html>
