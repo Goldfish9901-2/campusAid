@@ -37,12 +37,32 @@ public class ShopMapperTest {
 
     @BeforeEach
     void setUp() {
-        // 可以在这里插入测试前的数据准备逻辑
+        // 1. 插入测试店铺
+        Shop shop = Shop.builder()
+            .name(TEST_SHOP_NAME)
+            .description(TEST_SHOP_DESCRIPTION)
+            .password(TEST_USER_PASSWORD)
+            .build();
+        try { shopMapper.insert(shop); } catch (Exception ignored) {}
+        // 2. 插入测试商品
+        Good good = Good.builder()
+            .id(1L)
+            .name(TEST_GOOD_NAME)
+            .shop(TEST_SHOP_NAME)
+            .price(9.99)
+            .build();
+        try { goodMapper.insert(good); } catch (Exception ignored) {}
     }
 
     @AfterEach
     void tearDown() {
-        // 可以在这里插入清理逻辑
+        // 删除测试商品和店铺
+        try { goodMapper.deleteByShopAndName(TEST_SHOP_NAME, TEST_GOOD_NAME); } catch (Exception ignored) {}
+        try { shopMapper.deleteByName(TEST_SHOP_NAME); } catch (Exception ignored) {}
+        // 并发插入的商品清理
+        for (int i = 0; i < 5; i++) {
+            try { goodMapper.deleteByShopAndName(TEST_SHOP_NAME, TEST_GOOD_NAME + i); } catch (Exception ignored) {}
+        }
     }
 
     @Test
@@ -108,7 +128,14 @@ public class ShopMapperTest {
         assertNotNull(insertedGood, "[ERROR] 按ID查询返回 null");
         assertEquals(TEST_GOOD_NAME, insertedGood.getName(), "[ERROR] 商品名称不匹配");
 
-        System.out.println("[INFO] 按ID查询成功：" + insertedGood);
+        // === 新增：插入一条进货记录，确保有库存 ===
+        GoodTransaction restock = GoodTransaction.builder()
+            .id(transactionMapper.minFreeID())
+            .goodId(insertedGood.getId())
+            .amount(10L)
+            .orderId(null)
+            .build();
+        transactionMapper.insert(restock);
 
         // 4. 查询商店所有上架过的商品
         System.out.println("[DEBUG] 查询商店的所有上架商品...");
@@ -140,6 +167,9 @@ public class ShopMapperTest {
     @DisplayName("测试 TransactionMapper 的进货、进货量、销售量、库存查询功能")
     void testTransactionMapperNewMethods() {
         System.out.println("[INFO] 开始执行 testTransactionMapperNewMethods 测试");
+
+        // 测试前清理同名商品，避免主键冲突
+        goodMapper.deleteByShopAndName(TEST_SHOP_NAME, "TestGoodForStock");
 
         assertNotNull(transactionMapper, "[ERROR] TransactionMapper 注入失败");
         assertNotNull(goodMapper, "[ERROR] GoodMapper 注入失败");
@@ -268,4 +298,72 @@ public class ShopMapperTest {
         }
     }
 
+    /**
+     * 1. 查询不存在的店铺应返回null
+     */
+    @Test
+    @DisplayName("1. 查询不存在的店铺应返回null")
+    void testGetNonExistentShop() {
+        Shop shop = shopMapper.getShopByName("不存在的店铺");
+        assertNull(shop, "不存在的店铺应返回null");
+    }
+
+    /**
+     * 2. 插入重复主键应抛出异常
+     */
+    @Test
+    @DisplayName("2. 插入重复主键应抛出异常")
+    void testInsertDuplicateGood() {
+        Good good = Good.builder()
+            .id(1L)
+            .name(TEST_GOOD_NAME)
+            .shop(TEST_SHOP_NAME)
+            .price(9.99)
+            .build();
+        assertThrows(Exception.class, () -> goodMapper.insert(good), "插入重复主键应抛出异常");
+    }
+
+    /**
+     * 3. 插入空商品名应抛出异常
+     */
+    @Test
+    @DisplayName("3. 插入空商品名应抛出异常")
+    void testInsertEmptyGoodName() {
+        Good good = Good.builder()
+            .id(999L)
+            .name("")
+            .shop(TEST_SHOP_NAME)
+            .price(9.99)
+            .build();
+        assertThrows(Exception.class, () -> goodMapper.insert(good), "商品名为空应抛出异常");
+    }
+
+    /**
+     * 4. 并发插入商品测试
+     */
+    @Test
+    @DisplayName("4. 并发插入商品测试")
+    void testConcurrentInsertGood() throws InterruptedException {
+        int threadCount = 5;
+        Thread[] threads = new Thread[threadCount];
+        for (int i = 0; i < threadCount; i++) {
+            final int idx = i;
+            threads[i] = new Thread(() -> {
+                Good good = Good.builder()
+                    .id(1000L + idx)
+                    .name(TEST_GOOD_NAME + idx)
+                    .shop(TEST_SHOP_NAME)
+                    .price(9.99)
+                    .build();
+                try { goodMapper.insert(good); } catch (Exception ignored) {}
+            });
+            threads[i].start();
+        }
+        for (Thread t : threads) t.join();
+        // 检查是否都插入成功
+        for (int i = 0; i < threadCount; i++) {
+            Good good = goodMapper.selectGoodByID(1000L + i);
+            assertNotNull(good, "并发插入商品失败: " + i);
+        }
+    }
 }

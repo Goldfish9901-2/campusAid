@@ -60,4 +60,6 @@ public interface GoodMapper {
      */
      List<ProductTransaction> selectAvalibleGoodsByShopName(String shopName);
 
+    void deleteByShopAndName(String shop, String name);
+
 }

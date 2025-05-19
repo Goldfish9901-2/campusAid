@@ -69,6 +69,8 @@
           AND (COALESCE(stock.totalInStock, 0) - COALESCE(stock.totalSold, 0)) > 0;
     </select>
 
-
+    <delete id="deleteByShopAndName">
+        DELETE FROM good WHERE shop = #{shop} AND name = #{name}
+    </delete>
 
 </mapper>
