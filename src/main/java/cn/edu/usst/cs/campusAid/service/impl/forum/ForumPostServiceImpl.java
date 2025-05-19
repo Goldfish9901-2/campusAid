@@ -1,23 +1,22 @@
 package cn.edu.usst.cs.campusAid.service.impl.forum;
 
 import cn.edu.usst.cs.campusAid.dto.forum.*;
-import cn.edu.usst.cs.campusAid.mapper.mapstruct.BlogToForumPostPreview;
-import cn.edu.usst.cs.campusAid.mapper.mapstruct.ReplyMapperStruct;
 import cn.edu.usst.cs.campusAid.mapper.db.forum.BlogMapper;
 import cn.edu.usst.cs.campusAid.mapper.db.forum.LikeBlogMapper;
 import cn.edu.usst.cs.campusAid.mapper.db.forum.ReplyMapper;
+import cn.edu.usst.cs.campusAid.mapper.mapstruct.BlogToForumPostPreview;
+import cn.edu.usst.cs.campusAid.mapper.mapstruct.ReplyMapperStruct;
 import cn.edu.usst.cs.campusAid.model.forum.Blog;
 import cn.edu.usst.cs.campusAid.model.forum.LikeBlog;
 import cn.edu.usst.cs.campusAid.model.forum.Reply;
 import cn.edu.usst.cs.campusAid.model.forum.ReplyTreeNode;
 import cn.edu.usst.cs.campusAid.service.CampusAidException;
-import cn.edu.usst.cs.campusAid.service.forum.ForumPostService;
 import cn.edu.usst.cs.campusAid.service.UploadFileSystemService;
 import cn.edu.usst.cs.campusAid.service.auth.UserService;
+import cn.edu.usst.cs.campusAid.service.forum.ForumPostService;
 import com.github.houbb.sensitive.word.core.SensitiveWordHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.session.RowBounds;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -122,7 +121,7 @@ public class ForumPostServiceImpl implements ForumPostService {
         Blog blog = new Blog();
         blog.setTitle(post.getTitle());
         blog.setContent(
-                SensitiveWordHelper.replace(post.getContent(),'*')
+                SensitiveWordHelper.replace(post.getContent(), '*')
         );
 
         blog.setCreator(userId);
@@ -201,7 +200,7 @@ public class ForumPostServiceImpl implements ForumPostService {
         newReply.setBlogId(postId);
         newReply.setSender(userId);
         newReply.setContent(
-                SensitiveWordHelper.replace(reply.getContent(),'*')
+                SensitiveWordHelper.replace(reply.getContent(), '*')
         );
         replyMapper.insertReply(newReply);
     }
@@ -324,6 +323,41 @@ public class ForumPostServiceImpl implements ForumPostService {
             throw new CampusAidException("不是发布者 无权上传图片");
         File dir = uploadFileSystemService.getBlogsUploadDir(postId);
         return uploadFileSystemService.uploadFile(dir, file);
+    }
+
+    /**
+     * 修改帖子可见性
+     *
+     * @param userId     当前用户ID，用于权限校验
+     * @param postId     帖子ID
+     * @param visibility 新的可见性状态
+     */
+    @Override
+    public void updatePostVisibility(Long userId, Long postId, Visibility visibility) {
+        Blog blog = blogMapper.selectById(postId);
+        if (blog == null) throw new CampusAidException("帖子不存在");
+
+        // 权限控制：只有管理员或发帖人可以修改可见性
+        if (!blog.getCreator().equals(userId) && !userService.isAdmin(userId)) {
+            throw new CampusAidException("无权修改此帖子的可见性");
+        }
+
+        // 验证visibility参数是否合法
+        if (visibility == null) {
+            throw new CampusAidException("无效的可见性状态");
+        }
+
+        // 如果是管理员操作且不是设置为隐藏状态，拒绝操作
+        if (userService.isAdmin(userId) && visibility != Visibility.ADMIN) {
+            throw new CampusAidException("管理员只能将帖子设置为隐藏状态");
+        }
+
+        // 如果是发帖人操作且尝试设置为管理员隐藏状态，拒绝操作
+        if (blog.getCreator().equals(userId) && visibility == Visibility.ADMIN) {
+            throw new CampusAidException("发帖人不能将帖子设置为管理员隐藏状态");
+        }
+
+        blogMapper.updateVisibility(postId, visibility);
     }
 
     /**

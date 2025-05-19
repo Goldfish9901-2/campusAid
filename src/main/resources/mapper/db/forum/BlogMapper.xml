@@ -163,4 +163,10 @@
         ;
     </select>
 
+    <!-- 修改帖子可见性 -->
+    <update id="updateVisibility">
+        UPDATE blog
+        SET visibility = #{visibility.value}
+        WHERE id = #{postId}
+    </update>
 </mapper>
