@@ -6,10 +6,8 @@ import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.web.multipart.MultipartFile;
 
-
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 public interface ForumPostService {
 
@@ -33,7 +31,8 @@ public interface ForumPostService {
      * @return 返回经过筛选、排序和补充信息后的帖子预览列表
      */
     List<ForumPostPreview> getPostsSorted(Long userId, KeywordType type, String keyword, PostSortOrder sortBy, RowBounds rowBounds);
-    ForumPostPreview getPostById(Long postId) ;
+
+    ForumPostPreview getPostById(Long postId);
 
 
     /**
@@ -107,6 +106,7 @@ public interface ForumPostService {
      * @param postId 常指 blogId
      * @return 回复数量
      */
+    @Deprecated
     int getReplyCountByPostId(Long userId, Long postId);
 
     /**
@@ -117,6 +117,7 @@ public interface ForumPostService {
      * @param postId 帖子ID
      * @return 回复树
      */
+    @Deprecated
     List<ReplyTreeNode> getRepliesTreeByPostId(Long userId, Long postId);
 
     /**
@@ -125,6 +126,7 @@ public interface ForumPostService {
      * @param blogIds 博客ID列表
      * @return key: blogId, value: likeCount
      */
+    @Deprecated
     List<Map<String, Object>> getLikeCountsByPosts(List<Long> blogIds);
 
     /**
@@ -133,6 +135,7 @@ public interface ForumPostService {
      * @param blogIds 博客ID列表
      * @return key: blogId, value: replyCount
      */
+    @Deprecated
     List<Map<String, Object>> countRepliesByPosts(@Param("blogIds") List<Long> blogIds);
 
     /**
@@ -160,35 +163,15 @@ public interface ForumPostService {
      */
     String uploadImage(Long userId, Long postId, MultipartFile file);
 
-    default Long submitPost(Long userId, ForumPostPreview post) {
-        createPost(userId, post);
-        List<ForumPostPreview> candidates = getPostsSorted(
-                userId,
-                KeywordType.TITLE,
-                post.getTitle(),
-                PostSortOrder.TIME,
-                new RowBounds(0, 10)
-        );
-
-        System.err.println(candidates);
-        for (ForumPostPreview candidate : candidates) {
-            if (
-                    Objects.equals(candidate.getTitle(), post.getTitle())
-//                    && Objects.equals(candidate.getContent(), post.getContent())
-                            && Objects.equals(candidate.getAuthorId(), userId)
-            ) {
-                return candidate.getPostId();
-            }
-        }
-        return null;
-    }
+    Long submitPost(Long userId, ForumPostPreview post);
 
     Long getAuthorID(Long postId);
 
     /**
      * 修改帖子可见性
-     * @param userId 当前用户ID，用于权限校验
-     * @param postId 常量帖子ID
+     *
+     * @param userId     当前用户ID，用于权限校验
+     * @param postId     常量帖子ID
      * @param visibility 新的可见性状态（枚举类型）
      */
     void updatePostVisibility(Long userId, Long postId, Visibility visibility);
