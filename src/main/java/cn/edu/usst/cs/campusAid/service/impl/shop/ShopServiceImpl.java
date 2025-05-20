@@ -14,30 +14,41 @@ import cn.edu.usst.cs.campusAid.model.shop.GoodTransaction;
 import cn.edu.usst.cs.campusAid.model.shop.Shop;
 import cn.edu.usst.cs.campusAid.model.shop.ShopOrder;
 import cn.edu.usst.cs.campusAid.service.CampusAidException;
+import cn.edu.usst.cs.campusAid.service.auth.UserService;
 import cn.edu.usst.cs.campusAid.service.shop.ShopService;
 import io.micrometer.common.util.StringUtils;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.springframework.stereotype.Service;
 
+import java.sql.SQLException;
 import java.util.List;
 
 @Service
 public class ShopServiceImpl implements ShopService {
     private final ProductToGoodTransaction productToGoodTransaction;
     private final SqlSessionFactory sqlSessionFactory;
+    private final UserService userService;
     ShopMapper shopMapper;
     GoodMapper goodMapper;
     OrderMapper orderMapper;
     TransactionMapper transactionMapper;
 
-    public ShopServiceImpl(ShopMapper shopMapper, GoodMapper goodMapper, OrderMapper orderMapper, TransactionMapper transactionMapper, ProductToGoodTransaction productToGoodTransaction, SqlSessionFactory sqlSessionFactory) {
+    public ShopServiceImpl(
+            ShopMapper shopMapper,
+            GoodMapper goodMapper,
+            OrderMapper orderMapper,
+            TransactionMapper transactionMapper,
+            ProductToGoodTransaction productToGoodTransaction,
+            SqlSessionFactory sqlSessionFactory,
+            UserService userService) {
         this.shopMapper = shopMapper;
         this.goodMapper = goodMapper;
         this.orderMapper = orderMapper;
         this.transactionMapper = transactionMapper;
         this.productToGoodTransaction = productToGoodTransaction;
         this.sqlSessionFactory = sqlSessionFactory;
+        this.userService = userService;
     }
 
     @Override
@@ -102,11 +113,16 @@ public class ShopServiceImpl implements ShopService {
                 goodTransaction.setOrderId(orderID);
                 transactionMapper.insert(goodTransaction);
             }
-
-
+            if(userService.getBalance(orderDTO.getUserId())<price)
+                throw new CampusAidException("余额不足");
             sqlSession.commit(); // 提交事务
         } catch (Exception e) {
             sqlSession.rollback(); // 回滚事务
+            try {
+                sqlSession.getConnection().setAutoCommit(true);
+            }catch (SQLException sqlException){
+                throw new CampusAidException("订单提交失败");
+            }
             throw new CampusAidException(e.getMessage());
         } finally {
             sqlSession.close(); // 关闭会话
