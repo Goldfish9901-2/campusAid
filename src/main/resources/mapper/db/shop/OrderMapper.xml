@@ -17,7 +17,16 @@
     </insert>
 
     <select id="selectAllOrdersFromUser" resultType="cn.edu.usst.cs.campusAid.dto.shop.ProductTransaction">
-        SELECT * FROM shop_order WHERE shopper_id = #{userId};
+        SELECT 
+            o.shop AS shopName,
+            g.name AS name,
+            g.description AS description,
+            g.price AS price,
+            gt.amount AS amount
+        FROM shop_order o
+        JOIN good_transaction gt ON o.id = gt.order_id
+        JOIN good g ON gt.good_id = g.id
+        WHERE o.shopper_id = #{userId}
     </select>
 
 </mapper>
