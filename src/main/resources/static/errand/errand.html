@@ -1,0 +1,44 @@
+<!-- errand.html -->
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>跑腿任务</title>
+    <style>
+        /* 可以添加一些样式来美化页面 */
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>跑腿任务列表</h2>
+    <div id="errand-list">
+        <!-- 任务列表内容将通过JavaScript动态加载 -->
+    </div>
+</div>
+
+<script>
+    // 这里可以通过fetch API来获取跑腿任务列表
+    fetch('/api/errand/tasks')  // 替换为你实际的跑腿任务获取接口
+        .then(response => response.json())
+        .then(data => {
+            const errandListContainer = document.getElementById('errand-list');
+            if (data.length > 0) {
+                data.forEach(task => {
+                    errandListContainer.innerHTML += `
+                            <div class="task">
+                                <p><strong>任务名称:</strong> ${task.name}</p>
+                                <p><strong>任务描述:</strong> ${task.description}</p>
+                                <p><strong>发布人:</strong> ${task.creator}</p>
+                            </div>
+                        `;
+                });
+            } else {
+                errandListContainer.innerHTML = '<p>暂无跑腿任务。</p>';
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching errand tasks:', error);
+        });
+</script>
+</body>
+</html>
