@@ -18,7 +18,7 @@ import java.util.concurrent.ScheduledExecutorService;
         basePackages =
                 {
                         "cn.edu.usst.cs.campusAid.mapper.db",
-                        "cn.edu.usst.cs.campusAid.mapper.mapstruct"
+//                        "cn.edu.usst.cs.campusAid.mapper.mapstruct"
 //                        "cn.edu.usst.cs.campusAid.mapper.db.forum",
 //                        "cn.edu.usst.cs.campusAid.mapper.db.shop",
 //                        "cn.edu.usst.cs.campusAid.mapper.db.errand",
