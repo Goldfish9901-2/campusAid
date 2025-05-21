@@ -4,22 +4,63 @@
     <meta charset="UTF-8">
     <title>商店详情 - CampusAid</title>
     <style>
-        /* 页面样式 */
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: auto;
+        }
+
+        h2 {
+            text-align: center;
+            color: #0A2540;
+        }
+
+        #shop-info, .product-card {
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .product-card {
+            margin-bottom: 16px;
+        }
+
+        button {
+            padding: 6px 12px;
+            background-color: #0A2540;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #16365f;
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
     <h2>商店详情</h2>
-    <div id="shop-info">
-        <!-- 这里将显示商店信息 -->
-    </div>
+    <div id="shop-info">加载中...</div>
+
+    <h3 style="margin-top: 30px;">商品列表</h3>
+    <div id="product-list">加载中...</div>
 </div>
 
 <script>
-    const shopName = 'TestShop'; // 这里是商店的名称，根据实际情况调整
+    const shopName = 'TestShop'; // 修改为你实际的商店名
 
-    fetch(`/api/shop/${shopName}`)
+    // 获取商店信息
+    fetch(`/api/shop/info/${shopName}`)
         .then(response => response.json())
         .then(data => {
             const shopInfoContainer = document.getElementById('shop-info');
@@ -33,10 +74,46 @@
             }
         })
         .catch(error => {
-            console.error('Error fetching shop info:', error);
+            console.error('商店信息获取失败:', error);
+            document.getElementById('shop-info').innerText = '加载失败';
         });
+
+    // 获取商品列表
+    fetch(`/api/shop/products/${shopName}`)
+        .then(response => response.json())
+        .then(products => {
+            const container = document.getElementById("product-list");
+            container.innerHTML = "";
+
+            if (!products || products.length === 0) {
+                container.innerHTML = "<p>暂无商品。</p>";
+                return;
+            }
+
+            products.forEach(product => {
+                const card = document.createElement("div");
+                card.className = "product-card";
+                card.innerHTML = `
+                    <p><strong>名称：</strong>${product.name}</p>
+                    <p><strong>价格：</strong>¥${product.price}</p>
+                    <p><strong>库存：</strong>${product.stock}</p>
+                    <button onclick="buyProduct('${product.name}')">立即购买</button>
+                `;
+                container.appendChild(card);
+            });
+        })
+        .catch(error => {
+            console.error("商品信息加载失败:", error);
+            document.getElementById("product-list").innerText = "加载失败";
+        });
+
+    function buyProduct(productName) {
+        alert(`你点击了购买：${productName}`);
+        // 可在此发起 POST 请求调用 /api/shop/checkout
+    }
 </script>
 
 </body>
 </html>
+
 

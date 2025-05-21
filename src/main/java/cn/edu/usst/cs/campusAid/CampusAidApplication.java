@@ -18,10 +18,7 @@ import java.util.concurrent.ScheduledExecutorService;
         basePackages =
                 {
                         "cn.edu.usst.cs.campusAid.mapper.db",
-//                        "cn.edu.usst.cs.campusAid.mapper.db.forum",
-//                        "cn.edu.usst.cs.campusAid.mapper.db.shop",
-//                        "cn.edu.usst.cs.campusAid.mapper.db.errand",
-//                        "cn.edu.usst.cs.campusAid.mapper.db.complaint"
+
                 }
 ) // 只扫描真正的数据库 Mapper
 @SpringBootApplication

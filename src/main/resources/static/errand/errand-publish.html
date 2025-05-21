@@ -130,18 +130,22 @@
         // 可改为真实接口
         fetch("/api/errand/create", {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ description, from, to, price, deadline })
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({description, from, to, price, deadline})
         })
             .then(res => {
                 if (res.ok) {
                     alert("跑腿订单发布成功！");
                     window.location.href = "/webpages/errand-list.html";
                 } else {
-                    alert("发布失败，请稍后重试！");
+                    res.json().then((data) => {
+                        alert("发布失败，请稍后重试！" + data.message);
+                    });
                 }
             })
-            .catch(() => alert("网络错误，请检查连接"));
+            .catch(() => {
+                alert("网络错误，请检查连接");
+            });
     }
 </script>
 

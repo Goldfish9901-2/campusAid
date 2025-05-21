@@ -66,6 +66,29 @@
     button:hover {
       background-color: #0056b3;
     }
+
+    #back-home-btn {
+      position: fixed;
+      top: 30px;
+      right: 30px;
+      z-index: 1001;
+      padding: 10px 20px;
+      background-color: transparent;
+      color: black;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 22px;
+      transition: all 0.3s ease;
+    }
+
+    #back-home-btn:hover {
+      transform: translateY(-2px);
+    }
+
+    #back-home-btn:active {
+      transform: translateY(0);
+    }
   </style>
 </head>
 <body>
@@ -75,6 +98,7 @@
   <br>
   <button onclick="handleCharge()">立即充值</button>
 </div>
+<button id="back-home-btn" onclick="window.location.href = '/forum'"><strong>返回首页</strong></button>
 <script>
   function handleCharge() {
     const amount = document.getElementById("amount").value;

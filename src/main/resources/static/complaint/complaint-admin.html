@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>投诉处理 - 管理员页面</title>
+</head>
+<body>
+<h2>投诉列表</h2>
+<div id="complaint-list"></div>
+
+<h3>处理投诉</h3>
+<form id="process-form">
+    <label for="id">投诉编号：</label>
+    <input type="number" id="id" required><br>
+
+    <label for="result">处理结果：</label>
+    <input type="text" id="result" required><br>
+
+    <label for="ban_length">封禁时长（天）：</label>
+    <input type="number" id="ban_length" value="0"><br>
+
+    <button type="submit">提交处理</button>
+</form>
+
+<script>
+    // 加载投诉列表
+    fetch("/api/complaint")
+        .then(res => res.json())
+        .then(data => {
+            const listContainer = document.getElementById("complaint-list");
+            if (!data || data.length === 0) {
+                listContainer.innerText = "暂无投诉记录";
+                return;
+            }
+            data.forEach(item => {
+                const div = document.createElement("div");
+                div.innerHTML = `
+                        <hr>
+                        <p><strong>投诉ID:</strong> ${item.id}</p>
+                        <p><strong>投诉人ID:</strong> ${item.userId}</p>
+                        <p><strong>被投诉对象:</strong> ${item.target}</p>
+                        <p><strong>理由:</strong> ${item.reason}</p>
+                        <p><strong>状态:</strong> ${item.status}</p>
+                        <p><strong>结果:</strong> ${item.result || '未处理'}</p>
+                    `;
+                listContainer.appendChild(div);
+            });
+        });
+
+    // 处理投诉表单
+    document.getElementById("process-form").addEventListener("submit", function (e) {
+        e.preventDefault();
+        const id = document.getElementById("id").value;
+        const result = document.getElementById("result").value;
+        const banLength = document.getElementById("ban_length").value;
+
+        const params = new URLSearchParams({
+            id,
+            result,
+            ban_length: banLength
+        });
+
+        fetch("/api/complaint/process?" + params.toString(), {
+            method: "POST"
+        }).then(res => res.text())
+            .then(msg => alert("处理完成：" + msg))
+            .catch(err => alert("处理失败"));
+    });
+</script>
+</body>
+</html>
