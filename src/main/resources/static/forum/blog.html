@@ -291,24 +291,58 @@
                 postCard.className = 'post-card';
 
                 postCard.innerHTML = `
-                <div class="post-title">
-                    ${post.title}
-                    <a href="javascript:void(0)" class="delete-link" data-post-id="${post.postId}">删除</a>
-                </div>
-                <div class="post-meta">发布时间：${formatTime(post.publishTime)} | 点赞数：${post.likeCount} | 回复数：${post.replyCount}</div>
-                <div class="post-content">${truncateText(post.content, 100)}</div>`;
+        <div class="post-title">
+            ${post.title}
+            <a href="javascript:void(0)" class="delete-link" data-post-id="${post.postId}">删除</a>
+            <a href="javascript:void(0)" class="visible-link" data-post-id="${post.postId}">隐藏</a>
+        </div>
+        <div class="post-meta">发布时间：${formatTime(post.publishTime)} | 点赞数：${post.likeCount} | 回复数：${post.replyCount}</div>
+        <div class="post-content">${truncateText(post.content, 100)}</div>`;
 
                 container.appendChild(postCard);
 
+                // 删除帖子事件 ✅ 已正确绑定
                 postCard.querySelector('.delete-link').addEventListener('click', function () {
                     const postId = this.getAttribute('data-post-id');
                     if (confirm("确定要删除这篇帖子吗？")) {
                         deletePost(postId);
                     }
                 });
+
+                // 🔁 隐藏帖子事件 ✅ 添加到此处
+                postCard.querySelector('.visible-link').addEventListener('click', function () {
+                    const postId = this.getAttribute('data-post-id');
+                    const action = confirm("确定要将这篇帖子设为隐藏吗？") ? 'hide' : 'cancel';
+
+                    if (action === 'hide') {
+                        fetch(`/api/forum/post/${postId}/sender-visibility`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            credentials: 'include',
+                            body: JSON.stringify({ visibility: 'sender' }) // ✅ 改为大写
+                        })
+                            .then(response => {
+                                if (!response.ok) {
+                                    return response.text().then(text => {
+                                        throw new Error(text || '隐藏失败');
+                                    });
+                                }
+                                return response.text();
+                            })
+                            .then(() => {
+                                alert("帖子已隐藏");
+                                loadMyPosts(); // 刷新列表
+                            })
+                            .catch(error => {
+                                console.error("Error:", error);
+                                alert("隐藏失败：" + error.message);
+                            });
+                    }
+                });
             });
         }
-
         function updatePaginationUI() {
             const currentPageElement = document.getElementById('current-page');
             const pageInput = document.getElementById('page-input');
