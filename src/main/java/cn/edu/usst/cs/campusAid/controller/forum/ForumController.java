@@ -1,5 +1,6 @@
 package cn.edu.usst.cs.campusAid.controller.forum;
 
+import cn.edu.usst.cs.campusAid.config.AdminConfig;
 import cn.edu.usst.cs.campusAid.controller.SessionKeys;
 import cn.edu.usst.cs.campusAid.dto.forum.*;
 import cn.edu.usst.cs.campusAid.service.CampusAidException;
@@ -23,6 +24,8 @@ public class ForumController {
     ForumPostService forumPostService;
     @Autowired
     private UploadFileSystemService uploadFileSystemService;
+    @Autowired
+    private AdminConfig adminConfig;
 
     /**
      * 获取论坛帖子列表，支持排序与关键词搜索
@@ -43,8 +46,23 @@ public class ForumController {
 
         // 调用 service 并返回
         List<ForumPostPreview> posts = forumPostService.getPostsSorted(userId, type, keyword, sortBy, rowBounds);
+        posts = posts.stream().filter(
+                post -> {
+                    if (post.getVisibility() == Visibility.VISIBLE)
+                        return true;
+                    if (Objects.equals(post.getAuthorId(), userId))
+                        return true;
+                    try {
+                        adminConfig.verifyIsAdmin(userId);
+                        return true;
+                    } catch (CampusAidException e) {
+                        return false;
+                    }
+                }
+        ).toList();
         return ResponseEntity.ok(posts);
     }
+
     /**
      * 获取单个帖子详情
      */
@@ -54,6 +72,13 @@ public class ForumController {
             @SessionAttribute(SessionKeys.LOGIN_ID) Long userId
     ) {
         ForumPostPreview post = forumPostService.getPostById(postId);
+        if (post == null) {
+            return ResponseEntity.notFound().build();
+        }
+        if (post.getVisibility() != Visibility.VISIBLE
+                && !Objects.equals(userId, post.getAuthorId())
+        )
+            adminConfig.verifyIsAdmin(userId);
         return ResponseEntity.ok(post);
     }
 
@@ -84,8 +109,9 @@ public class ForumController {
 
     /**
      * 用户向已有的帖子追加图文附件
+     *
      * @param postId 帖子
-     * @param file 图文附件
+     * @param file   图文附件
      * @param userId 用户ID 校验用
      * @return 图文附件的映射uri
      */
@@ -173,7 +199,7 @@ public class ForumController {
         if (visibility != Visibility.ADMIN) {
             throw new CampusAidException("管理员只能设置为隐藏状态");
         }
-        
+
         forumPostService.updatePostVisibility(userId, postId, visibility);
         return ResponseEntity.ok("管理员可见性修改成功");
     }
@@ -191,7 +217,7 @@ public class ForumController {
         if (visibility != Visibility.SENDER && visibility != Visibility.VISIBLE) {
             throw new CampusAidException("发帖人只能设置为本人隐藏或公开");
         }
-        
+
         forumPostService.updatePostVisibility(userId, postId, visibility);
         return ResponseEntity.ok("发帖人可见性修改成功");
     }

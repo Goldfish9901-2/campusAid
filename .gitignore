@@ -35,3 +35,4 @@ config/**
 logs/
 .env
 /illustration/
+/architecture/

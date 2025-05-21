@@ -1,6 +1,6 @@
 package cn.edu.usst.cs.campusAid.model.charge;
 
-import cn.edu.usst.cs.campusAid.util.BizContentField;
+//import cn.edu.usst.cs.campusAid.util.BizContentField;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,18 +15,18 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 
 public class Charge implements Serializable {
-    @BizContentField(key = "subject")
+//    @BizContentField(key = "subject")
     public final long interfaceInfoId = 294389472934L;
 
-    @BizContentField(key = "product_code")
+//    @BizContentField(key = "product_code")
     public final String productCode = "WAP_FAST_LAND_ESCAPE"; // 修改为 WAP_FAST_LAND_ESCAPE 或 PAGE_PAY
 
-    @BizContentField(key = "body")
+//    @BizContentField(key = "body")
     public final String paymentMethod = "支付宝";
-    @BizContentField(key = "out_trade_info")
+//    @BizContentField(key = "out_trade_info")
     private Long id;
     private Long userId;
     private LocalDateTime chargeTime;
-    @BizContentField(key = "total_amount")
+//    @BizContentField(key = "total_amount")
     private double amount;
 }
