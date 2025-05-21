@@ -1,9 +1,10 @@
 package cn.edu.usst.cs.campusAid.controller.auth;
 
+import cn.edu.usst.cs.campusAid.config.AdminConfig;
 import cn.edu.usst.cs.campusAid.controller.SessionKeys;
+import cn.edu.usst.cs.campusAid.dto.ApiResponse;
 import cn.edu.usst.cs.campusAid.dto.auth.LoginRequest;
 import cn.edu.usst.cs.campusAid.dto.auth.VerifyRequest;
-import cn.edu.usst.cs.campusAid.dto.ApiResponse;
 import cn.edu.usst.cs.campusAid.service.CampusAidException;
 import cn.edu.usst.cs.campusAid.service.auth.LoginService;
 import jakarta.servlet.http.HttpSession;
@@ -18,6 +19,8 @@ public class LoginController {
 
     @Autowired
     private LoginService loginService;
+    @Autowired
+    private AdminConfig adminConfig;
 
     @PostMapping
     public ApiResponse<String> sendLoginCode(
@@ -40,15 +43,24 @@ public class LoginController {
     ) throws CampusAidException {
         loginService.verifyCode(id, request.getCode(), sessionCode);
         session.setAttribute(SessionKeys.LOGIN_TIME, LocalTime.now());
-        return ApiResponse.success("登录成功");
+        String message;
+        try {
+            adminConfig.verifyIsAdmin(id);
+            message = "admin";
+        } catch (CampusAidException ignored) {
+            message = "user";
+        }
+        return ApiResponse.success(message);
     }
+
     /**
      * 登出
      */
     @GetMapping("/logout")
     public ApiResponse<String> logout(HttpSession session) {
-        session.removeAttribute(SessionKeys.LOGIN_ID);
-        session.removeAttribute(SessionKeys.LOGIN_TIME);
+        session.invalidate();
+//        session.removeAttribute(SessionKeys.LOGIN_ID);
+//        session.removeAttribute(SessionKeys.LOGIN_TIME);
         return ApiResponse.success("登出成功");
     }
 }
