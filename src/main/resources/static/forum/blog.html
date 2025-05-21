@@ -99,7 +99,7 @@
             line-height: 1.5;
         }
 
-        .delete-link {
+        .delete-link ,.visible-link{
             margin-left: 12px;
             font-size: 14px;
             color: #e74c3c;
@@ -110,13 +110,13 @@
             transition: color 0.3s ease;
         }
 
-        .delete-link::before {
+        .delete-link, .visible-link::before {
             content: "🗑️ ";
             font-size: 12px;
             margin-right: 4px;
         }
 
-        .delete-link:hover {
+        .delete-link, .visible-link:hover {
             color: #c0392b;
         }
 
@@ -266,6 +266,7 @@
                     } else {
                         pagination.hasMore = true;
                     }
+                    console.log("当前帖子数据：",posts);
 
                     renderPosts(posts);
                     updatePaginationUI();
@@ -290,20 +291,62 @@
                 const postCard = document.createElement('div');
                 postCard.className = 'post-card';
 
+                // 根据 visibility 设置按钮文字
+                const visibleText = post.visibility === 'VISIBLE' ? '隐藏' : '取消隐藏';
+
                 postCard.innerHTML = `
-                <div class="post-title">
-                    ${post.title}
-                    <a href="javascript:void(0)" class="delete-link" data-post-id="${post.postId}">删除</a>
-                </div>
-                <div class="post-meta">发布时间：${formatTime(post.publishTime)} | 点赞数：${post.likeCount} | 回复数：${post.replyCount}</div>
-                <div class="post-content">${truncateText(post.content, 100)}</div>`;
+            <div class="post-title">
+                ${post.title}
+                <a href="javascript:void(0)" class="delete-link" data-post-id="${post.postId}">删除</a>
+                <a href="javascript:void(0)" class="visible-link" data-post-id="${post.postId}">${visibleText}</a>
+            </div>
+            <div class="post-meta">发布时间：${formatTime(post.publishTime)} | 点赞数：${post.likeCount} | 回复数：${post.replyCount}</div>
+            <div class="post-content">${truncateText(post.content, 100)}</div>
+        `;
 
                 container.appendChild(postCard);
 
+                // 删除帖子事件
                 postCard.querySelector('.delete-link').addEventListener('click', function () {
                     const postId = this.getAttribute('data-post-id');
                     if (confirm("确定要删除这篇帖子吗？")) {
                         deletePost(postId);
+                    }
+                });
+
+                // 隐藏/取消隐藏按钮事件
+                postCard.querySelector('.visible-link').addEventListener('click', function () {
+                    const postId = this.getAttribute('data-post-id');
+                    const currentVisibility = post.visibility;
+
+                    // 判断当前状态，决定切换为哪种状态
+                    const newVisibility = currentVisibility === 'VISIBLE' ? 'SENDER' : 'VISIBLE';
+
+                    if (confirm(`确定要将这篇帖子设为【${newVisibility === 'VISIBLE' ? '公开' : '隐藏'}】吗？`)) {
+                        fetch(`/api/forum/post/${postId}/sender-visibility?visibility=${newVisibility}`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            credentials: 'include',
+                            body: JSON.stringify({ visibility: newVisibility })
+                        })
+                            .then(response => {
+                                if (!response.ok) {
+                                    return response.text().then(text => {
+                                        throw new Error(text || '操作失败');
+                                    });
+                                }
+                                return response.text();
+                            })
+                            .then(() => {
+                                alert("帖子状态已更新");
+                                loadMyPosts(); // 刷新列表
+                            })
+                            .catch(error => {
+                                console.error("Error:", error);
+                                alert("操作失败：" + error.message);
+                            });
                     }
                 });
             });
