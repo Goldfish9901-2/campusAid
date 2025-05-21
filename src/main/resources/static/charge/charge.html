@@ -75,7 +75,6 @@
   <br>
   <button onclick="handleCharge()">立即充值</button>
 </div>
-
 <script>
   function handleCharge() {
     const amount = document.getElementById("amount").value;
@@ -84,10 +83,8 @@
       return;
     }
 
-    // 构造跳转链接，将金额作为 price 参数
     const redirectUrl = "http://misaka52065.w1.luyouxia.net/api/alipay/pay?price=" + encodeURIComponent(amount);
 
-    // 跳转
     window.location.href = redirectUrl;
   }
 </script>

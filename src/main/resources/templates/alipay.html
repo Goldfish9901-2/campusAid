@@ -169,31 +169,22 @@
 </head>
 <body>
 <div class="login-wrapper">
-    <!-- 逐字动画标题 -->
     <div class="page-title">
         <span class="char">充</span>
         <span class="char">值</span>
         <span class="char">成</span>
         <span class="char">功</span>
     </div>
-
-    <!-- 支付结果卡片 -->
     <div class="container">
         <div class="content">
             <h2>充值成功</h2>
             <div class="info">
                 充值金额：<span th:text="${total_amount} + ' 元'"></span>
             </div>
-            <div class="info">
-                充值时间：<span th:text="${time}"></span>
-            </div>
-
-            <!-- 返回首页按钮 -->
             <button class="return-button" id="return" onclick="window.location.href='/'">返回首页</button>
         </div>
     </div>
 </div>
-
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         document.getElementById("return").onclick = function () {
