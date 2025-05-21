@@ -2,16 +2,195 @@
 <html lang="zh" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>支付成功 - CampusAid</title>
+    <link rel="icon" href="/favicon.jpg">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            font-family: 'Arial', sans-serif;
+            opacity: 0;
+            animation: fadeIn 1.5s ease forwards;
+            background-color: #f4f4f9;
+            background-image: url("/background2.jpg");
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("/background2.jpg");
+            background-size: cover;
+            filter: blur(2px);
+            z-index: -2;
+        }
+
+        body::after {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.6);
+            z-index: -1;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .login-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem;
+            box-sizing: border-box;
+        }
+
+        .page-title {
+            text-align: center;
+            font-family: 'Pacifico', cursive;
+            font-size: 3rem;
+            font-weight: bold;
+            color: #333;
+            white-space: nowrap;
+            margin-bottom: 2rem;
+            text-shadow: 0 1px 0 rgba(192, 192, 192, 0.4),
+            0 2px 0 rgba(176, 176, 176, 0.35),
+            0 3px 0 rgba(160, 160, 160, 0.3),
+            0 4px 0 rgba(144, 144, 144, 0.25),
+            0 5px 8px rgba(0, 0, 0, 0.25);
+        }
+
+        .char {
+            display: inline-block;
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+
+        .char:nth-child(1) { animation: charFadeIn 0.5s ease forwards 0.0s; }
+        .char:nth-child(2) { animation: charFadeIn 0.5s ease forwards 0.1s; }
+        .char:nth-child(3) { animation: charFadeIn 0.5s ease forwards 0.2s; }
+        .char:nth-child(4) { animation: charFadeIn 0.5s ease forwards 0.3s; }
+        .char:nth-child(5) { animation: charFadeIn 0.5s ease forwards 0.4s; }
+
+        @keyframes charFadeIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            max-width: 600px;
+            width: 100%;
+            padding: 2rem;
+            box-sizing: border-box;
+            opacity: 0;
+            animation: formFadeIn 1s ease 0.5s forwards;
+        }
+
+        @keyframes formFadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .content {
+            width: 100%;
+            text-align: center;
+        }
+
+        .content h2 {
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: #2c3e50;
+        }
+
+        .info {
+            font-size: 1.2rem;
+            color: #333;
+            margin: 1rem 0;
+        }
+
+        .info span {
+            font-weight: bold;
+            color: #e67e22;
+        }
+
+        .return-button {
+            margin-top: 2rem;
+            width: 60%;
+            padding: 0.75rem;
+            background-color: #3399ff;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: block;
+            margin: 2rem auto 0;
+            font-family: 'Pacifico', cursive;
+            font-size: 1rem;
+        }
+
+        .return-button:hover {
+            background-color: #0056b3;
+            transform: scale(1.03);
+        }
+
+        .return-button:active {
+            transform: scale(0.98);
+        }
+    </style>
 </head>
 <body>
-<h2>支付成功</h2>
-<div id="value">
-  支付<p th:text="${total_amount}"></p>元
+<div class="login-wrapper">
+    <div class="page-title">
+        <span class="char">充</span>
+        <span class="char">值</span>
+        <span class="char">成</span>
+        <span class="char">功</span>
+    </div>
+    <div class="container">
+        <div class="content">
+            <h2>充值成功</h2>
+            <div class="info">
+                充值金额：<span th:text="${total_amount} + ' 元'"></span>
+            </div>
+            <button class="return-button" id="return" onclick="window.location.href='/'">返回首页</button>
+        </div>
+    </div>
 </div>
-<div id="time">
-  <p th:text="${time}"></p>
-</div>
-
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        document.getElementById("return").onclick = function () {
+            window.location.href = "/forum";
+        };
+    });
+</script>
 </body>
 </html>
