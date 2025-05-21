@@ -562,6 +562,8 @@
                 } else {
                     pagination.hasMore = true;
                 }
+                console.log("当前帖子数据：",posts);
+
                 renderPosts(posts);
                 updatePaginationUI();
             })
@@ -571,6 +573,7 @@
                 document.getElementById("post-list").innerHTML = "<p>加载帖子时出错</p>";
             });
     }
+
     function renderPosts(posts) {
         const postList = document.getElementById("post-list");
         postList.innerHTML = "";
@@ -579,9 +582,8 @@
             postList.innerHTML = "<p>暂无帖子</p>";
             return;
         }
-        posts.forEach(post => {
-            console.log('当前帖子数据:', post);
 
+        posts.forEach(post => {
             const postCard = document.createElement("div");
             postCard.className = "post-card";
             postCard.innerHTML = `
@@ -597,13 +599,14 @@
         `;
 
             const likeButton = postCard.querySelector('.like-button');
-            likeButton.addEventListener('click', function() {
+            likeButton.addEventListener('click', function () {
                 toggleLike(likeButton);
             });
 
             postList.appendChild(postCard);
         });
 
+        // 补足偶数个卡片，保持布局对齐
         const count = posts.length;
         const remainder = count % 2;
         if (remainder !== 0) {
@@ -611,6 +614,7 @@
                 const ghost = document.createElement("div");
                 ghost.className = "post-card";
                 ghost.style.visibility = "hidden";
+                ghost.innerHTML = "&nbsp;";
                 postList.appendChild(ghost);
             }
         }
