@@ -5,6 +5,7 @@ import cn.edu.usst.cs.campusAid.service.ExceptionService;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageConversionException;
 import org.springframework.web.bind.ServletRequestBindingException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -24,24 +25,24 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler({CampusAidException.class})
-    public ApiResponse<?> handleCampusAidException(CampusAidException e) {
+    public ResponseEntity<?> handleCampusAidException(CampusAidException e) {
         log.error("CampusAidException:", e);
-        return ApiResponse.badRequest(e.getMessage());
+        return ResponseEntity.badRequest().body(e.getMessage());
     }
     @ExceptionHandler({ServletRequestBindingException.class})
-    public ApiResponse<?> handleServletRequestBindingException(ServletRequestBindingException e) {
+    public ResponseEntity<?> handleServletRequestBindingException(ServletRequestBindingException e) {
         log.error("ServletRequestBindingException: {}", e.getMessage());
-        return ApiResponse.badRequest("是不是没有登陆（会话参数错误）\n" + e.getMessage());
+        return ResponseEntity.badRequest().body("是不是没有登陆（会话参数错误）\n" + e.getMessage());
     }
 
     @ExceptionHandler({HttpMessageConversionException.class, MissingRequestValueException.class})
-    public ApiResponse<?> handleHttpMessageConversionException(HttpMessageConversionException e) {
+    public ResponseEntity<?> handleHttpMessageConversionException(HttpMessageConversionException e) {
         log.error("HttpMessageConversionException: {}", e.getMessage());
-        return ApiResponse.badRequest("参数错误\n" + e.getMessage());
+        return ResponseEntity.badRequest().body("参数错误\n" + e.getMessage());
     }
 
     @ExceptionHandler({Exception.class})
-    public ApiResponse<?> handleOtherExceptions(Exception e) {
+    public ResponseEntity<?> handleOtherExceptions(Exception e) {
         var reportID =
                 exceptionService.reportException(e);
         StringBuilder message = new StringBuilder("服务器内部错误。编号 " + reportID);
@@ -53,7 +54,7 @@ public class GlobalExceptionHandler {
                         .append(sqlException.getMessage());
             }
         }
-        return ApiResponse.interServerError(message.toString());
+        return ResponseEntity.internalServerError().body(message.toString());
     }
 
 
