@@ -6,8 +6,8 @@
 <mapper namespace="cn.edu.usst.cs.campusAid.mapper.db.shop.ShopMapper">
 
     <!-- 验证用户名密码 -->
-    <select id="verify" parameterType="map" resultType="string">
-        SELECT name FROM shop WHERE name = #{name} AND password = #{password};
+    <select id="verifyInternal" resultType="string">
+        SELECT name FROM shop WHERE name = #{name} AND password = #{password}
     </select>
 
     <!-- 获取商店信息 -->

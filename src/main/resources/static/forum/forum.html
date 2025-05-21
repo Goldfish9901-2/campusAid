@@ -382,7 +382,7 @@
     <div class="logo"></div>
     <div class="title"><strong>欢迎您，<span id="user-id"></span>！</strong></div>
     <button class="user-center"><strong>举报</strong></button>
-    <button class="user-center"><strong>充值</strong></button>
+    <button class="user-center" onclick="window.location.href='/charge'"><strong>充值</strong></button>
     <button class="user-center" onclick="window.location.href='/forum/information'"><strong>个人中心</strong></button>
 
 
@@ -564,6 +564,8 @@
                 } else {
                     pagination.hasMore = true;
                 }
+                console.log("当前帖子数据：",posts);
+
                 renderPosts(posts);
                 updatePaginationUI();
             })
@@ -573,6 +575,7 @@
                 document.getElementById("post-list").innerHTML = "<p>加载帖子时出错</p>";
             });
     }
+
     function renderPosts(posts) {
         const postList = document.getElementById("post-list");
         postList.innerHTML = "";
@@ -581,27 +584,41 @@
             postList.innerHTML = "<p>暂无帖子</p>";
             return;
         }
-        posts.forEach(post => {
-            console.log('当前帖子数据:', post);
 
+        posts.forEach(post => {
             const postCard = document.createElement("div");
             postCard.className = "post-card";
-            postCard.innerHTML = `
-            <h3>${post.title}<span class="post-id"> /${post.authorName} ${post.authorId}</span></h3>
-            <div class="post-time">${formatTime(post.publishTime)}</div>
-            <div class="post-content">${truncateText(post.content, 40)}</div>
-            <div class="post-like">
-                <button class="like-button ${post.liked ? 'liked' : ''}" data-post-id="${post.postId}" data-liked="${post.liked}">
-                    点赞： <span>${post.likeCount}</span>
-                </button>
-                <a href="/forum/reply?postId=${post.postId}">共${post.replyCount}条回复></a>
-            </div>
-        `;
 
-            const likeButton = postCard.querySelector('.like-button');
-            likeButton.addEventListener('click', function() {
-                toggleLike(likeButton);
-            });
+            let contentHTML = "";
+
+            if (post.visibility === 'VISIBLE') {
+                contentHTML = `
+                <h3>${post.title}<span class="post-id"> /${post.authorName} ${post.authorId}</span></h3>
+                <div class="post-time">${formatTime(post.publishTime)}</div>
+                <div class="post-content">${truncateText(post.content, 40)}</div>
+                <div class="post-like">
+                    <button class="like-button ${post.liked ? 'liked' : ''}" data-post-id="${post.postId}" data-liked="${post.liked}">
+                        点赞： <span>${post.likeCount}</span>
+                    </button>
+                    <a href="/forum/reply?postId=${post.postId}">共${post.replyCount}条回复></a>
+                </div>
+            `;
+            } else {
+                contentHTML = `
+                <h3>此帖子已被隐藏</h3>
+            `;
+            }
+
+            postCard.innerHTML = contentHTML;
+
+            if (post.visibility === 'VISIBLE') {
+                const likeButton = postCard.querySelector('.like-button');
+                if (likeButton) {
+                    likeButton.addEventListener('click', function () {
+                        toggleLike(likeButton);
+                    });
+                }
+            }
 
             postList.appendChild(postCard);
         });
@@ -613,6 +630,7 @@
                 const ghost = document.createElement("div");
                 ghost.className = "post-card";
                 ghost.style.visibility = "hidden";
+                ghost.innerHTML = "&nbsp;";
                 postList.appendChild(ghost);
             }
         }

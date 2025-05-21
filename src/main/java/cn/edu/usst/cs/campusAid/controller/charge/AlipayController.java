@@ -78,7 +78,7 @@ public class AlipayController {
             HttpSession session
     ) throws Exception {
         if (existingCharge != null)
-            throw new CampusAidException("请先完成之前的充值");
+            return "<script>window.location.href='/api/alipay/cancel'</script>";
         LocalDateTime chargeTime = LocalDateTime.now();
         Charge.ChargeBuilder builder = Charge.builder();
         long generatedId = getGeneratedId(chargeTime);
@@ -92,7 +92,6 @@ public class AlipayController {
         String body = response.getBody();
         if (body == null)
             throw new CampusAidException("支付失败");
-//        body = body.replace("null://", "");
         log.info(" 支付宝页面： {}", body);
         return body;
     }

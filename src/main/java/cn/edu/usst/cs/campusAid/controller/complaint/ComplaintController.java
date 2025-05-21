@@ -41,15 +41,10 @@ public class ComplaintController {
     }
 
     /**
-     * 处理投诉的控制器方法
-     * 该方法用于处理用户提交的投诉，由管理员执行
-     * 它依赖于用户的身份验证，确保只有管理员可以处理投诉
-     *
-     * @param userId      从会话属性中获取的用户ID，用于验证用户是否为管理员
-     * @param complaintId 投诉的ID，标识特定的投诉事件
-     * @param result      处理投诉的结果，描述投诉处理的结局
-     * @param banLength   封禁时长（如果适用），默认为0，表示不进行封禁
-     * @return 返回处理结果的HTTP响应，包括一个表示处理成功的消息
+     * 管理员处理投诉接口
+     * 1. 需要管理员权限验证
+     * 2. 支持设置处理结果和封禁时长
+     * 3. 返回处理结果信息
      */
     @PostMapping("/process")
     public ResponseEntity<String> processComplaint(
@@ -58,11 +53,12 @@ public class ComplaintController {
             @RequestParam("result") String result,
             @RequestParam(value = "ban_length", defaultValue = "0") int banLength
     ) {
-        // 验证用户是否为管理员
+        // 管理员权限校验
         adminConfig.verifyIsAdmin(userId);
-        // 处理投诉，包括更新投诉状态和执行相应的处理措施
+        
+        // 调用服务层处理投诉
         var submitResult = complaintService.processComplaint(userId, complaintId, result, banLength);
-        // 返回处理成功的响应
+        
         return ResponseEntity.ok(submitResult);
     }
 

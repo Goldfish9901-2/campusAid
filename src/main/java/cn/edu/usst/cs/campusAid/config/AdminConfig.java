@@ -17,7 +17,7 @@ public class AdminConfig {
     String admin;
 
     /**
-     *
+     * 验证用户是否为管理员
      * @param userId 用户id 一般建议传入{@link Long} 或者 {@link String}
      * @throws CampusAidException 用户无权限
      */

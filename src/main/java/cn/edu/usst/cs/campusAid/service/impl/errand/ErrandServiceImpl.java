@@ -10,6 +10,7 @@ import cn.edu.usst.cs.campusAid.mapper.mapstruct.ErrandViewsMapper;
 import cn.edu.usst.cs.campusAid.model.User;
 import cn.edu.usst.cs.campusAid.model.errand.Errand;
 import cn.edu.usst.cs.campusAid.service.CampusAidException;
+import cn.edu.usst.cs.campusAid.service.auth.UserService;
 import cn.edu.usst.cs.campusAid.service.errand.ErrandService;
 import jakarta.annotation.Nullable;
 import org.jetbrains.annotations.NotNull;
@@ -30,16 +31,18 @@ public class ErrandServiceImpl implements ErrandService {
     private final UserMapper userMapper;
     private final ScheduledExecutorService executorService;
     private final AdminConfig adminConfig;
+    private final UserService userService;
 
     public ErrandServiceImpl(ErrandViewsMapper errandViewsMapper,
                              ErrandMapper errandMapper,
                              UserMapper userMapper,
-                             ScheduledExecutorService executorService, AdminConfig adminConfig) {
+                             ScheduledExecutorService executorService, AdminConfig adminConfig, UserService userService) {
         this.errandViewsMapper = errandViewsMapper;
         this.errandMapper = errandMapper;
         this.userMapper = userMapper;
         this.executorService = executorService;
         this.adminConfig = adminConfig;
+        this.userService = userService;
     }
 
     /**
@@ -70,10 +73,13 @@ public class ErrandServiceImpl implements ErrandService {
 
     @Override
     public Long publishOrder(ErrandOrderRequest request, Long userId) {
+        if (userService.getBalance(userId) < request.getFee())
+            throw new CampusAidException("余额不足");
         request.setSenderId(userId);
         Long targetID = errandMapper.minFreeId();
         request.setId(targetID);
         Errand errand = errandViewsMapper.wrapIntoErrand(request);
+
 
         if (targetID != null) {
             errand.setId(targetID);
