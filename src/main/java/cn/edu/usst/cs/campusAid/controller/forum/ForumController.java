@@ -20,12 +20,22 @@ import java.util.Objects;
 @RestController
 @RequestMapping("/api/forum")
 public class ForumController {
-    @Autowired
-    ForumPostService forumPostService;
-    @Autowired
-    private UploadFileSystemService uploadFileSystemService;
-    @Autowired
-    private AdminConfig adminConfig;
+
+    private final ForumPostService forumPostService;
+
+    private final UploadFileSystemService uploadFileSystemService;
+
+    private final AdminConfig adminConfig;
+
+
+    public ForumController(
+            ForumPostService forumPostService,
+            UploadFileSystemService uploadFileSystemService,
+            AdminConfig adminConfig) {
+        this.forumPostService = forumPostService;
+        this.uploadFileSystemService = uploadFileSystemService;
+        this.adminConfig = adminConfig;
+    }
 
     /**
      * 获取论坛帖子列表，支持排序与关键词搜索
@@ -195,9 +205,10 @@ public class ForumController {
             @RequestParam Visibility visibility,
             @SessionAttribute(SessionKeys.LOGIN_ID) Long userId
     ) {
+        adminConfig.verifyIsAdmin(userId);
         // 验证参数合法性
-        if (visibility != Visibility.ADMIN) {
-            throw new CampusAidException("管理员只能设置为隐藏状态");
+        if (visibility == Visibility.SENDER) {
+            throw new CampusAidException("用户已隐藏");
         }
 
         forumPostService.updatePostVisibility(userId, postId, visibility);
@@ -214,9 +225,11 @@ public class ForumController {
             @SessionAttribute(SessionKeys.LOGIN_ID) Long userId
     ) {
         // 验证参数合法性
-        if (visibility != Visibility.SENDER && visibility != Visibility.VISIBLE) {
-            throw new CampusAidException("发帖人只能设置为本人隐藏或公开");
+        if (visibility ==Visibility.ADMIN) {
+            throw new CampusAidException("管理员已隐藏");
         }
+        if(!forumPostService.getPostById(postId).getAuthorId().equals(userId))
+            throw new CampusAidException("无权修改此帖子的可见性");
 
         forumPostService.updatePostVisibility(userId, postId, visibility);
         return ResponseEntity.ok("发帖人可见性修改成功");

@@ -347,15 +347,15 @@ public class ForumPostServiceImpl implements ForumPostService {
             throw new CampusAidException("无效的可见性状态");
         }
 
-        // 如果是管理员操作且不是设置为隐藏状态，拒绝操作
-        if (userService.isAdmin(userId) && visibility != Visibility.ADMIN) {
-            throw new CampusAidException("管理员只能将帖子设置为隐藏状态");
-        }
-
-        // 如果是发帖人操作且尝试设置为管理员隐藏状态，拒绝操作
-        if (blog.getCreator().equals(userId) && visibility == Visibility.ADMIN) {
-            throw new CampusAidException("发帖人不能将帖子设置为管理员隐藏状态");
-        }
+//        // 如果是管理员操作且不是设置为隐藏状态，拒绝操作
+//        if (userService.isAdmin(userId) && visibility != Visibility.ADMIN) {
+//            throw new CampusAidException("管理员只能将帖子设置为隐藏状态");
+//        }
+//
+//        // 如果是发帖人操作且尝试设置为管理员隐藏状态，拒绝操作
+//        if (blog.getCreator().equals(userId) && visibility == Visibility.ADMIN) {
+//            throw new CampusAidException("发帖人不能将帖子设置为管理员隐藏状态");
+//        }
 
         blogMapper.updateVisibility(postId, visibility);
     }
