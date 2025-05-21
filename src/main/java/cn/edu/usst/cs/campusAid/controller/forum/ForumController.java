@@ -252,6 +252,22 @@ public class ForumController {
     }
 
     /**
+     * 删除回复
+     *
+     * @param replyId 回复ID
+     * @param userId  用户ID（从会话中获取）
+     * @return ResponseEntity<String> 操作结果
+     */
+    @DeleteMapping("/reply/{replyId}")
+    public ResponseEntity<String> deleteReply(
+            @PathVariable Long replyId,
+            @SessionAttribute(SessionKeys.LOGIN_ID) Long userId
+    ) {
+        forumPostService.deleteReply(replyId, userId);
+        return ResponseEntity.ok("回复删除成功");
+    }
+
+    /**
      * 获取帖子附件
      *
      * @param userId 用户ID 校验用

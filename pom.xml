@@ -14,6 +14,7 @@
         <spring-boot.version>3.3.10</spring-boot.version>
         <mapstruct.version>1.5.5.Final</mapstruct.version>
     </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -148,6 +149,13 @@
             <artifactId>sensitive-word</artifactId>
             <version>0.26.0</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/org.asciidoctor/asciidoctorj -->
+        <dependency>
+            <groupId>org.asciidoctor</groupId>
+            <artifactId>asciidoctorj</artifactId>
+            <version>3.0.0</version>
+        </dependency>
+
 
     </dependencies>
     <dependencyManagement>
