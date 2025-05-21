@@ -223,6 +223,22 @@ public class ForumController {
     }
 
     /**
+     * 取消隐藏帖子
+     */
+    @PostMapping("/post/{postId}/unhide")
+    public ResponseEntity<String> unhidePost(
+            @PathVariable Long postId,
+            @SessionAttribute(SessionKeys.LOGIN_ID) Long userId
+    ) {
+        ForumPostPreview post = forumPostService.getPostById(postId);
+        if (!Objects.equals(post.getAuthorId(),  userId))
+            adminConfig.verifyIsAdmin(userId);
+        // 设置可见性为 VISIBLE，表示取消隐藏
+        forumPostService.updatePostVisibility(userId, postId, Visibility.VISIBLE);
+        return ResponseEntity.ok("帖子已成功取消隐藏");
+    }
+
+    /**
      * 获取帖子附件
      *
      * @param userId 用户ID 校验用
