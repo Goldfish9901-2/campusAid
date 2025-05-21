@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>CampusAid-充值</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f9;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background-image: url("/background2.jpg");
+      background-size: cover;
+      background-position: center;
+      position: relative;
+    }
+
+    body::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(255, 255, 255, 0.7);
+      z-index: -1;
+    }
+
+    .container {
+      background-color: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      max-width: 400px;
+      width: 100%;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+    }
+
+    input[type="number"] {
+      width: 80%;
+      padding: 10px;
+      margin-bottom: 20px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 16px;
+    }
+
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      color: white;
+      background-color: #3399ff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>充值</h1>
+  <input type="number" id="amount" placeholder="请输入充值金额" min="0.01" step="0.01">
+  <br>
+  <button onclick="handleCharge()">立即充值</button>
+</div>
+
+<script>
+  function handleCharge() {
+    const amount = document.getElementById("amount").value;
+    if (!amount || parseFloat(amount) <= 0) {
+      alert("请输入有效的充值金额");
+      return;
+    }
+
+    // 构造跳转链接，将金额作为 price 参数
+    const redirectUrl = "http://misaka52065.w1.luyouxia.net/api/alipay/pay?price=" + encodeURIComponent(amount);
+
+    // 跳转
+    window.location.href = redirectUrl;
+  }
+</script>
+</body>
+</html>
