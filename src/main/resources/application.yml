@@ -73,8 +73,7 @@ mybatis:
     cn.edu.usst.campusAid.model.shop
 
 campus_aid:
-  admin: 2235032128
+  admin: 2235062121
   delay_threads: 10
 app:
   upload-dir: uploads
-
