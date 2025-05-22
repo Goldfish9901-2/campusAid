@@ -1,4 +1,4 @@
-package cn.edu.usst.cs.campusAid.interceptor;
+package cn.edu.usst.cs.campusAid.interceptor.view;
 
 import cn.edu.usst.cs.campusAid.controller.SessionKeys;
 import cn.edu.usst.cs.campusAid.mapper.db.complaint.BanMapper;
@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public abstract class BanInterceptor extends BasicInterceptor {
+public abstract class TemplatedBanInterceptor extends ViewInterceptor {
     @NonNull
     protected abstract BanMapper getBanMapper();
 

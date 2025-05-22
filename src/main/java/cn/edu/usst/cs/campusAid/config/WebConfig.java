@@ -1,8 +1,9 @@
 package cn.edu.usst.cs.campusAid.config;
 
-import cn.edu.usst.cs.campusAid.interceptor.AuthInterceptor;
-import cn.edu.usst.cs.campusAid.interceptor.ErrandInterceptor;
-import cn.edu.usst.cs.campusAid.interceptor.ForumInterceptor;
+import cn.edu.usst.cs.campusAid.interceptor.api.AuthInterceptor;
+import cn.edu.usst.cs.campusAid.interceptor.api.BanInterceptor;
+import cn.edu.usst.cs.campusAid.interceptor.view.ErrandInterceptorTemplated;
+import cn.edu.usst.cs.campusAid.interceptor.view.ForumInterceptorTemplated;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -18,11 +19,13 @@ import java.util.List;
 public class WebConfig implements WebMvcConfigurer {
 
     @Autowired
-    private ForumInterceptor forumInterceptor;
+    private ForumInterceptorTemplated forumInterceptor;
     @Autowired
-    private ErrandInterceptor errandInterceptor;
+    private ErrandInterceptorTemplated errandInterceptor;
     @Autowired
     private AuthInterceptor authInterceptor;
+    @Autowired
+    private BanInterceptor banInterceptor;
 
     /**
      * campusaid-web/src/main/resources/static里的文件若需要在公网访问，需要在这里注册
@@ -71,11 +74,9 @@ public class WebConfig implements WebMvcConfigurer {
         // 配置拦截器
         registry
                 .addInterceptor(authInterceptor)
-
                 .addPathPatterns("/api/**")
                 .excludePathPatterns("/api/login/**")
                 .excludePathPatterns("/api/register/**")
-
         ;
         registry.addInterceptor(forumInterceptor)
                 .addPathPatterns("/forum/**")
@@ -84,6 +85,9 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addInterceptor(errandInterceptor)
                 .addPathPatterns("/api/errand/**")
                 .addPathPatterns("/errand/**")
+        ;
+        registry.addInterceptor(banInterceptor)
+                .addPathPatterns("/api/**")
         ;
     }
 

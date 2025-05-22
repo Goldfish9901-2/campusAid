@@ -1,4 +1,4 @@
-package cn.edu.usst.cs.campusAid.interceptor;
+package cn.edu.usst.cs.campusAid.interceptor.api;
 
 import cn.edu.usst.cs.campusAid.controller.SessionKeys;
 import cn.edu.usst.cs.campusAid.service.auth.LoginService;
@@ -7,28 +7,17 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
-import org.thymeleaf.TemplateEngine;
-import org.thymeleaf.spring6.SpringTemplateEngine;
 
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 
 
 @Component
-public class AuthInterceptor extends BasicInterceptor {
-    private final SpringTemplateEngine templateEngine;
-    String redirect_str = URLEncoder.encode("/error?message=未登录", StandardCharsets.UTF_8);
+public class AuthInterceptor extends ApiInterceptor {
 
-    public AuthInterceptor(SpringTemplateEngine templateEngine) {
+    public AuthInterceptor() {
         super();
-        this.templateEngine = templateEngine;
     }
 
-    @Override
-    protected TemplateEngine getTemplateEngine() {
-        return templateEngine;
-    }
 
     @Override
     public boolean preHandle(

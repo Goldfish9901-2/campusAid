@@ -1,4 +1,4 @@
-package cn.edu.usst.cs.campusAid.interceptor;
+package cn.edu.usst.cs.campusAid.interceptor.view;
 
 import cn.edu.usst.cs.campusAid.mapper.db.complaint.BanMapper;
 import cn.edu.usst.cs.campusAid.model.complaint.BanBlock;
@@ -9,11 +9,11 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 
 @Component
-public class ErrandInterceptor extends BanInterceptor {
+public class ErrandInterceptorTemplated extends TemplatedBanInterceptor {
     private final SpringTemplateEngine templateEngine;
     private final BanMapper banMapper;
 
-    public ErrandInterceptor(SpringTemplateEngine templateEngine, BanMapper banMapper) {
+    public ErrandInterceptorTemplated(SpringTemplateEngine templateEngine, BanMapper banMapper) {
         this.templateEngine = templateEngine;
         this.banMapper = banMapper;
     }

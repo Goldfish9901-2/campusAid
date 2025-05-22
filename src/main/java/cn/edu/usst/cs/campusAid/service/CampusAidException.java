@@ -28,7 +28,7 @@ public class CampusAidException extends RuntimeException {
      * {@link CampusAidException}
      */
     public CampusAidException(Throwable cause) {
-        super(cause);
+        this(cause.getMessage(), cause);
     }
 
     /**
