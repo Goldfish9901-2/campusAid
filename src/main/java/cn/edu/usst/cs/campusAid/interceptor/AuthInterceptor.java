@@ -5,29 +5,29 @@ import cn.edu.usst.cs.campusAid.service.auth.LoginService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import org.json.JSONObject;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
-import org.springframework.web.servlet.HandlerInterceptor;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.spring6.SpringTemplateEngine;
 
-import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 
 
 @Component
-public class AuthInterceptor implements HandlerInterceptor {
+public class AuthInterceptor extends BasicInterceptor {
+    private final SpringTemplateEngine templateEngine;
     String redirect_str = URLEncoder.encode("/error?message=未登录", StandardCharsets.UTF_8);
 
+    public AuthInterceptor(SpringTemplateEngine templateEngine) {
+        super();
+        this.templateEngine = templateEngine;
+    }
 
-    static String buildJsonResponse(int code, String message) {
-        JSONObject json = new JSONObject();
-        json.put("code", code);
-        json.put("message", message);
-        json.put("data", JSONObject.NULL);
-        return json.toString();
+    @Override
+    protected TemplateEngine getTemplateEngine() {
+        return templateEngine;
     }
 
     @Override
@@ -35,7 +35,7 @@ public class AuthInterceptor implements HandlerInterceptor {
             HttpServletRequest request,
             @NonNull HttpServletResponse response,
             @NonNull Object handler
-    ) throws IOException {
+    ) {
         String lastVerifiedKey = LoginService.LAST_VERIFY_TIME;
         HttpSession session = request.getSession(false);
 
@@ -45,22 +45,19 @@ public class AuthInterceptor implements HandlerInterceptor {
 
 
         if (session == null) {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.getWriter().write(buildJsonResponse(401, "未登录或会话已失效"));
+            processResponse(response, HttpServletResponse.SC_UNAUTHORIZED, "未登录，请登录");
             return false;
         }
 
 
         Object obj = session.getAttribute(SessionKeys.LOGIN_TIME);
         if (!(obj instanceof LocalDateTime time)) {
-            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-            response.getWriter().write(buildJsonResponse(403, "未完成验证，禁止访问"));
+            processResponse(response, HttpServletResponse.SC_UNAUTHORIZED, "会话状态异常，请重新登录");
             return false;
         }
 
         if (time.plusMinutes(active).isBefore(now)) {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.getWriter().write(buildJsonResponse(401, "登录已过期，请重新登录"));
+            processResponse(response, HttpServletResponse.SC_UNAUTHORIZED, "会话已过期，请重新登录");
             return false;
         }
         session.setMaxInactiveInterval(60 * active);

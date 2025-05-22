@@ -4,15 +4,23 @@ import cn.edu.usst.cs.campusAid.mapper.db.complaint.BanMapper;
 import cn.edu.usst.cs.campusAid.model.complaint.BanBlock;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.spring6.SpringTemplateEngine;
 
 @Component
 public class ForumInterceptor extends BanInterceptor {
 
+    private final SpringTemplateEngine templateEngine;
     private final BanMapper banMapper;
 
-    public ForumInterceptor(BanMapper banMapper) {
-        super();
+    public ForumInterceptor(SpringTemplateEngine templateEngine, BanMapper banMapper) {
+        this.templateEngine = templateEngine;
         this.banMapper = banMapper;
+    }
+
+    @Override
+    protected TemplateEngine getTemplateEngine() {
+        return templateEngine;
     }
 
     @NotNull
