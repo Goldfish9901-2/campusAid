@@ -2,6 +2,7 @@ package cn.edu.usst.cs.campusAid.service.impl.complaint;
 
 import cn.edu.usst.cs.campusAid.config.AdminConfig;
 import cn.edu.usst.cs.campusAid.dto.complaint.ComplaintRequest;
+import cn.edu.usst.cs.campusAid.mapper.db.UserMapper;
 import cn.edu.usst.cs.campusAid.mapper.db.complaint.BanMapper;
 import cn.edu.usst.cs.campusAid.mapper.db.complaint.ComplaintMapper;
 import cn.edu.usst.cs.campusAid.mapper.db.errand.ErrandMapper;
@@ -10,6 +11,7 @@ import cn.edu.usst.cs.campusAid.mapper.db.shop.OrderMapper;
 import cn.edu.usst.cs.campusAid.mapper.db.shop.ShopMapper;
 import cn.edu.usst.cs.campusAid.mapper.db.shop.TransactionMapper;
 import cn.edu.usst.cs.campusAid.mapper.mapstruct.ComplaintDTOMapper;
+import cn.edu.usst.cs.campusAid.model.User;
 import cn.edu.usst.cs.campusAid.model.complaint.Ban;
 import cn.edu.usst.cs.campusAid.model.complaint.BanBlock;
 import cn.edu.usst.cs.campusAid.model.complaint.Complaint;
@@ -32,6 +34,7 @@ public class ComplaintServiceImpl
     private final OrderMapper orderMapper;
     private final TransactionMapper transactionMapper;
     private final BlogMapper blogMapper;
+    private final UserMapper userMapper;
     private BanMapper banMapper;
 
     public ComplaintServiceImpl(BanMapper banMapper,
@@ -42,7 +45,7 @@ public class ComplaintServiceImpl
                                 ErrandMapper errandMapper,
                                 AdminConfig adminConfig,
                                 ComplaintMapper complaintMapper,
-                                ComplaintDTOMapper complaintDTOMapper) {
+                                ComplaintDTOMapper complaintDTOMapper, UserMapper userMapper) {
         this.banMapper = banMapper;
         this.blogMapper = blogMapper;
         this.transactionMapper = transactionMapper;
@@ -52,6 +55,7 @@ public class ComplaintServiceImpl
         this.adminConfig = adminConfig;
         this.complaintMapper = complaintMapper;
         this.complaintDTOMapper = complaintDTOMapper;
+        this.userMapper = userMapper;
     }
 
     @Override
@@ -109,6 +113,10 @@ public class ComplaintServiceImpl
             default:
                 throw new CampusAidException("未知投诉类型");
         }
+        User user = userMapper.getUserById(targetUserId);
+        if (user == null)
+            throw new CampusAidException("用户不存在");
+
         LocalDateTime banReleaseTime = LocalDateTime.now().plusDays(banLength);
         BanBlock banBlock =
                 switch (complaint.getBlock()) {
@@ -118,6 +126,10 @@ public class ComplaintServiceImpl
                 };
         if (banBlock == null)
             throw new CampusAidException("未知投诉类型");
+        List<Ban> validBans = banMapper.countBan(targetUserId, banBlock);
+        if (!validBans.isEmpty()) {
+            throw new CampusAidException("用户已存在封禁记录");
+        }
         banBuilder
                 .userId(targetUserId)
                 .lengthByDay(banLength)
