@@ -17,7 +17,7 @@ public class AdminConfig {
     String admin;
     /**
      * 验证用户是否为管理员
-     * @see AdminConfig#verifyIsAdmin(String) 
+     * @see AdminConfig#verifyIsAdmin(String)
      */
     
     public void verifyIsAdmin(Long userId){
