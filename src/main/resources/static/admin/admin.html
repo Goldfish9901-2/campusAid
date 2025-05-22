@@ -4,265 +4,55 @@
   <meta charset="UTF-8" />
   <title>CampusAid-管理员界面</title>
   <link rel="icon" href="/favicon.jpg" />
-  <style>
-    * {
-      box-sizing: border-box;
-    }
+  <style>  .complaint-table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+  }
 
-    body {
-      margin: 0;
-      font-family: 'Arial', sans-serif;
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-      background-image: url("/background2.jpg");
-      background-size: cover;
-      background-position: center;
-    }
+  .complaint-table th,
+  .complaint-table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+  }
 
-    .header {
-      display: flex;
-      align-items: center;
-      background-color: transparent;
-      padding: 10px;
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      height: 70px;
-    }
-
-    .logo {
-      width: 50px;
-      height: 50px;
-      background-image: url('/favicon.jpg');
-      background-size: cover;
-      border-radius: 50%;
-    }
-
-    .title {
-      flex-grow: 1;
-      text-align: left;
-      font-size: 38px;
-      padding-left: 180px;
-      font-family: 'Pacifico', cursive;
-    }
-
-    .user-center {
-      padding: 10px 20px;
-      background-color: transparent;
-      border: none;
-      border-radius: 6px;
-      font-size: 19px;
-      cursor: pointer;
-    }
-
-    .main-container {
-      display: flex;
-      flex: 1;
-      overflow: hidden;
-      background-color: transparent;
-    }
-
-    .right-panel {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-    }
-
-    .search-wrapper {
-      padding: 10px;
-      background-color: transparent;
-      text-align: left;
-      position: relative;
-    }
-
-    .search-bar {
-      display: inline-flex;
-      flex-direction: column;
-      align-items: stretch;
-      gap: 10px;
-      max-width: 600px;
-      width: 100%;
-      background-color: transparent;
-      padding: 10px;
-      border-radius: 8px;
-    }
-
-    .search-select,
-    .search-input,
-    .search-button {
-      padding: 8px 12px;
-      font-size: 14px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-    }
-
-    .search-input {
-      flex: 1;
-    }
-
-    .search-button:hover {
-      background-color: #C0C0C0;
-    }
-
-    .content-container {
-      flex: 1;
-      padding: 20px;
-      overflow-y: auto;
-      position: relative;
-    }
-
-    .post-list {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-top: -20px;
-    }
-
-    .post-card {
-      flex: 0 0 calc(50% - 10px);
-      box-sizing: border-box;
-      background-color: white;
-      border: 1px solid #eee;
-      padding: 10px;
-      border-radius: 8px;
-      position: relative;
-      transition: all 0.3s ease;
-      transform-origin: center;
-      will-change: transform;
-    }
-
-    .post-card:hover {
-      transform: scale(1.03);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-      z-index: 10;
-    }
-
-    .post-card h3 {
-      margin: 0;
-      font-size: 18px;
-    }
-
-    .post-card .post-id {
-      color: #777;
-      font-size: 14px;
-      margin-left: 8px;
-    }
-
-    .post-card .post-time {
-      font-size: 12px;
-      color: #999;
-      margin-top: 4px;
-    }
-
-    .post-card .post-content {
-      font-size: 14px;
-      color: #555;
-      margin-top: 4px;
-    }
-
-    .pagination {
-      position: fixed;
-      bottom: 20px;
-      left: 55%;
-      transform: translateX(-50%);
-      z-index: 1000;
-      background-color: white;
-      padding: 6px 12px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-      border-radius: 6px;
-      display: flex;
-      align-items: center;
-      font-size: 14px;
-    }
-
-    .pagination button {
-      padding: 8px 16px;
-      margin: 0 5px;
-      background-color: #f1f1f1;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-
-    .pagination button:disabled {
-      background-color: #e1e1e1;
-      color: #aaa;
-      cursor: not-allowed;
-    }
+  .complaint-table thead th {
+    background-color: #f2f2f2;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+  }
   </style>
 </head>
 <body>
-<div class="header">
-  <div class="logo"></div>
-  <div class="title"><strong>欢迎您，<span id="user-id"></span>！</strong></div>
-  <button class="user-center"><strong>查看用户列表</strong></button>
-  <button class="user-center"><strong>查看举报列表</strong></button>
-  <button class="user-center" onclick="window.location.href='/forum/information'"><strong>个人中心</strong></button>
-</div>
-<div class="main-container">
-  <div class="right-panel">
-    <div class="search-wrapper">
-      <div class="search-bar">
-        <div class="search-controls">
-          <select class="search-select" id="search-type">
-            <option value="TITLE">标题</option>
-            <option value="CREATOR">学号</option>
-            <option value="TAG">标签</option>
-          </select>
-          <label>
-            <input type="text" class="search-input" id="search-keyword" placeholder="请输入搜索内容">
-          </label>
-          <button class="search-button" id="search-btn">🔍 搜索</button>
-        </div>
-        <div class="filter-radios">
-          <label class="radio-option">
-            <input type="radio" name="sortType" value="TIME" checked>
-            <span>发布时间</span>
-          </label>
-          <label class="radio-option">
-            <input type="radio" name="sortType" value="LIKE_COUNT">
-            <span>点赞量</span>
-          </label>
-          <label class="radio-option">
-            <input type="radio" name="sortType" value="REPLY_COUNT">
-            <span>回复量</span>
-          </label>
-        </div>
-      </div>
-    </div>
-    <div class="content-container">
-      <div id="post-list" class="post-list"></div>
-      <div class="pagination">
-        <button id="prev-page" disabled>上一页</button>
-        <span class="page-info">第 <span id="current-page">1</span> 页</span>
-        <button id="next-page">下一页</button>
-        <div class="page-jump">
-          <span>跳至</span>
-          <input type="number" id="page-input" min="1" value="1">
-          <span>页</span>
-          <button id="jump-btn">跳转</button>
-        </div>
-      </div>
-    </div>
-  </div>
+<h1 id="admin-title">您是管理员</h1>
+
+<!-- 固定表头 -->
+<table id="complaint-table-header" class="complaint-table">
+  <thead>
+  <tr>
+    <th>投诉ID</th>
+    <th>板块</th>
+    <th>标题</th>
+    <th>描述</th>
+    <th>用户ID</th>
+    <th>处理结果</th>
+  </tr>
+  </thead>
+</table>
+
+<!-- 可滚动内容区域 -->
+<div class="complaint-content" style="max-height: 400px; overflow-y: auto;">
+  <table id="complaint-table-body" class="complaint-table">
+    <tbody id="complaint-table-body-content"></tbody>
+  </table>
 </div>
 <script>
-  const pagination = {
-    currentPage: 0,
-    hasMore: true,
-    isLoading: false
-  };
-  const searchParams = {
-    keyword: "",
-    type: "TITLE",
-    sortBy: "TIME"
-  };
   document.addEventListener('DOMContentLoaded', function () {
+    // 获取用户ID并更新标题
     fetch('/api/user', {
       method: 'GET',
-      headers: { 'Content-Type': 'application/json' },
       credentials: 'include'
     })
             .then(response => {
@@ -270,234 +60,61 @@
               return response.json();
             })
             .then(user => {
-              document.getElementById('user-id').textContent = user["name"];
+              const userId = user.id || user.userId || '未知ID';
+              document.getElementById('admin-title').textContent = `您是管理员（用户ID: ${userId}）`;
+
+              // 加载投诉列表
+              return fetch('/api/complaint', {
+                method: 'GET',
+                credentials: 'include'
+              });
             })
-            .catch(error => {
-              console.error('Error:', error);
-              document.getElementById('user-id').textContent = '用户';
-            });
-
-    loadPosts();
-    const radioButtons = document.querySelectorAll('input[name="sortType"]');
-    radioButtons.forEach(radio => {
-      radio.addEventListener('change', function() {
-        if (this.checked) {
-          searchParams.sortBy = this.value;
-          pagination.currentPage = 0;
-          loadPosts();
-        }
-      });
-    });
-    document.getElementById('search-btn').addEventListener('click', function() {
-      searchParams.keyword = document.getElementById('search-keyword').value;
-      searchParams.type = document.getElementById('search-type').value;
-      searchParams.sortBy = document.querySelector('input[name="sortType"]:checked').value;
-
-      pagination.currentPage = 0;
-      pagination.hasMore = true;
-
-      loadPosts();
-    });
-    document.getElementById('prev-page').addEventListener('click', function() {
-      if (pagination.currentPage > 0) {
-        pagination.currentPage--;
-        loadPosts();
-      }
-    });
-    document.getElementById('next-page').addEventListener('click', function() {
-      if (pagination.hasMore) {
-        pagination.currentPage++;
-        loadPosts();
-      }
-    });
-    document.getElementById('jump-btn').addEventListener('click', function() {
-      const pageInput = document.getElementById('page-input');
-      let targetPage = parseInt(pageInput.value) - 1; // 转为0-based
-
-      if (isNaN(targetPage)) {
-        alert('请输入有效的页码');
-        return;
-      }
-      if (targetPage < 0) {
-        targetPage = 0;
-      }
-      if (targetPage !== pagination.currentPage) {
-        pagination.currentPage = targetPage;
-        loadPosts();
-      }
-    });
-    document.getElementById('page-input').addEventListener('keypress', function(e) {
-      if (e.key === 'Enter') {
-        document.getElementById('jump-btn').click();
-      }
-    });
-    document.getElementById('view-my-posts').addEventListener('click', function() {
-      window.location.href = '/forum/blog';
-    });
-
-    document.getElementById('add-new-post').addEventListener('click', function() {
-      window.location.href = '/forum/post';
-    });
-  });
-  function loadPosts() {
-    if (pagination.isLoading) return;
-    pagination.isLoading = true;
-    document.getElementById('post-list').innerHTML = '<p>加载中...</p>';
-
-    const { keyword, type, sortBy } = searchParams;
-    const page = pagination.currentPage;
-    fetch(`/api/forum/posts?keyword=${encodeURIComponent(keyword)}&type=${type}&sortBy=${sortBy}&page=${page}`, {
-      method: 'GET',
-      credentials: 'include'
-    })
-            .then(response => {
-              if (!response.ok) throw new Error('网络响应失败');
-              return response.json();
-            })
-            .then(posts => {
-              pagination.isLoading = false;
-
-              if (posts.length < 10) {
-                pagination.hasMore = false;
-              } else {
-                pagination.hasMore = true;
-              }
-              console.log("当前帖子数据：",posts);
-
-              renderPosts(posts);
-              updatePaginationUI();
-            })
-            .catch(error => {
-              pagination.isLoading = false;
-              console.error("获取帖子失败:", error);
-              document.getElementById("post-list").innerHTML = "<p>加载帖子时出错</p>";
-            });
-  }
-
-  function renderPosts(posts) {
-    const postList = document.getElementById("post-list");
-    postList.innerHTML = "";
-
-    if (posts.length === 0) {
-      postList.innerHTML = "<p>暂无帖子</p>";
-      return;
-    }
-
-    posts.forEach(post => {
-      const postCard = document.createElement("div");
-      postCard.className = "post-card";
-
-      let contentHTML = "";
-
-      if (post.visibility === 'VISIBLE') {
-        contentHTML = `
-                <h3>${post.title}<span class="post-id"> /${post.authorName} ${post.authorId}</span></h3>
-                <div class="post-time">${formatTime(post.publishTime)}</div>
-                <div class="post-content">${truncateText(post.content, 40)}</div>
-                <div class="post-like">
-                    <button class="like-button ${post.liked ? 'liked' : ''}" data-post-id="${post.postId}" data-liked="${post.liked}">
-                        点赞： <span>${post.likeCount}</span>
-                    </button>
-                    <a href="/forum/reply?postId=${post.postId}">共${post.replyCount}条回复></a>
-                </div>
-            `;
-      } else {
-        contentHTML = `
-                <h3>此帖子已被隐藏</h3>
-            `;
-      }
-
-      postCard.innerHTML = contentHTML;
-
-      if (post.visibility === 'VISIBLE') {
-        const likeButton = postCard.querySelector('.like-button');
-        if (likeButton) {
-          likeButton.addEventListener('click', function () {
-            toggleLike(likeButton);
-          });
-        }
-      }
-
-      postList.appendChild(postCard);
-    });
-
-    const count = posts.length;
-    const remainder = count % 2;
-    if (remainder !== 0) {
-      for (let i = 0; i < 2 - remainder; i++) {
-        const ghost = document.createElement("div");
-        ghost.className = "post-card";
-        ghost.style.visibility = "hidden";
-        ghost.innerHTML = "&nbsp;";
-        postList.appendChild(ghost);
-      }
-    }
-  }
-
-  function toggleLike(button) {
-    const userId = document.getElementById('user-id').textContent;
-    if (!userId || userId === '用户') {
-      alert('请先登录');
-      return;
-    }
-
-    const postId = button.getAttribute('data-post-id');
-    const isLiked = button.getAttribute('data-liked') === 'true';
-    const action = isLiked ? 'unlike' : 'like';
-    const countSpan = button.querySelector('span');
-
-    button.disabled = true;
-
-    button.classList.toggle('liked');
-    button.setAttribute('data-liked', !isLiked);
-    countSpan.textContent = isLiked
-            ? parseInt(countSpan.textContent) - 1
-            : parseInt(countSpan.textContent) + 1;
-
-    fetch(`/api/forum/post/${postId}/${action}`, {
-      method: 'POST',
-      credentials: 'include'
-    })
             .then(response => {
               if (!response.ok) {
                 return response.text().then(text => {
-                  throw new Error(text || '操作失败');
+                  throw new Error(`请求失败: ${text}`);
                 });
               }
-              return response.text();
+              return response.json();
             })
-            .then(text => {
-              console.log(text);
+            .then(data => {
+              console.log("收到的投诉数据：", data);
+
+              const tbody = document.querySelector('#complaint-table tbody');
+              tbody.innerHTML = '';
+
+              if (data.length === 0) {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `<td colspan="6">暂无投诉记录</td>`;
+                tbody.appendChild(tr);
+                return;
+              }
+
+              data.forEach(complaint => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+        <td>${complaint.id}</td>
+        <td>${complaint.block || '--'}</td>
+        <td>${complaint.title || '无标题'}</td>
+        <td>${complaint.description || '无描述'}</td>
+        <td>${complaint.senderId}</td>
+        <td>${complaint.result || '-'}</td>
+    `;
+                tbody.appendChild(tr);
+              });
+
             })
             .catch(error => {
               console.error('Error:', error);
-              button.classList.toggle('liked');
-              button.setAttribute('data-liked', isLiked);
-              countSpan.textContent = isLiked
-                      ? parseInt(countSpan.textContent) + 1
-                      : parseInt(countSpan.textContent) - 1;
-              alert('操作失败: ' + error.message);
-            })
-            .finally(() => {
-              button.disabled = false;
+              alert('加载数据失败，请确认是否为管理员并重新登录。');
             });
-  }
-  function updatePaginationUI() {
-    const currentPageElement = document.getElementById('current-page');
-    const pageInput = document.getElementById('page-input');
+  });
 
-    currentPageElement.textContent = pagination.currentPage + 1;
-    pageInput.value = pagination.currentPage + 1;
-
-    document.getElementById('prev-page').disabled = pagination.currentPage === 0;
-    document.getElementById('next-page').disabled = !pagination.hasMore;
-  }
-  function truncateText(text, maxLength) {
-    return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
-  }
   function formatTime(timeStr) {
+    if (!timeStr) return '--';
     return timeStr.replace("T", " ").substring(0, 16);
   }
+
 </script>
 </body>
 </html>
