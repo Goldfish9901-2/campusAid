@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.edu.usst.cs.campusAid.mapper.db.complaint.BanMapper">
+    <insert id="insert">
+        INSERT INTO ban (
+            user_id,
+            release_time,
+            length_by_day,
+            reason,
+            block
+        ) VALUES (
+                     #{userId},
+                     #{releaseTime},
+                     #{lengthByDay},
+                     #{reason},
+                     #{block, typeHandler=org.apache.ibatis.type.EnumTypeHandler}
+                 )
+    </insert>
+</mapper>

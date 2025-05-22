@@ -1,5 +1,6 @@
 package cn.edu.usst.cs.campusAid.controller.auth;
 
+import cn.edu.usst.cs.campusAid.config.AdminConfig;
 import cn.edu.usst.cs.campusAid.controller.SessionKeys;
 import cn.edu.usst.cs.campusAid.dto.auth.VerifyRequest;
 import cn.edu.usst.cs.campusAid.dto.ApiResponse;
@@ -18,6 +19,8 @@ public class RegisterController {
 
     @Autowired
     private RegisterService registerService;
+    @Autowired
+    private AdminConfig adminConfig;
 
     @PostMapping("/")
     public ApiResponse<String> sendRegisterCode(
