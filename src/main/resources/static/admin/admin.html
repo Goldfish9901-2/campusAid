@@ -4,50 +4,116 @@
   <meta charset="UTF-8" />
   <title>CampusAid-管理员界面</title>
   <link rel="icon" href="/favicon.jpg" />
-  <style>  .complaint-table {
-    width: 100%;
-    border-collapse: collapse;
-    table-layout: fixed;
-  }
+  <style>
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      overflow: hidden; /* 禁止整个页面滚动 */
+    }
 
-  .complaint-table th,
-  .complaint-table td {
-    padding: 12px;
-    text-align: left;
-    border-bottom: 1px solid #ddd;
-  }
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f9f9f9;
+      display: flex;
+      flex-direction: column;
+      height: 100%; /* 占满屏幕高度 */
+    }
 
-  .complaint-table thead th {
-    background-color: #f2f2f2;
-    position: sticky;
-    top: 0;
-    z-index: 1;
-  }
+    h1 {
+      color: #333;
+      margin-top: 0;
+      padding: 20px;
+      background-color: white;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      z-index: 2;
+    }
+
+    .complaint-table {
+      width: 100%;
+      border-collapse: collapse;
+      table-layout: fixed;
+    }
+
+    .complaint-table th,
+    .complaint-table td {
+      padding: 12px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .complaint-table thead th {
+      background-color: #f2f2f2;
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+
+    .complaint-content {
+      flex: 1;
+      overflow-y: auto;
+      border: 1px solid #ddd;
+      background-color: white;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      margin: 0 20px 20px 20px;
+      padding: 0;
+    }
+
+    table tbody tr:hover {
+      background-color: #f5f5f5;
+    }
+
+    .back-button {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 10px 20px;
+      background-color: #007bff;
+      color: white;
+      text-decoration: none;
+      border-radius: 4px;
+      font-size: 14px;
+      z-index: 1000;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      transition: background-color 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .back-button:hover {
+      background-color: #0056b3;
+    }
   </style>
 </head>
+
 <body>
 <h1 id="admin-title">您是管理员</h1>
 
-<!-- 固定表头 -->
-<table id="complaint-table-header" class="complaint-table">
-  <thead>
-  <tr>
-    <th>投诉ID</th>
-    <th>板块</th>
-    <th>标题</th>
-    <th>描述</th>
-    <th>用户ID</th>
-    <th>处理结果</th>
-  </tr>
-  </thead>
-</table>
+<!-- 返回论坛按钮 -->
+<a href="/forum.html" class="back-button">← 返回论坛</a>
 
-<!-- 可滚动内容区域 -->
-<div class="complaint-content" style="max-height: 400px; overflow-y: auto;">
-  <table id="complaint-table-body" class="complaint-table">
+<!-- 固定表头 + 内容表格合并为一个表格 -->
+<div class="complaint-content">
+  <table id="complaint-table" class="complaint-table">
+    <thead>
+    <tr>
+      <th style="width: 6%">投诉ID</th>
+      <th style="width: 12%">板块</th>
+      <th style="width: 15%">标题</th>
+      <th style="width: 40%">描述</th>
+      <th style="width: 12%">用户ID</th>
+      <th style="width: 15%">处理结果</th>
+    </tr>
+    </thead>
     <tbody id="complaint-table-body-content"></tbody>
   </table>
 </div>
+
 <script>
   document.addEventListener('DOMContentLoaded', function () {
     // 获取用户ID并更新标题
@@ -80,12 +146,12 @@
             .then(data => {
               console.log("收到的投诉数据：", data);
 
-              const tbody = document.querySelector('#complaint-table tbody');
+              const tbody = document.querySelector('#complaint-table-body-content');
               tbody.innerHTML = '';
 
               if (data.length === 0) {
                 const tr = document.createElement('tr');
-                tr.innerHTML = `<td colspan="6">暂无投诉记录</td>`;
+                tr.innerHTML = `<td colspan="6" style="text-align:center; padding: 20px;">暂无投诉记录</td>`;
                 tbody.appendChild(tr);
                 return;
               }
@@ -93,28 +159,21 @@
               data.forEach(complaint => {
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
-        <td>${complaint.id}</td>
-        <td>${complaint.block || '--'}</td>
-        <td>${complaint.title || '无标题'}</td>
-        <td>${complaint.description || '无描述'}</td>
-        <td>${complaint.senderId}</td>
-        <td>${complaint.result || '-'}</td>
-    `;
+              <td>${complaint.id}</td>
+              <td>${complaint.block || '--'}</td>
+              <td>${complaint.title || '无标题'}</td>
+              <td>${complaint.description || '无描述'}</td>
+              <td>${complaint.senderId}</td>
+              <td>${complaint.result || '-'}</td>
+            `;
                 tbody.appendChild(tr);
               });
-
             })
             .catch(error => {
               console.error('Error:', error);
               alert('加载数据失败，请确认是否为管理员并重新登录。');
             });
   });
-
-  function formatTime(timeStr) {
-    if (!timeStr) return '--';
-    return timeStr.replace("T", " ").substring(0, 16);
-  }
-
 </script>
 </body>
 </html>
