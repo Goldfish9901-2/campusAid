@@ -58,7 +58,7 @@ public class BanMapperTest {
         banMapper.insert(ban);
 
         // 调用 countBan 方法
-        int count = banMapper.countBan(userId, block);
+        int count = banMapper.countBan(userId, block).size();
         System.out.println(count);
     }
 }
