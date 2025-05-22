@@ -41,4 +41,24 @@ public class BanMapperTest {
         // 验证对象是否构建成功（可选：查询数据库验证插入）
         assertNotNull(ban, "Ban 对象不应为 null");
     }
+    @Test
+    @DisplayName("测试查询用户封禁状态")
+    public void testCountBan() {
+        Long userId = 2235062128L;
+        BanBlock block = BanBlock.FORUM;
+
+        // 插入一条封禁记录用于测试
+        Ban ban = Ban.builder()
+                .block(block)
+                .userId(userId)
+                .releaseTime(LocalDateTime.now().plusDays(7)) // 现在之后的第七天解禁
+                .lengthByDay(7) // 持续 7 天
+                .reason("测试封禁")
+                .build();
+        banMapper.insert(ban);
+
+        // 调用 countBan 方法
+        int count = banMapper.countBan(userId, block);
+        System.out.println(count);
+    }
 }
