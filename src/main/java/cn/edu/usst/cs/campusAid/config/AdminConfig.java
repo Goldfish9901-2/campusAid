@@ -15,14 +15,22 @@ public class AdminConfig {
      */
     @Value("${campus_aid.admin}")
     String admin;
+    /**
+     * 验证用户是否为管理员
+     * @see AdminConfig#verifyIsAdmin(String)
+     */
+    
+    public void verifyIsAdmin(Long userId){
+        verifyIsAdmin(String.valueOf(userId));
+    }
 
     /**
      * 验证用户是否为管理员
      * @param userId 用户id 一般建议传入{@link Long} 或者 {@link String}
      * @throws CampusAidException 用户无权限
      */
-    public void verifyIsAdmin(Object userId) {
-        if (!userId.toString().equals(admin))
+    public void verifyIsAdmin(String userId) {
+        if (!userId.equals(admin))
             throw new CampusAidException("用户无权限");
     }
 }
