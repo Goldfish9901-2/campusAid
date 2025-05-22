@@ -1,6 +1,7 @@
 package cn.edu.usst.cs.campusAid.interceptor;
 
 import cn.edu.usst.cs.campusAid.controller.SessionKeys;
+import cn.edu.usst.cs.campusAid.mapper.db.complaint.BanMapper;
 import cn.edu.usst.cs.campusAid.service.auth.LoginService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -18,7 +19,20 @@ import java.time.LocalTime;
 
 @Component
 public class AuthInterceptor implements HandlerInterceptor {
+    private final BanMapper banMapper;
     String redirect_str = URLEncoder.encode("/error?message=未登录", StandardCharsets.UTF_8);
+
+    public AuthInterceptor(BanMapper banMapper) {
+        this.banMapper = banMapper;
+    }
+
+    static String buildJsonResponse(int code, String message) {
+        JSONObject json = new JSONObject();
+        json.put("code", code);
+        json.put("message", message);
+        json.put("data", JSONObject.NULL);
+        return json.toString();
+    }
 
     @Override
     public boolean preHandle(
@@ -54,14 +68,6 @@ public class AuthInterceptor implements HandlerInterceptor {
 
 
         return true;
-    }
-
-    private String buildJsonResponse(int code, String message) {
-        JSONObject json = new JSONObject();
-        json.put("code", code);
-        json.put("message", message);
-        json.put("data", JSONObject.NULL);
-        return json.toString();
     }
 
 

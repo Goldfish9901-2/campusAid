@@ -1,6 +1,8 @@
 package cn.edu.usst.cs.campusAid.config;
 
 import cn.edu.usst.cs.campusAid.interceptor.AuthInterceptor;
+import cn.edu.usst.cs.campusAid.interceptor.ErrandInterceptor;
+import cn.edu.usst.cs.campusAid.interceptor.ForumInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -14,6 +16,13 @@ import java.util.List;
 
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
+
+    @Autowired
+    private ForumInterceptor forumInterceptor;
+    @Autowired
+    private ErrandInterceptor errandInterceptor;
+    @Autowired
+    private AuthInterceptor authInterceptor;
 
     /**
      * campusaid-web/src/main/resources/static里的文件若需要在公网访问，需要在这里注册
@@ -57,32 +66,27 @@ public class WebConfig implements WebMvcConfigurer {
                 .addResourceLocations("classpath:/static/shop/");
     }
 
-    @Autowired
-    private AuthInterceptor authInterceptor;
-
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         // 配置拦截器
         registry
                 .addInterceptor(authInterceptor)
 
-//                论坛页面
+                .addPathPatterns("/api/**")
+                .excludePathPatterns("/api/login/**")
+                .excludePathPatterns("/api/register/**")
+
+        ;
+        registry.addInterceptor(forumInterceptor)
                 .addPathPatterns("/forum/**")
-
-//                论坛后端支持
                 .addPathPatterns("/api/forum/**")
-
+        ;
+        registry.addInterceptor(errandInterceptor)
                 .addPathPatterns("/api/errand/**")
-
-                // 商店页面只有结账和历史订单需要访问者为一般用户
-                .addPathPatterns("/api/shop/checkout")
-                .addPathPatterns("/api/shop/history")
-
-                .addPathPatterns("/forum/**") // 论坛页面
-                .addPathPatterns("/api/forum/**") // 论坛后端支持
-                .addPathPatterns("/forum/**") // 论坛页面
-                .addPathPatterns("/api/forum/**"); // 论坛后端支持
+                .addPathPatterns("/errand/**")
+        ;
     }
+
     @Override
     public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
         converters.add(new MappingJackson2HttpMessageConverter());
