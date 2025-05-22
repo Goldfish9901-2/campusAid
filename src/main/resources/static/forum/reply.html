@@ -179,6 +179,25 @@
     </div>
 </div>
 <script>
+    let currentUserId = null;
+
+    // 获取当前登录用户ID
+    fetch('/api/user', {
+        method: 'GET',
+        credentials: 'include'
+    })
+        .then(response => {
+            if (!response.ok) throw new Error('获取用户信息失败');
+            return response.json();
+        })
+        .then(user => {
+            currentUserId = user.id || user.userId;
+        })
+        .catch(error => {
+            console.error('获取用户信息失败:', error);
+            alert('请先登录');
+        });
+
     const urlParams = new URLSearchParams(window.location.search);
     const postId = urlParams.get('postId');
     if (!postId) {

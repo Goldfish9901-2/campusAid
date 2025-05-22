@@ -10,7 +10,7 @@
       margin: 0;
       padding: 0;
       height: 100%;
-      overflow: hidden; /* 禁止整个页面滚动 */
+      overflow: hidden;
     }
 
     body {
@@ -18,7 +18,7 @@
       background-color: #f9f9f9;
       display: flex;
       flex-direction: column;
-      height: 100%; /* 占满屏幕高度 */
+      height: 100%;
     }
 
     h1 {
@@ -90,14 +90,9 @@
     }
   </style>
 </head>
-
 <body>
-<h1 id="admin-title">您是管理员</h1>
-
-<!-- 返回论坛按钮 -->
-<a href="/forum.html" class="back-button">← 返回论坛</a>
-
-<!-- 固定表头 + 内容表格合并为一个表格 -->
+<h1 id="admin-title">管理员操作</h1>
+<a href="/forum" class="back-button">← 返回论坛</a>
 <div class="complaint-content">
   <table id="complaint-table" class="complaint-table">
     <thead>
@@ -107,15 +102,26 @@
       <th style="width: 15%">标题</th>
       <th style="width: 40%">描述</th>
       <th style="width: 12%">用户ID</th>
-      <th style="width: 15%">处理结果</th>
+      <th style="width: 15%">
+        处理结果
+        <div style="margin-top: 4px;">
+          <label>
+            <input type="checkbox" id="filter-unprocessed" />
+            仅显示未处理
+          </label>
+        </div>
+      </th>
     </tr>
     </thead>
     <tbody id="complaint-table-body-content"></tbody>
   </table>
 </div>
-
 <script>
   document.addEventListener('DOMContentLoaded', function () {
+    const tbody = document.querySelector('#complaint-table-body-content');
+    const filterCheckbox = document.getElementById('filter-unprocessed');
+    let currentData = [];
+
     // 获取用户ID并更新标题
     fetch('/api/user', {
       method: 'GET',
@@ -127,7 +133,7 @@
             })
             .then(user => {
               const userId = user.id || user.userId || '未知ID';
-              document.getElementById('admin-title').textContent = `您是管理员（用户ID: ${userId}）`;
+              document.getElementById('admin-title').textContent = `管理员操作（用户ID: ${userId}）`;
 
               // 加载投诉列表
               return fetch('/api/complaint', {
@@ -137,43 +143,121 @@
             })
             .then(response => {
               if (!response.ok) {
-                return response.text().then(text => {
-                  throw new Error(`请求失败: ${text}`);
-                });
+                return response.text().then(text => { throw new Error(`请求失败: ${text}`); });
               }
               return response.json();
             })
             .then(data => {
               console.log("收到的投诉数据：", data);
-
-              const tbody = document.querySelector('#complaint-table-body-content');
-              tbody.innerHTML = '';
-
-              if (data.length === 0) {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `<td colspan="6" style="text-align:center; padding: 20px;">暂无投诉记录</td>`;
-                tbody.appendChild(tr);
-                return;
-              }
-
-              data.forEach(complaint => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-              <td>${complaint.id}</td>
-              <td>${complaint.block || '--'}</td>
-              <td>${complaint.title || '无标题'}</td>
-              <td>${complaint.description || '无描述'}</td>
-              <td>${complaint.senderId}</td>
-              <td>${complaint.result || '-'}</td>
-            `;
-                tbody.appendChild(tr);
-              });
+              currentData = [...data];
+              filterCheckbox.checked = false;
+              renderTable(currentData);
             })
             .catch(error => {
               console.error('Error:', error);
               alert('加载数据失败，请确认是否为管理员并重新登录。');
             });
+
+    function renderTable(data) {
+      tbody.innerHTML = '';
+      if (data.length === 0) {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td colspan="6" style="text-align:center; padding: 25px;">暂无投诉记录</td>`;
+        tbody.appendChild(tr);
+        return;
+      }
+
+      data.forEach(complaint => {
+        const tr = document.createElement('tr');
+
+        // 处理结果列逻辑（未处理则显示“处理”链接）
+        const resultCell = complaint.result === null ?
+                `<a href="#" class="process-link" data-id="${complaint.id}" style="color: #007bff; text-decoration: none; font-size: 14px;">处理</a>` :
+                complaint.result;
+
+        tr.innerHTML = `
+                <td>${complaint.id}</td>
+                <td>${complaint.block || '--'}</td>
+                <td>${complaint.title || '无标题'}</td>
+                <td>${complaint.description || '无描述'}</td>
+                <td>${complaint.senderId}</td>
+                <td>${resultCell}</td>
+            `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // 点击“处理”链接时弹出输入框
+    tbody.addEventListener('click', function (e) {
+      if (e.target.classList.contains('process-link')) {
+        e.preventDefault();
+
+        const complaintId = parseInt(e.target.getAttribute('data-id'));
+        const userInputResult = prompt("请输入处理结果：");
+        if (userInputResult === null) return; // 取消输入
+
+        const banLengthStr = prompt("请输入封禁天数（默认为0）：", "0");
+        const banLength = banLengthStr !== null ? parseInt(banLengthStr) : 0;
+
+        if (isNaN(banLength)) {
+          alert("封禁天数必须是数字！");
+          return;
+        }
+
+        // 发送POST请求处理投诉
+        const formData = new URLSearchParams();
+        formData.append('id', complaintId);
+        formData.append('result', userInputResult);
+        formData.append('ban_length', banLength);
+
+        fetch('/api/complaint/process', {
+          method: 'POST',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+          },
+          body: formData.toString()
+        })
+                .then(response => {
+                  if (!response.ok) {
+                    return response.text().then(text => { throw new Error(`提交失败: ${text}`); });
+                  }
+                  return response.text();
+                })
+                .then(resultText => {
+                  alert(resultText);
+
+                  // 刷新整个表格
+                  return fetch('/api/complaint', {
+                    method: 'GET',
+                    credentials: 'include'
+                  });
+                })
+                .then(response => response.json())
+                .then(updatedData => {
+                  currentData = updatedData;
+                  renderTable(currentData);
+                })
+                .catch(error => {
+                  console.error('Error:', error);
+                  alert('处理失败：' + error.message);
+                });
+      }
+    });
+
+    // 勾选框监听事件：筛选未处理
+    if (filterCheckbox) {
+      filterCheckbox.addEventListener('change', function () {
+        if (this.checked) {
+          const filteredData = currentData.filter(item => item.result == null);
+          renderTable(filteredData);
+        } else {
+          renderTable(currentData);
+        }
+      });
+    }
   });
 </script>
+
 </body>
 </html>

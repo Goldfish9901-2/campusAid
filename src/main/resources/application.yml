@@ -3,10 +3,10 @@ spring:
     import: optional:file:.env[.properties]
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-#    url: ${DB_URL}
+    url: ${DB_URL}
     password: ${DB_PASSWORD}
     username: campus_aid
-    url: jdbc:mysql://10.100.164.51:3306/campus_aid?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC
+  #  url: jdbc:mysql://10.100.164.51:3306/campus_aid?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC
   thymeleaf:
     mode: HTML
     prefix: classpath:/templates/
