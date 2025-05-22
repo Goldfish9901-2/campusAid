@@ -11,6 +11,7 @@ import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 @RestController
@@ -42,7 +43,7 @@ public class LoginController {
             HttpSession session
     ) throws CampusAidException {
         loginService.verifyCode(id, request.getCode(), sessionCode);
-        session.setAttribute(SessionKeys.LOGIN_TIME, LocalTime.now());
+        session.setAttribute(SessionKeys.LOGIN_TIME, LocalDateTime.now());
         String message;
         try {
             adminConfig.verifyIsAdmin(id);

@@ -22,7 +22,7 @@ public abstract class BanInterceptor implements HandlerInterceptor {
         Long userId = (Long) request.getSession().getAttribute(SessionKeys.LOGIN_ID);
         if (userId == null) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.getWriter().write("{\"code\":401,\"message\":\"未登录或会话已失效\",\"data\":null}");
+            response.getWriter().write(AuthInterceptor.buildJsonResponse(401, "封禁用户"));
             return false;
         }
         int count = getBanMapper().countBan(userId,getBlock());
