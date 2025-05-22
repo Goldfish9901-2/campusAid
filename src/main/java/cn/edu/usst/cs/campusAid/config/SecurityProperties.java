@@ -11,5 +11,4 @@ import java.time.Duration;
 public class SecurityProperties {
     private Duration codeTtl = Duration.ofMinutes(5);
     private Duration resendInterval = Duration.ofMinutes(1);
-    // getters/setters
 }

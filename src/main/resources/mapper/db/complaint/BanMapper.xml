@@ -19,4 +19,15 @@
                      #{block, typeHandler=org.apache.ibatis.type.EnumTypeHandler}
                  )
     </insert>
+    <select id="countBan" resultType="int">
+    <![CDATA[
+        SELECT COUNT(*)
+        FROM ban
+        WHERE user_id = #{userId}
+          AND block = #{banBlock, typeHandler=org.apache.ibatis.type.EnumTypeHandler}
+          AND NOW() < release_time
+        ]]>
+</select>
+
+
 </mapper>

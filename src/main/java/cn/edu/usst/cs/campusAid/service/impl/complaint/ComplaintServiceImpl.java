@@ -1,7 +1,6 @@
 package cn.edu.usst.cs.campusAid.service.impl.complaint;
 
 import cn.edu.usst.cs.campusAid.config.AdminConfig;
-import cn.edu.usst.cs.campusAid.dto.complaint.ComplaintBlock;
 import cn.edu.usst.cs.campusAid.dto.complaint.ComplaintRequest;
 import cn.edu.usst.cs.campusAid.mapper.db.complaint.BanMapper;
 import cn.edu.usst.cs.campusAid.mapper.db.complaint.ComplaintMapper;
@@ -111,16 +110,24 @@ public class ComplaintServiceImpl
                 throw new CampusAidException("未知投诉类型");
         }
         LocalDateTime banReleaseTime = LocalDateTime.now().plusDays(banLength);
+        BanBlock banBlock =
+                switch (complaint.getBlock()) {
+                    case ERRAND -> BanBlock.ERRAND;
+                    case FORUM_BLOG, FORUM_REPLY -> BanBlock.FORUM;
+                    default -> null;
+                };
+        if (banBlock == null)
+            throw new CampusAidException("未知投诉类型");
         banBuilder
                 .userId(targetUserId)
                 .lengthByDay(banLength)
                 .reason(result)
-                .block(complaint.getBlock() == ComplaintBlock.ERRAND ? BanBlock.ERRAND : BanBlock.FORUM)
+                .block(banBlock)
                 .releaseTime(banReleaseTime);
         banMapper.insert(banBuilder.build());
         return String.format(
                 "封禁用户%s，封禁时长为%d天，封禁原因为%s，待%s解封",
-                targetUserId, banLength, result,  banReleaseTime
+                targetUserId, banLength, result, banReleaseTime
         );
 
     }
