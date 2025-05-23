@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <title>出错了</title>
     <style>
-        /* 自定义字体样式 */
         @font-face {
             font-family: 'ErrorFont';
         }
@@ -104,7 +103,6 @@
             transform: translateY(-2px);
         }
 
-        /* 浮动背景元素 */
         .floating-elements {
             position: absolute;
             top: 0;
@@ -122,7 +120,6 @@
             animation: float 15s infinite linear;
         }
 
-        /* 动画定义 */
         @keyframes fadeInUp {
             to {
                 opacity: 1;
@@ -155,7 +152,6 @@
             }
         }
 
-        /* 响应式设计 */
         @media (max-width: 768px) {
             .error-container {
                 padding: 30px;
@@ -178,7 +174,6 @@
     </style>
 </head>
 <body>
-<!-- 浮动背景元素 -->
 <div class="floating-elements" id="floatingElements"></div>
 
 <div class="error-container">
@@ -192,7 +187,6 @@
 </div>
 
 <script th:inline="javascript">
-    // 动态创建浮动背景元素
     function createFloatingElements() {
         const container = document.getElementById('floatingElements');
         const count = 15;
@@ -201,16 +195,13 @@
             const element = document.createElement('div');
             element.classList.add('floating-element');
 
-            // 随机大小
             const size = Math.random() * 100 + 50;
             element.style.width = `${size}px`;
             element.style.height = `${size}px`;
 
-            // 随机位置
             element.style.left = `${Math.random() * 100}%`;
             element.style.bottom = `-${size}px`;
 
-            // 随机动画延迟和持续时间
             const delay = Math.random() * 5;
             const duration = 10 + Math.random() * 20;
             element.style.animationDelay = `${delay}s`;
@@ -220,11 +211,9 @@
         }
     }
 
-    // 页面加载完成后执行
     document.addEventListener('DOMContentLoaded', function() {
         createFloatingElements();
 
-        // 错误信息处理
         let messageElement = document.getElementById("main-para");
         let message = messageElement.innerText;
         if (message === '') {
@@ -232,7 +221,6 @@
             messageElement.innerText = message;
         }
 
-        // 延迟显示错误信息（可选）
         setTimeout(function() {
             const errorContainer = document.querySelector('.error-container');
             errorContainer.style.boxShadow = '0 15px 35px rgba(0, 0, 0, 0.2)';
