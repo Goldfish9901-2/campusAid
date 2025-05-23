@@ -6,13 +6,9 @@ import lombok.Data;
 @Data
 @Builder
 public class ProductTransaction {
-    String shopName;
-    String name;
-    String description;
-    /**
-     * <h2>价格</h2>
-     * <p>可以为空，表示维持现价</p>
-     */
-    Float price;
-    Long amount;
+    private String shopName;
+    private String name;
+    private String description;
+    private Float price;
+    private Long amount; // ⚠️注意字段名和数据库查询一致
 }
