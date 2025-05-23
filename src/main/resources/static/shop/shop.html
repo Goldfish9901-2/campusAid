@@ -9,29 +9,24 @@
             padding: 20px;
             background-color: #f8f9fa;
         }
-
         .container {
             max-width: 800px;
             margin: auto;
         }
-
         h2 {
             text-align: center;
             color: #0A2540;
         }
-
-        #shop-info, .product-card {
+        #shop-info, .product-card, #cart-list {
             background: #fff;
             border: 1px solid #ddd;
             border-radius: 10px;
             padding: 20px;
             margin-top: 20px;
         }
-
         .product-card {
             margin-bottom: 16px;
         }
-
         button {
             padding: 6px 12px;
             background-color: #0A2540;
@@ -40,56 +35,132 @@
             border-radius: 4px;
             cursor: pointer;
         }
-
         button:hover {
             background-color: #16365f;
         }
     </style>
 </head>
 <body>
-
 <div class="container">
     <h2>商店详情</h2>
     <div id="shop-info">加载中...</div>
 
     <h3 style="margin-top: 30px;">商品列表</h3>
     <div id="product-list">加载中...</div>
+
+    <h3 style="margin-top: 40px;">🛒 当前购物车</h3>
+    <div id="cart-list"><p>购物车为空</p></div>
+
+    <div style="margin-top: 20px; text-align: center;">
+        <button onclick="submitOrder()">🧾 提交订单</button>
+    </div>
 </div>
 
 <script>
-    const shopName = 'TestShop'; // 修改为你实际的商店名
+    const shopName = new URLSearchParams(location.search).get("name") || "TestShop";
+    let cart = [];
 
-    // 获取商店信息
-    fetch(`/api/shop/info/${shopName}`)
-        .then(response => response.json())
-        .then(data => {
-            const shopInfoContainer = document.getElementById('shop-info');
-            if (data) {
-                shopInfoContainer.innerHTML = `
-                    <p><strong>商店名称：</strong>${data.name}</p>
-                    <p><strong>商店描述：</strong>${data.description}</p>
-                `;
-            } else {
-                shopInfoContainer.innerHTML = `<p>商店未找到。</p>`;
-            }
+    function renderCart() {
+        const cartContainer = document.getElementById('cart-list');
+        if (cart.length === 0) {
+            cartContainer.innerHTML = "<p>购物车为空</p>";
+            return;
+        }
+        cartContainer.innerHTML = cart.map(item => `
+            <div>
+                ${item.name} × ${item.quantity}
+                <button onclick="removeFromCart('${item.name}')">移除</button>
+            </div>
+        `).join('');
+    }
+
+    function addToCart(name, quantity) {
+        const existing = cart.find(item => item.name === name);
+        if (existing) {
+            existing.quantity += quantity;
+        } else {
+            cart.push({ name, quantity });
+        }
+        renderCart();
+    }
+
+    function removeFromCart(name) {
+        cart = cart.filter(item => item.name !== name);
+        renderCart();
+    }
+
+    function addToCartPrompt(name) {
+        const qty = parseInt(prompt(`请输入要购买的 ${name} 数量：`, "1"));
+        if (isNaN(qty) || qty <= 0) {
+            alert("请输入有效数量");
+            return;
+        }
+        addToCart(name, qty);
+    }
+
+    function submitOrder() {
+        if (cart.length === 0) {
+            alert("购物车为空，无法下单");
+            return;
+        }
+
+        const payload = {
+            shopName,
+            items: cart.map(item => ({
+                name: item.name,
+                amount: item.quantity
+            }))
+        };
+
+        fetch('/api/shop/checkout', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify(payload)
         })
-        .catch(error => {
-            console.error('商店信息获取失败:', error);
-            document.getElementById('shop-info').innerText = '加载失败';
+            .then(res => {
+                if (!res.ok) return res.json().then(err => { throw new Error(err.message || "提交失败") });
+                return res.json();
+            })
+            .then(data => {
+                alert(`下单成功！订单号：${data.id}\n总价：¥${data.price}`);
+                cart = [];
+                renderCart();
+            })
+            .catch(err => {
+                alert("下单失败：" + err.message);
+            });
+    }
+
+    // 加载商店信息
+    fetch(`/api/shop/info/${shopName}`)
+        .then(res => res.json())
+        .then(data => {
+            const el = document.getElementById("shop-info");
+            if (!data || !data.name) {
+                el.innerHTML = "<p>商店未找到</p>";
+                return;
+            }
+            el.innerHTML = `
+                <p><strong>商店名称：</strong>${data.name}</p>
+                <p><strong>商店描述：</strong>${data.description}</p>
+            `;
+        })
+        .catch(err => {
+            console.error("商店信息加载失败：", err);
+            document.getElementById("shop-info").innerText = "加载失败";
         });
 
-    // 获取商品列表
+    // 加载商品列表
     fetch(`/api/shop/products/${shopName}`)
-        .then(response => response.json())
+        .then(res => res.json())
         .then(products => {
             const container = document.getElementById("product-list");
-            container.innerHTML = "";
-
             if (!products || products.length === 0) {
                 container.innerHTML = "<p>暂无商品。</p>";
                 return;
             }
-
+            container.innerHTML = "";
             products.forEach(product => {
                 const card = document.createElement("div");
                 card.className = "product-card";
@@ -97,22 +168,16 @@
                     <p><strong>名称：</strong>${product.name}</p>
                     <p><strong>价格：</strong>¥${product.price}</p>
                     <p><strong>库存：</strong>${product.stock}</p>
-                    <button onclick="buyProduct('${product.name}')">立即购买</button>
+                    <button onclick="addToCartPrompt('${product.name}')">添加至购物车</button>
                 `;
                 container.appendChild(card);
             });
         })
-        .catch(error => {
-            console.error("商品信息加载失败:", error);
+        .catch(err => {
+            console.error("商品加载失败：", err);
             document.getElementById("product-list").innerText = "加载失败";
         });
-
-    function buyProduct(productName) {
-        alert(`你点击了购买：${productName}`);
-        // 可在此发起 POST 请求调用 /api/shop/checkout
-    }
 </script>
-
 </body>
 </html>
 
