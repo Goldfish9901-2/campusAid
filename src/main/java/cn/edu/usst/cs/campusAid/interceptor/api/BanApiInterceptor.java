@@ -11,11 +11,17 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+import static jakarta.servlet.http.HttpServletResponse.SC_UNAUTHORIZED;
+
+/**
+ * 拦截封禁用户后端请求
+ * 可自动通过uri识别封禁板块
+ */
 @Component
-public class BanInterceptor extends ApiInterceptor {
+public class BanApiInterceptor extends ApiInterceptor {
     private final BanMapper banMapper;
 
-    public BanInterceptor(BanMapper banMapper) {
+    public BanApiInterceptor(BanMapper banMapper) {
         super();
         this.banMapper = banMapper;
     }
@@ -38,7 +44,7 @@ public class BanInterceptor extends ApiInterceptor {
         if (!bans.isEmpty()) {
             String message = "您已被禁言" + bans.get(0).getLengthByDay() + "天，原因：" + bans.get(0).getReason()
                     + "，到" + bans.get(0).getReleaseTime() + "前解除禁言";
-            processResponse(response, 403, message);
+            processResponse(response, SC_UNAUTHORIZED, message);
             return false;
         }
         return true;

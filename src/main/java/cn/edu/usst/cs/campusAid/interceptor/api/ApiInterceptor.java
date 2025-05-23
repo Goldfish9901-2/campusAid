@@ -7,6 +7,10 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 
+/**
+ * 拦截后端请求
+ * 回复体均为json
+ */
 public abstract class ApiInterceptor extends BasicInterceptor {
     @Override
     protected void processResponse(HttpServletResponse response, int code, String message) {

@@ -10,6 +10,9 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 
+/**
+ * 拦截未认证用户登录除认证以外其他所有后端请求
+ */
 
 @Component
 public class AuthInterceptor extends ApiInterceptor {
