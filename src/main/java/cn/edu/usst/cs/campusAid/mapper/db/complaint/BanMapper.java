@@ -4,6 +4,8 @@ import cn.edu.usst.cs.campusAid.model.complaint.Ban;
 import cn.edu.usst.cs.campusAid.model.complaint.BanBlock;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.util.List;
+
 @Mapper
 public interface BanMapper {
     void insert(Ban build);
@@ -12,7 +14,7 @@ public interface BanMapper {
      * @param userId 用户ID
      * @return 返回论坛封禁数量，0表示无封禁
      */
-    int countBan(Long userId, BanBlock banBlock);
+    List<Ban> countBan(Long userId, BanBlock banBlock);
 
 
 }

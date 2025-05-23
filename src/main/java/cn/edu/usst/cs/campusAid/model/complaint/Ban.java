@@ -10,12 +10,12 @@ import java.time.LocalDateTime;
 @Builder
 public class Ban {
     @NonNull
-    private BanBlock block;
-    @NonNull
     private Long userId;
     @NonNull
     private LocalDateTime releaseTime;
     private int lengthByDay;
     @NonNull
     private String reason;
+    @NonNull
+    private BanBlock block;
 }

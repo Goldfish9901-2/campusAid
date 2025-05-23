@@ -14,6 +14,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 @SpringBootTest
@@ -58,7 +59,9 @@ public class BanMapperTest {
         banMapper.insert(ban);
 
         // 调用 countBan 方法
-        int count = banMapper.countBan(userId, block);
+        List<Ban> bans = banMapper.countBan(userId, block);
+        System.out.println(bans);
+        int count = bans.size();
         System.out.println(count);
     }
 }

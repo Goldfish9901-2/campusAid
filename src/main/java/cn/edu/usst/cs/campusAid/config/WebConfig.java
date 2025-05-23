@@ -1,9 +1,9 @@
 package cn.edu.usst.cs.campusAid.config;
 
-import cn.edu.usst.cs.campusAid.interceptor.AuthInterceptor;
-import cn.edu.usst.cs.campusAid.interceptor.ErrandInterceptor;
-import cn.edu.usst.cs.campusAid.interceptor.ForumInterceptor;
-import org.springframework.beans.factory.annotation.Autowired;
+import cn.edu.usst.cs.campusAid.interceptor.api.AuthInterceptor;
+import cn.edu.usst.cs.campusAid.interceptor.api.BanApiInterceptor;
+import cn.edu.usst.cs.campusAid.interceptor.view.TemplatedErrandInterceptor;
+import cn.edu.usst.cs.campusAid.interceptor.view.TemplatedForumInterceptor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
@@ -17,12 +17,27 @@ import java.util.List;
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 
-    @Autowired
-    private ForumInterceptor forumInterceptor;
-    @Autowired
-    private ErrandInterceptor errandInterceptor;
-    @Autowired
-    private AuthInterceptor authInterceptor;
+    private final AuthInterceptor authInterceptor;
+    private final BanApiInterceptor banApiInterceptor;
+
+
+    private TemplatedErrandInterceptor templatedErrandInterceptor;
+    private TemplatedForumInterceptor templatedForumInterceptor;
+
+
+    public WebConfig(
+                     AuthInterceptor authInterceptor,
+                     BanApiInterceptor banApiInterceptor,
+                     TemplatedErrandInterceptor templatedErrandInterceptor,
+                     TemplatedForumInterceptor templatedForumInterceptor
+
+    ) {
+
+        this.authInterceptor = authInterceptor;
+        this.banApiInterceptor = banApiInterceptor;
+        this.templatedErrandInterceptor = templatedErrandInterceptor;
+        this.templatedForumInterceptor = templatedForumInterceptor;
+    }
 
     /**
      * campusaid-web/src/main/resources/static里的文件若需要在公网访问，需要在这里注册
@@ -73,19 +88,19 @@ public class WebConfig implements WebMvcConfigurer {
         // 配置拦截器
         registry
                 .addInterceptor(authInterceptor)
-
                 .addPathPatterns("/api/**")
                 .excludePathPatterns("/api/login/**")
                 .excludePathPatterns("/api/register/**")
+        ;
 
+        registry.addInterceptor(banApiInterceptor)
+                .addPathPatterns("/api/**")
         ;
-        registry.addInterceptor(forumInterceptor)
-                .addPathPatterns("/forum/**")
-                .addPathPatterns("/api/forum/**")
+        registry.addInterceptor(templatedErrandInterceptor)
+                .addPathPatterns("/errand")
         ;
-        registry.addInterceptor(errandInterceptor)
-                .addPathPatterns("/api/errand/**")
-                .addPathPatterns("/errand/**")
+        registry.addInterceptor(templatedForumInterceptor)
+                .addPathPatterns("/forum")
         ;
     }
 
