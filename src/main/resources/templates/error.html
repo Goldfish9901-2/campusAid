@@ -3,16 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <title>出错了</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f8f8;
+            color: #333;
+            text-align: center;
+            padding: 50px;
+        }
+
+        .error-container {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            display: inline-block;
+            padding: 40px;
+        }
+
+        h1 {
+            color: #e74c3c;
+            font-size: 60px;
+            margin-bottom: 20px;
+        }
+
+        p {
+            font-size: 20px;
+            margin-bottom: 30px;
+        }
+
+        a {
+            color: #3498db;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
 </head>
 <body>
-<h1>??</h1>
-<p id="main-para" th:text="${message}"></p>
+    <div class="error-container">
+        <h1>:(</h1>
+        <p id="main-para" th:text="${message}">错误信息</p>
+        <p><a href="javascript:history.back()">返回上一页</a></p>
+    </div>
+    <script th:inline="javascript">
+        let messageElement = document.getElementById("main-para");
+        let message = messageElement.innerText;
+        if (message === '') {
+            message = '出错了';
+            messageElement.innerText = message;
+        }
+        setTimeout(function() {
+            alert(message);
+        }, 100);
+    </script>
 </body>
-<script th:inline="javascript">
-    let message = document.getElementById("main-para").innerText;
-    if (message === '') {
-        message = '出错了';
-    }
-    alert(message);
-</script>
 </html>
