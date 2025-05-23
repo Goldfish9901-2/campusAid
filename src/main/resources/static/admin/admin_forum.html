@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>CampusAid - 管理论坛</title>
+  <link rel="icon" href="/favicon.jpg" />
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Arial', sans-serif;
+      padding: 20px;
+      background-color: #f4f4f9;
+    }
+
+    .search-bar {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .search-select,
+    .search-input,
+    .search-button {
+      padding: 8px 12px;
+      font-size: 14px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    .search-button {
+      background-color: #3399ff;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    .search-button:hover {
+      background-color: #2980b9;
+    }
+
+    .post-list {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .post-card {
+      background-color: white;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      padding: 15px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+      transition: transform 0.2s ease;
+    }
+
+    .post-card:hover {
+      transform: scale(1.01);
+    }
+
+    .post-title {
+      font-size: 18px;
+      font-weight: bold;
+      margin: 0 0 8px;
+    }
+
+    .post-meta {
+      font-size: 14px;
+      color: #666;
+      margin-bottom: 8px;
+    }
+
+    .post-content {
+      font-size: 14px;
+      color: #333;
+      margin-bottom: 10px;
+    }
+
+    .post-actions {
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .view-reply {
+      color: #3399ff;
+      text-decoration: none;
+      font-size: 14px;
+      transition: color 0.3s ease;
+    }
+
+    .view-reply:hover {
+      color: #0056b3;
+    }
+
+    .delete-link {
+      color: red;
+      text-decoration: none;
+      font-size: 14px;
+      transition: color 0.3s ease;
+    }
+
+    .delete-link:hover {
+      color: darkred;
+    }
+
+    .pagination {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      margin-top: 20px;
+      flex-wrap: wrap;
+    }
+
+    .pagination button {
+      padding: 6px 12px;
+      background-color: #f1f1f1;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .pagination button:disabled {
+      background-color: #e1e1e1;
+      color: #aaa;
+      cursor: not-allowed;
+    }
+
+    .page-info {
+      font-size: 14px;
+    }
+
+    .page-jump input {
+      width: 50px;
+      padding: 4px;
+      text-align: center;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    .page-jump button {
+      padding: 4px 8px;
+      background-color: #ddd;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .back-button {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 10px 20px;
+      background-color: #007bff;
+      color: white;
+      text-decoration: none;
+      border-radius: 4px;
+      font-size: 14px;
+      z-index: 1000;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      transition: background-color 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .back-button:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+<h1>管理员 - 论坛管理</h1>
+<a href="/admin" class="back-button">返回</a>
+<!-- 搜索区域 -->
+<div class="search-bar">
+  <select id="search-type" class="search-select">
+    <option value="TITLE">标题</option>
+    <option value="CREATOR">学号</option>
+    <option value="TAG">标签</option>
+  </select>
+  <input type="text" id="search-keyword" class="search-input" placeholder="请输入关键词" />
+  <button id="search-btn" class="search-button">🔍 搜索</button>
+</div>
+
+<!-- 帖子列表 -->
+<div class="post-list" id="post-list">
+  <!-- 帖子将在这里动态加载 -->
+</div>
+
+<!-- 分页栏 -->
+<div class="pagination" id="pagination">
+  <button id="prev-page" disabled>上一页</button>
+  <span class="page-info">第 <span id="current-page">1</span> 页</span>
+  <button id="next-page">下一页</button>
+  <div class="page-jump">
+    <span>跳至</span>
+    <input type="number" id="page-input" min="1" value="1" style="margin: 0 5px;" />
+    <span>页</span>
+    <button id="jump-btn">跳转</button>
+  </div>
+</div>
+
+<script>
+  const pagination = {
+    currentPage: 0,
+    hasMore: true,
+    isLoading: false
+  };
+
+  const searchParams = {
+    keyword: "",
+    type: "TITLE"
+  };
+
+  document.addEventListener('DOMContentLoaded', function () {
+    // 初始化事件监听
+    document.getElementById('search-btn').addEventListener('click', handleSearch);
+    document.getElementById('prev-page').addEventListener('click', goPrevPage);
+    document.getElementById('next-page').addEventListener('click', goNextPage);
+    document.getElementById('jump-btn').addEventListener('click', jumpToPage);
+    document.getElementById('page-input').addEventListener('keypress', function (e) {
+      if (e.key === 'Enter') {
+        jumpToPage();
+      }
+    });
+
+    // 初始加载
+    loadPosts();
+  });
+
+  function handleSearch() {
+    searchParams.keyword = document.getElementById('search-keyword').value.trim();
+    searchParams.type = document.getElementById('search-type').value;
+    pagination.currentPage = 0;
+    pagination.hasMore = true;
+    loadPosts();
+  }
+
+  function loadPosts() {
+    if (pagination.isLoading) return;
+    pagination.isLoading = true;
+
+    const { keyword, type } = searchParams;
+    const page = pagination.currentPage;
+
+    fetch(`/api/forum/posts?keyword=${encodeURIComponent(keyword)}&type=${type}&page=${page}`, {
+      method: 'GET',
+      credentials: 'include'
+    })
+            .then(response => {
+              if (!response.ok) throw new Error('网络响应失败');
+              return response.json();
+            })
+            .then(posts => {
+              pagination.isLoading = false;
+              if (posts.length < 10) pagination.hasMore = false;
+              renderPosts(posts);
+              updatePaginationUI();
+            })
+            .catch(error => {
+              pagination.isLoading = false;
+              console.error("获取帖子失败:", error);
+              document.getElementById("post-list").innerHTML = "<p>加载帖子时出错</p>";
+            });
+  }
+
+  function renderPosts(posts) {
+    const postList = document.getElementById("post-list");
+    postList.innerHTML = "";
+
+    if (posts.length === 0) {
+      postList.innerHTML = "<p>暂无帖子</p>";
+      return;
+    }
+
+    posts.forEach(post => {
+      const card = document.createElement("div");
+      card.className = "post-card";
+
+      card.innerHTML = `
+                    <div class="post-title">${post.title}</div>
+                    <div class="post-meta">作者：${post.authorId} • 时间：${formatTime(post.publishTime)}</div>
+                    <div class="post-content">${truncateText(post.content, 50)}</div>
+                    <div class="post-actions">
+                        <a href="/forum/reply?postId=${post.postId}" target="_blank" class="view-reply">查看回复 (${post.replyCount})</a>
+                        <a href="#" onclick="deletePost(${post.postId}); return false;" class="delete-link">删除帖子</a>
+                    </div>
+                `;
+
+      postList.appendChild(card);
+    });
+  }
+
+  function formatTime(timeStr) {
+    return timeStr ? timeStr.replace("T", " ").substring(0, 16) : "";
+  }
+
+  function truncateText(text, maxLength) {
+    return text && text.length > maxLength ? text.substring(0, maxLength) + "..." : text;
+  }
+
+  function updatePaginationUI() {
+    document.getElementById('current-page').textContent = pagination.currentPage + 1;
+    document.getElementById('page-input').value = pagination.currentPage + 1;
+    document.getElementById('prev-page').disabled = pagination.currentPage === 0;
+    document.getElementById('next-page').disabled = !pagination.hasMore;
+  }
+
+  function goPrevPage() {
+    if (pagination.currentPage > 0) {
+      pagination.currentPage--;
+      loadPosts();
+    }
+  }
+
+  function goNextPage() {
+    if (pagination.hasMore) {
+      pagination.currentPage++;
+      loadPosts();
+    }
+  }
+
+  function jumpToPage() {
+    const pageInput = document.getElementById('page-input');
+    let targetPage = parseInt(pageInput.value) - 1; // 转为 0-based index
+
+    if (isNaN(targetPage) || targetPage < 0) {
+      alert('请输入有效的页码');
+      return;
+    }
+
+    if (targetPage !== pagination.currentPage) {
+      pagination.currentPage = targetPage;
+      loadPosts();
+    }
+  }
+
+  function deletePost(postId) {
+    if (!confirm(`确定要删除帖子 ID 为 ${postId} 的帖子吗？`)) {
+      return;
+    }
+
+    fetch(`/api/forum/post/${postId}`, {
+      method: 'DELETE',
+      credentials: 'include'
+    })
+            .then(response => {
+              if (!response.ok) throw new Error('删除失败');
+              return response.text();
+            })
+            .then(() => {
+              alert('删除成功');
+              loadPosts(); // 刷新数据
+            })
+            .catch(err => {
+              alert('删除失败: ' + err.message);
+            });
+  }
+</script>
+</body>
+</html>
