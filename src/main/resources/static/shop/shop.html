@@ -118,9 +118,10 @@
             credentials: 'include',
             body: JSON.stringify(payload)
         })
-            .then(res => {
-                if (!res.ok) return res.json().then(err => { throw new Error(err.message || "提交失败") });
-                return res.json();
+            .then(async res => {
+                const text = await res.text();
+                if (!res.ok) throw new Error(text || "提交失败");
+                return JSON.parse(text); // only parse if status OK
             })
             .then(data => {
                 alert(`下单成功！订单号：${data.id}\n总价：¥${data.price}`);
@@ -167,7 +168,7 @@
                 card.innerHTML = `
                     <p><strong>名称：</strong>${product.name}</p>
                     <p><strong>价格：</strong>¥${product.price}</p>
-                    <p><strong>库存：</strong>${product.stock}</p>
+                    <p><strong>库存：</strong>${product.stock ?? product.amount ?? '未知'}</p>
                     <button onclick="addToCartPrompt('${product.name}')">添加至购物车</button>
                 `;
                 container.appendChild(card);
