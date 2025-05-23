@@ -59,6 +59,26 @@
 <script>
     const shopName = new URLSearchParams(location.search).get("name") || "TestShop";
     let cart = [];
+    let currentUserId = null;
+
+    function fetchCurrentUserId() {
+        return fetch('/api/user', {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include'
+        })
+            .then(res => {
+                if (!res.ok) throw new Error("未登录或会话无效");
+                return res.json();
+            })
+            .then(user => {
+                currentUserId = user.id;
+                console.log("✅ 当前用户 ID 获取成功：", currentUserId);
+            })
+            .catch(err => {
+                alert("无法获取当前用户ID，不能下单：" + err.message);
+            });
+    }
 
     function renderCart() {
         const cartContainer = document.getElementById('cart-list');
@@ -67,11 +87,11 @@
             return;
         }
         cartContainer.innerHTML = cart.map(item => `
-            <div>
-                ${item.name} × ${item.quantity}
-                <button onclick="removeFromCart('${item.name}')">移除</button>
-            </div>
-        `).join('');
+      <div>
+        ${item.name} × ${item.quantity}
+        <button onclick="removeFromCart('${item.name}')">移除</button>
+      </div>
+    `).join('');
     }
 
     function addToCart(name, quantity) {
@@ -99,12 +119,17 @@
     }
 
     function submitOrder() {
+        if (!currentUserId) {
+            alert("无法获取当前用户ID，请刷新页面或重新登录");
+            return;
+        }
         if (cart.length === 0) {
             alert("购物车为空，无法下单");
             return;
         }
 
         const payload = {
+            userId: currentUserId,
             shopName,
             items: cart.map(item => ({
                 name: item.name,
@@ -118,10 +143,9 @@
             credentials: 'include',
             body: JSON.stringify(payload)
         })
-            .then(async res => {
-                const text = await res.text();
-                if (!res.ok) throw new Error(text || "提交失败");
-                return JSON.parse(text); // only parse if status OK
+            .then(res => {
+                if (!res.ok) return res.json().then(err => { throw new Error(err.message || "提交失败") });
+                return res.json();
             })
             .then(data => {
                 alert(`下单成功！订单号：${data.id}\n总价：¥${data.price}`);
@@ -133,6 +157,9 @@
             });
     }
 
+    // 初始化流程
+    fetchCurrentUserId();
+
     // 加载商店信息
     fetch(`/api/shop/info/${shopName}`)
         .then(res => res.json())
@@ -143,9 +170,9 @@
                 return;
             }
             el.innerHTML = `
-                <p><strong>商店名称：</strong>${data.name}</p>
-                <p><strong>商店描述：</strong>${data.description}</p>
-            `;
+        <p><strong>商店名称：</strong>${data.name}</p>
+        <p><strong>商店描述：</strong>${data.description}</p>
+      `;
         })
         .catch(err => {
             console.error("商店信息加载失败：", err);
@@ -166,11 +193,11 @@
                 const card = document.createElement("div");
                 card.className = "product-card";
                 card.innerHTML = `
-                    <p><strong>名称：</strong>${product.name}</p>
-                    <p><strong>价格：</strong>¥${product.price}</p>
-                    <p><strong>库存：</strong>${product.stock ?? product.amount ?? '未知'}</p>
-                    <button onclick="addToCartPrompt('${product.name}')">添加至购物车</button>
-                `;
+          <p><strong>名称：</strong>${product.name}</p>
+          <p><strong>价格：</strong>¥${product.price}</p>
+          <p><strong>库存：</strong>${product.amount ?? product.stock ?? 0}</p>
+          <button onclick="addToCartPrompt('${product.name}')">添加至购物车</button>
+        `;
                 container.appendChild(card);
             });
         })
@@ -181,5 +208,6 @@
 </script>
 </body>
 </html>
+
 
 
