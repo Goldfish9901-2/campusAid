@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>CampusAid-帖子详情</title>
+    <title>CampusAid-帖子管理</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -12,9 +12,6 @@
             height: 100vh;
             display: flex;
             flex-direction: column;
-            background-image: url("/background2.jpg");
-            background-size: cover;
-            background-position: center;
             animation: fadein 1.5s ease-in-out forwards;
         }
 
@@ -94,65 +91,26 @@
             margin-top: 5px;
         }
 
-        #back-home-btn {
+        .back-button {
+            border: none;
             position: fixed;
-            top: 30px;
-            right: 30px;
-            z-index: 1000;
-            background-color: transparent;
-            color: black;
-            border: none;
+            top: 20px;
+            right: 20px;
             padding: 10px 20px;
-            font-size: 22px;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        #back-home-btn:hover {
-            transform: translateY(-2px);
-        }
-
-        #back-home-btn:active {
-            transform: translateY(0);
-        }
-
-        .bottom-reply-box {
-            background-color: #f4f4f9;
-            padding: 15px 0;
-            border-top: 1px solid #ddd;
-        }
-
-        .reply-input-container {
-            max-width: 700px;
-            margin: 0 auto;
-            display: flex;
-            gap: 10px;
-            padding: 0 20px;
-        }
-
-        #reply-input {
-            flex: 1;
-            padding: 12px 15px;
-            font-size: 15px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            outline: none;
-        }
-
-        #send-reply-btn {
-            padding: 12px 25px;
-            background-color: #3399ff;
+            background-color: #007bff;
             color: white;
-            border: none;
-            border-radius: 6px;
-            font-size: 15px;
-            cursor: pointer;
-            white-space: nowrap;
+            text-decoration: none;
+            border-radius: 4px;
+            font-size: 14px;
+            z-index: 1000;
+            transition: background-color 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
         }
 
-        #send-reply-btn:hover {
-            background-color: #2980b9;
+        .back-button:hover {
+            background-color: #0056b3;
         }
 
         .no-replies {
@@ -163,7 +121,7 @@
     </style>
 </head>
 <body>
-<button id="back-home-btn" onclick="window.location.href='/forum'"><strong>返回首页</strong></button>
+<button class="back-button" onclick="window.location.href='/admin/admin_forum'"><strong>返回</strong></button>
 <div class="content-wrapper">
     <div class="post-container">
         <div id="post-detail">
@@ -172,16 +130,9 @@
         <div id="replies-container" class="replies-container"></div>
     </div>
 </div>
-<div class="bottom-reply-box">
-    <div class="reply-input-container">
-        <input type="text" id="reply-input" placeholder="输入你的回复...">
-        <button type="button" id="send-reply-btn">发送</button>
-    </div>
-</div>
 <script>
     let currentUserId = null;
 
-    // 获取当前登录用户ID
     fetch('/api/user', {
         method: 'GET',
         credentials: 'include'
@@ -247,37 +198,6 @@
             sendReply();
         }
     });
-    function sendReply() {
-        const replyInput = document.getElementById('reply-input');
-        const content = replyInput.value.trim();
-        if (!content) {
-            alert('回复内容不能为空');
-            return;
-        }
-        const replyData = {
-            content: content
-        };
-        fetch(`/api/forum/post/${postId}/reply`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            credentials: 'include',
-            body: JSON.stringify(replyData)
-        })
-            .then(response => {
-                if (!response.ok) throw new Error('回复失败');
-                return response.text();
-            })
-            .then(() => {
-                replyInput.value = '';
-                loadReplies();
-            })
-            .catch(error => {
-                console.error('回复失败:', error);
-                alert('回复失败: ' + error.message);
-            });
-    }
     function renderPost(post) {
         console.log('当前帖子数据:', post);
         const container = document.getElementById('post-detail');
@@ -304,33 +224,8 @@
                 <div>${reply.content}</div>
                 <small>${formatTime(reply.sendTime)}</small>
             `;
-            const strong = replyCard.querySelector('strong');
-            fetchUserData(strong, reply.senderId);
-
             container.appendChild(replyCard);
         });
-    }
-    function fetchUserData(element,id){
-        fetch(`/api/user?targetUserId=${id}`)
-            .then(response=>{
-                let content=response.json();
-                console.log(
-                    'Response status:',
-                    response.status
-                )
-                console.log(
-                    'Response data:',
-                    content
-                )
-                return content;
-            })
-            .then(content=>{
-                console.log(content)
-                element.innerText=content["name"]
-            })
-            .catch(error=>{
-                console.error("获取用户信息失败:", error);
-            })
     }
     function formatTime(timeStr) {
         return timeStr ? timeStr.replace("T", " ").substring(0, 16) : "";

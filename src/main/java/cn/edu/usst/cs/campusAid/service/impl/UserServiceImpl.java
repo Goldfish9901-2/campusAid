@@ -64,7 +64,8 @@ public class UserServiceImpl implements UserService {
     public Long getTargetUserId(Long userId, Long targetUserId) {
         try {
             adminConfig.verifyIsAdmin(userId);
-            return targetUserId;
+//            return targetUserId;
+            return userId;
         } catch (CampusAidException e) {
             // 不是管理员 只能看自己的
             return userId;

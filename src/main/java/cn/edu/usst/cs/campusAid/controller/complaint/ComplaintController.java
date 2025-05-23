@@ -61,6 +61,4 @@ public class ComplaintController {
         
         return ResponseEntity.ok(submitResult);
     }
-
-
 }

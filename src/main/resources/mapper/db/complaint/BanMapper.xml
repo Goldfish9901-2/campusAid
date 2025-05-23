@@ -19,4 +19,16 @@
                      #{block, typeHandler=org.apache.ibatis.type.EnumTypeHandler}
                  )
     </insert>
+    <select id="countBan" resultType="cn.edu.usst.cs.campusAid.model.complaint.Ban">
+        <![CDATA[
+            SELECT *
+            FROM ban
+            WHERE user_id = #{userId}
+              AND block = #{banBlock, typeHandler=org.apache.ibatis.type.EnumTypeHandler}
+              AND NOW() < release_time
+            ;
+        ]]>
+    </select>
+
+
 </mapper>

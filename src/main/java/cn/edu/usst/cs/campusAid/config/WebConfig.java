@@ -1,7 +1,9 @@
 package cn.edu.usst.cs.campusAid.config;
 
-import cn.edu.usst.cs.campusAid.interceptor.AuthInterceptor;
-import org.springframework.beans.factory.annotation.Autowired;
+import cn.edu.usst.cs.campusAid.interceptor.api.AuthInterceptor;
+import cn.edu.usst.cs.campusAid.interceptor.api.BanApiInterceptor;
+import cn.edu.usst.cs.campusAid.interceptor.view.TemplatedErrandInterceptor;
+import cn.edu.usst.cs.campusAid.interceptor.view.TemplatedForumInterceptor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
@@ -14,6 +16,28 @@ import java.util.List;
 
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
+
+    private final AuthInterceptor authInterceptor;
+    private final BanApiInterceptor banApiInterceptor;
+
+
+    private TemplatedErrandInterceptor templatedErrandInterceptor;
+    private TemplatedForumInterceptor templatedForumInterceptor;
+
+
+    public WebConfig(
+                     AuthInterceptor authInterceptor,
+                     BanApiInterceptor banApiInterceptor,
+                     TemplatedErrandInterceptor templatedErrandInterceptor,
+                     TemplatedForumInterceptor templatedForumInterceptor
+
+    ) {
+
+        this.authInterceptor = authInterceptor;
+        this.banApiInterceptor = banApiInterceptor;
+        this.templatedErrandInterceptor = templatedErrandInterceptor;
+        this.templatedForumInterceptor = templatedForumInterceptor;
+    }
 
     /**
      * campusaid-web/src/main/resources/static里的文件若需要在公网访问，需要在这里注册
@@ -32,6 +56,8 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addViewController("/charge").setViewName("forward:/charge/charge.html");
 
         registry.addViewController("/admin").setViewName("forward:/admin/admin.html");
+        registry.addViewController("/admin/admin_forum").setViewName("forward:/admin/admin_forum.html");
+        registry.addViewController("/admin/admin_reply").setViewName("forward:/admin/admin_reply.html");
 
         registry.addViewController("/").setViewName("forward:/auth/index.html");
         registry.addViewController("/register").setViewName("forward:/auth/register.html");
@@ -57,32 +83,27 @@ public class WebConfig implements WebMvcConfigurer {
                 .addResourceLocations("classpath:/static/shop/");
     }
 
-    @Autowired
-    private AuthInterceptor authInterceptor;
-
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         // 配置拦截器
         registry
                 .addInterceptor(authInterceptor)
+                .addPathPatterns("/api/**")
+                .excludePathPatterns("/api/login/**")
+                .excludePathPatterns("/api/register/**")
+        ;
 
-//                论坛页面
-                .addPathPatterns("/forum/**")
-
-//                论坛后端支持
-                .addPathPatterns("/api/forum/**")
-
-                .addPathPatterns("/api/errand/**")
-
-                // 商店页面只有结账和历史订单需要访问者为一般用户
-                .addPathPatterns("/api/shop/checkout")
-                .addPathPatterns("/api/shop/history")
-
-                .addPathPatterns("/forum/**") // 论坛页面
-                .addPathPatterns("/api/forum/**") // 论坛后端支持
-                .addPathPatterns("/forum/**") // 论坛页面
-                .addPathPatterns("/api/forum/**"); // 论坛后端支持
+        registry.addInterceptor(banApiInterceptor)
+                .addPathPatterns("/api/**")
+        ;
+        registry.addInterceptor(templatedErrandInterceptor)
+                .addPathPatterns("/errand")
+        ;
+        registry.addInterceptor(templatedForumInterceptor)
+                .addPathPatterns("/forum")
+        ;
     }
+
     @Override
     public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
         converters.add(new MappingJackson2HttpMessageConverter());

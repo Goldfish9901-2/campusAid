@@ -3,16 +3,229 @@
 <head>
     <meta charset="UTF-8">
     <title>出错了</title>
+    <style>
+        @font-face {
+            font-family: 'ErrorFont';
+        }
+
+        body {
+            font-family: 'ErrorFont', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: #333;
+            text-align: center;
+            padding: 0;
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .error-container {
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            padding: 50px 60px;
+            max-width: 600px;
+            position: relative;
+            overflow: hidden;
+            transform: translateY(20px);
+            opacity: 0;
+            animation: fadeInUp 0.8s ease-out forwards;
+            z-index: 1;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .error-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, #ff6b6b, #ff8e8e, #ff6b6b);
+            background-size: 200% 100%;
+            animation: gradientFlow 2s linear infinite;
+        }
+
+        h1 {
+            color: #e74c3c;
+            font-size: 5rem;
+            margin: 0 0 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+            animation: pulse 2s infinite;
+        }
+
+        p {
+            font-size: 1.25rem;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .error-actions {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-back {
+            background-color: #3498db;
+            color: white;
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+        }
+
+        .btn-back:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(52, 152, 219, 0.4);
+        }
+
+        .btn-home {
+            background-color: white;
+            color: #3498db;
+            border: 2px solid #3498db;
+        }
+
+        .btn-home:hover {
+            background-color: #f8f9fa;
+            transform: translateY(-2px);
+        }
+
+        .floating-elements {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .floating-element {
+            position: absolute;
+            background-color: rgba(255, 107, 107, 0.1);
+            border-radius: 50%;
+            animation: float 15s infinite linear;
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes gradientFlow {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 200% 50%; }
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.3;
+            }
+            100% {
+                transform: translateY(-1000px) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .error-container {
+                padding: 30px;
+                margin: 20px;
+            }
+
+            h1 {
+                font-size: 3.5rem;
+            }
+
+            p {
+                font-size: 1rem;
+            }
+
+            .error-actions {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
 </head>
 <body>
-<h1>??</h1>
-<p id="main-para" th:text="${message}"></p>
-</body>
+<div class="floating-elements" id="floatingElements"></div>
+
+<div class="error-container">
+    <h1>:(</h1>
+    <p id="main-para" th:text="${message}">错误信息</p>
+
+    <div class="error-actions">
+        <a href="javascript:history.back()" class="btn btn-back">返回上一页</a>
+        <a href="/" class="btn btn-home">返回首页</a>
+    </div>
+</div>
+
 <script th:inline="javascript">
-    let message = document.getElementById("main-para").innerText;
-    if (message === '') {
-        message = '出错了';
+    function createFloatingElements() {
+        const container = document.getElementById('floatingElements');
+        const count = 15;
+
+        for (let i = 0; i < count; i++) {
+            const element = document.createElement('div');
+            element.classList.add('floating-element');
+
+            const size = Math.random() * 100 + 50;
+            element.style.width = `${size}px`;
+            element.style.height = `${size}px`;
+
+            element.style.left = `${Math.random() * 100}%`;
+            element.style.bottom = `-${size}px`;
+
+            const delay = Math.random() * 5;
+            const duration = 10 + Math.random() * 20;
+            element.style.animationDelay = `${delay}s`;
+            element.style.animationDuration = `${duration}s`;
+
+            container.appendChild(element);
+        }
     }
-    alert(message);
+
+    document.addEventListener('DOMContentLoaded', function() {
+        createFloatingElements();
+
+        let messageElement = document.getElementById("main-para");
+        let message = messageElement.innerText;
+        if (message === '') {
+            message = '出错了，请稍后再试';
+            messageElement.innerText = message;
+        }
+
+        setTimeout(function() {
+            const errorContainer = document.querySelector('.error-container');
+            errorContainer.style.boxShadow = '0 15px 35px rgba(0, 0, 0, 0.2)';
+        }, 800);
+    });
 </script>
+</body>
 </html>

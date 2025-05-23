@@ -3,10 +3,10 @@ spring:
     import: optional:file:.env[.properties]
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-#    url: ${DB_URL}
+    url: ${DB_URL}
     password: ${DB_PASSWORD}
     username: campus_aid
-    url: jdbc:mysql://10.100.164.51:3306/campus_aid?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC
+#    url: jdbc:mysql://10.100.164.51:3306/campus_aid?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC
   thymeleaf:
     mode: HTML
     prefix: classpath:/templates/
@@ -58,7 +58,7 @@ logging:
             smtp: debug
       thymeleaf:
         template: debug
-      mybatis: info
+      mybatis: debug
     # 自定义 Mapper 日志级别（与 org 同级）
     cn.edu.usst.campusAid.mapper: debug
 
@@ -73,8 +73,7 @@ mybatis:
     cn.edu.usst.campusAid.model.shop
 
 campus_aid:
-  admin: 2235032128
+  admin: 2235062121
   delay_threads: 10
 app:
   upload-dir: uploads
-
