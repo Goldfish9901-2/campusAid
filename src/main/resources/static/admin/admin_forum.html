@@ -406,13 +406,12 @@
       <div class="post-meta">发帖人：${post.authorId} • 时间：${formatTime(post.publishTime)} • 帖子ID：${post.postId}</div>
       <div class="post-content">${truncateText(post.content, 50)}</div>
       <div class="post-actions">
-        <a href="/forum/reply?postId=${post.postId}" target="_blank" class="view-reply">查看回复 (${post.replyCount})</a>
+        <a href="/admin/admin_reply?postId=${post.postId}" class="view-reply">查看回复 (${post.replyCount})</a>
         <a href="#" onclick="deletePost(${post.postId}); return false;" class="delete-link">删除</a>
       </div>
     `;
 
       postList.appendChild(card);
-
       void card.offsetWidth;
 
       setTimeout(() => {
@@ -480,7 +479,7 @@
             })
             .then(() => {
               alert('删除成功');
-              loadPosts(); // 刷新数据
+              loadPosts();
             })
             .catch(err => {
               alert('删除失败: ' + err.message);

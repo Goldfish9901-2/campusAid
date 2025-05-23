@@ -223,12 +223,6 @@
             will-change: transform;
         }
 
-        .post-card:hover {
-            transform: scale(1.03);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            z-index: 10;
-        }
-
         .post-card h3 {
             margin: 0;
             font-size: 18px;
@@ -272,6 +266,23 @@
         .post-card .post-like a:hover {
             text-decoration: underline;
             color: #3399ff;
+        }
+
+        .post-card {
+            opacity: 0;
+            transform: scale(0.95);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .post-card.show {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .post-card:hover {
+            transform: scale(1.03);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            z-index: 10;
         }
 
         .pagination {
@@ -585,9 +596,10 @@
             return;
         }
 
-        posts.forEach(post => {
+        posts.forEach((post, index) => {
             const postCard = document.createElement("div");
-            postCard.className = "post-card";
+            postCard.className = "post-card hidden"; // 初始隐藏
+            postCard.style.background = getRandomPastelGradient();
 
             let contentHTML = "";
 
@@ -604,9 +616,7 @@
                 </div>
             `;
             } else {
-                contentHTML = `
-                <h3>此帖子已被隐藏</h3>
-            `;
+                contentHTML = `<h3>此帖子已被隐藏</h3>`;
             }
 
             postCard.innerHTML = contentHTML;
@@ -621,6 +631,11 @@
             }
 
             postList.appendChild(postCard);
+
+            // 延迟添加 show 类以触发动画
+            setTimeout(() => {
+                postCard.classList.add("show");
+            }, index * 100); // 每个卡片间隔 100ms 显示
         });
 
         const count = posts.length;
@@ -699,6 +714,10 @@
     }
     function formatTime(timeStr) {
         return timeStr.replace("T", " ").substring(0, 16);
+    }
+    function getRandomPastelGradient() {
+        const hue = Math.floor(Math.random() * 360); // 0 - 360
+        return `linear-gradient(to right bottom, hsl(${hue}, 35%, 92%), hsl(${hue}, 25%, 88%))`;
     }
 </script>
 </body>
