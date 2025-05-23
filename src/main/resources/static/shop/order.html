@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>订单详情 - CampusAid</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            padding: 30px;
+        }
+
+        .container {
+            background: #fff;
+            padding: 25px;
+            border-radius: 8px;
+            max-width: 600px;
+            margin: auto;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            text-align: center;
+            color: #0A2540;
+        }
+
+        p {
+            font-size: 16px;
+            margin: 8px 0;
+        }
+
+        .highlight {
+            font-weight: bold;
+            color: #0A2540;
+        }
+
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #0A2540;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #16365f;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>订单提交成功</h2>
+    <p>订单编号：<span class="highlight" id="order-id">加载中...</span></p>
+    <p>支付金额：<span class="highlight" id="total-price">加载中...</span></p>
+    <button onclick="goBack()">返回商店</button>
+</div>
+
+<script>
+    const params = new URLSearchParams(location.search);
+    const orderId = params.get("orderId");
+    const price = params.get("price");
+
+    document.getElementById("order-id").textContent = orderId || "未知";
+    document.getElementById("total-price").textContent = price ? `¥${price}` : "未知";
+
+    function goBack() {
+        history.back();
+    }
+</script>
+</body>
+</html>

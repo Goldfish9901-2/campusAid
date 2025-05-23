@@ -61,23 +61,19 @@
     let cart = [];
     let currentUserId = null;
 
-    function fetchCurrentUserId() {
-        return fetch('/api/user', {
-            method: 'GET',
-            headers: { 'Content-Type': 'application/json' },
-            credentials: 'include'
-        })
-            .then(res => {
-                if (!res.ok) throw new Error("未登录或会话无效");
-                return res.json();
-            })
-            .then(user => {
-                currentUserId = user.id;
-                console.log("✅ 当前用户 ID 获取成功：", currentUserId);
-            })
-            .catch(err => {
-                alert("无法获取当前用户ID，不能下单：" + err.message);
+    async function fetchCurrentUserId() {
+        try {
+            const res = await fetch('/api/user', {
+                method: 'GET',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include'
             });
+            if (!res.ok) throw new Error("未登录或会话无效");
+            const user = await res.json();
+            currentUserId = user.id;
+        } catch (err) {
+            alert("无法获取当前用户ID，不能下单：" + err.message);
+        }
     }
 
     function renderCart() {
@@ -120,7 +116,7 @@
 
     function submitOrder() {
         if (!currentUserId) {
-            alert("无法获取当前用户ID，请刷新页面或重新登录");
+            alert("未登录，无法提交订单");
             return;
         }
         if (cart.length === 0) {
@@ -148,16 +144,16 @@
                 return res.json();
             })
             .then(data => {
-                alert(`下单成功！订单号：${data.id}\n总价：¥${data.price}`);
                 cart = [];
                 renderCart();
+                window.location.href = `/shop/order.html?orderId=${data.id}&price=${data.price}`;
             })
             .catch(err => {
                 alert("下单失败：" + err.message);
             });
     }
 
-    // 初始化流程
+    // 初始化
     fetchCurrentUserId();
 
     // 加载商店信息
@@ -208,6 +204,7 @@
 </script>
 </body>
 </html>
+
 
 
 
