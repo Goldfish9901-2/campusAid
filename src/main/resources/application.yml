@@ -58,7 +58,7 @@ logging:
             smtp: debug
       thymeleaf:
         template: debug
-      mybatis: info
+      mybatis: debug
     # 自定义 Mapper 日志级别（与 org 同级）
     cn.edu.usst.campusAid.mapper: debug
 

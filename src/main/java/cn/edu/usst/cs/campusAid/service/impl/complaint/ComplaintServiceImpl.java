@@ -35,17 +35,18 @@ public class ComplaintServiceImpl
     private final TransactionMapper transactionMapper;
     private final BlogMapper blogMapper;
     private final UserMapper userMapper;
-    private BanMapper banMapper;
+    private final BanMapper banMapper;
 
-    public ComplaintServiceImpl(BanMapper banMapper,
-                                BlogMapper blogMapper,
-                                TransactionMapper transactionMapper,
-                                OrderMapper orderMapper,
-                                ShopMapper shopMapper,
-                                ErrandMapper errandMapper,
-                                AdminConfig adminConfig,
-                                ComplaintMapper complaintMapper,
-                                ComplaintDTOMapper complaintDTOMapper, UserMapper userMapper) {
+   public ComplaintServiceImpl(
+           BanMapper banMapper,
+           BlogMapper blogMapper,
+           TransactionMapper transactionMapper,
+           OrderMapper orderMapper,
+           ShopMapper shopMapper,
+           ErrandMapper errandMapper,
+           AdminConfig adminConfig,
+           ComplaintMapper complaintMapper,
+           ComplaintDTOMapper complaintDTOMapper, UserMapper userMapper) {
         this.banMapper = banMapper;
         this.blogMapper = blogMapper;
         this.transactionMapper = transactionMapper;
@@ -55,8 +56,8 @@ public class ComplaintServiceImpl
         this.adminConfig = adminConfig;
         this.complaintMapper = complaintMapper;
         this.complaintDTOMapper = complaintDTOMapper;
-        this.userMapper = userMapper;
-    }
+       this.userMapper = userMapper;
+   }
 
     @Override
     public Long postComplaint(ComplaintRequest complaintRequest) {

@@ -19,7 +19,7 @@
                      #{block, typeHandler=org.apache.ibatis.type.EnumTypeHandler}
                  )
     </insert>
-    <select id="countBan" resultType="int">
+    <select id="countBan" resultType="cn.edu.usst.cs.campusAid.model.complaint.Ban">
         <![CDATA[
             SELECT *
             FROM ban
