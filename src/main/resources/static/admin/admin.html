@@ -92,6 +92,7 @@
 </head>
 <body>
 <h1 id="admin-title">管理员操作</h1>
+<a href="/admin/admin_forum" class="back-button" style="right: 160px">管理论坛</a>
 <a href="/forum" class="back-button">← 返回论坛</a>
 <div class="complaint-content">
   <table id="complaint-table" class="complaint-table">
@@ -156,6 +157,7 @@
             .catch(error => {
               console.error('Error:', error);
               alert('加载数据失败，请确认是否为管理员并重新登录。');
+              window.location.href = '/forum';
             });
 
     function renderTable(data) {
@@ -206,9 +208,9 @@
 
         // 发送POST请求处理投诉
         const formData = new URLSearchParams();
-        formData.append('id', complaintId);
+        formData.append('id', complaintId.toString());
         formData.append('result', userInputResult);
-        formData.append('ban_length', banLength);
+        formData.append('ban_length', banLength.toString());
 
         fetch('/api/complaint/process', {
           method: 'POST',
