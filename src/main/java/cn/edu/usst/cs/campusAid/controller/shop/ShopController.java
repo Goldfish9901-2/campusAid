@@ -19,7 +19,7 @@ import java.util.List;
 @RequestMapping("/api/shop")
 public class ShopController {
     private final UserService userService;
-    private ShopService shopService;
+    private final ShopService shopService;
 
     public ShopController(ShopService shopService, UserService userService) {
         this.shopService = shopService;
@@ -47,10 +47,10 @@ public class ShopController {
     }
 
 
-    @GetMapping("/products/{shopName}")
-    public List<ProductTransaction> getProducts(@PathVariable String shopName) {
-        return shopService.getShopInfo(shopName, null).getProducts();
-    }
+//    @GetMapping("/products/{shopName}")
+//    public List<ProductTransaction> getProducts(@PathVariable String shopName) {
+//        return shopService.getShopInfo(shopName, null).getProducts();
+//    }
 
 
     /**

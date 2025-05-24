@@ -1,4 +1,5 @@
-GET localhost:8090/api/shop/info/TestShop
+GET localhost:8090/api/shop/info/%E6%95%99%E8%82%B2%E8%B6%85%E5%B8%82
+# info后面直接跟 中文 教育超市 会乱码 需url转码成 %E6%95%99%E8%82%B2%E8%B6%85%E5%B8%82
 ###
 
 POST localhost:8090/api/shop/checkout

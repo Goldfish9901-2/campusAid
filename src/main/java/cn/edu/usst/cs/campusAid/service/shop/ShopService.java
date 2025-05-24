@@ -21,10 +21,12 @@ public interface ShopService {
 
     /**
      * 提交订单
-     * <strong>如果有商品存货不够，抛出异常</strong>
-     * <strong>如果余额不足，抛出异常</strong>
+     * <p><strong>如果有商品存货不够，抛出异常</strong></p>
+     *
+     * <p><strong>如果余额不足，抛出异常</strong></p>
+     *
      * @param orderDTO 订单信息
-     * @return
+     * @return 后端结算信息
      */
     Order checkout(OrderDTO orderDTO);
 

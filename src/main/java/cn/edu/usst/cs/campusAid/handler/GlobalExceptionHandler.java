@@ -31,7 +31,7 @@ public class GlobalExceptionHandler {
     }
     @ExceptionHandler({ServletRequestBindingException.class})
     public ResponseEntity<?> handleServletRequestBindingException(ServletRequestBindingException e) {
-        log.error("ServletRequestBindingException: {}", e.getMessage());
+        log.error("ServletRequestBindingException: ", e);
         return ResponseEntity.badRequest().body("是不是没有登陆（会话参数错误）\n" + e.getMessage());
     }
 
