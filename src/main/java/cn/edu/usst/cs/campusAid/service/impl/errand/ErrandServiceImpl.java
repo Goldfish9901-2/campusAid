@@ -51,7 +51,6 @@ public class ErrandServiceImpl implements ErrandService {
      * @param userId 用户id
      * @param errand 跑腿订单
      */
-
     private static void verifyState(Long userId, @Nullable Errand errand) {
         if (errand == null) throw new CampusAidException("跑腿订单不存在");
         if (errand.getStatus() != ErrandOrderStatus.NORMAL) {
@@ -79,7 +78,6 @@ public class ErrandServiceImpl implements ErrandService {
         Long targetID = errandMapper.minFreeId();
         request.setId(targetID);
         Errand errand = errandViewsMapper.wrapIntoErrand(request);
-
 
         if (targetID != null) {
             errand.setId(targetID);
@@ -119,7 +117,6 @@ public class ErrandServiceImpl implements ErrandService {
         errandMapper.updateAcceptorId(id, runnerId);
         return runnerId + "--接单成功 单号--" + id;
     }
-
 
     @Override
     public String confirmOrder(Long id, Long userId) {

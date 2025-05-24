@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -54,7 +55,8 @@
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
         }
 
-        input, textarea {
+        input,
+        textarea {
             width: 100%;
             padding: 10px;
             margin: 10px 0;
@@ -102,6 +104,7 @@
         }
     </style>
 </head>
+
 <body>
 <div class="container">
     <!-- 申请跑腿请求按钮 -->
@@ -125,14 +128,8 @@
             <label for="start-location">起点位置：</label>
             <input type="text" id="start-location" placeholder="请输入起点位置" required />
 
-            <label for="start-point">起点：</label>
-            <input type="text" id="start-point" placeholder="输入起点" required />
-
             <label for="end-location">终点位置：</label>
             <input type="text" id="end-location" placeholder="请输入终点位置" required />
-
-            <label for="end-point">终点：</label>
-            <input type="text" id="end-point" placeholder="输入终点" required />
 
             <label for="fee">跑腿费用：</label>
             <input type="number" id="fee" placeholder="费用" min="1" value="3" />
@@ -172,13 +169,11 @@
         const title = document.getElementById('title').value;
         const latestArrivalTime = document.getElementById('latest-arrival-time').value;
         const startLocation = document.getElementById('start-location').value;
-        const startPoint = document.getElementById('start-point').value;
         const endLocation = document.getElementById('end-location').value;
-        const endPoint = document.getElementById('end-point').value;
         const fee = document.getElementById('fee').value;
         const description = document.getElementById('description').value;
 
-        if (!title || !latestArrivalTime || !startLocation || !startPoint || !endLocation || !endPoint) {
+        if (!title || !latestArrivalTime || !startLocation || !endLocation) {
             alert('请填写所有必填项');
             return;
         }
@@ -188,9 +183,7 @@
             title,
             latestArrivalTime,
             startLocation,
-            startPoint,
             endLocation,
-            endPoint,
             fee,
             description
         };
@@ -229,13 +222,13 @@
                     const orderItem = document.createElement('div');
                     orderItem.classList.add('order-item');
                     orderItem.innerHTML = `
-                        <h4>标题: ${order.title || '无标题'}</h4>
-                        <p>最晚送达时间: ${order.latestArrivalTime || '无'}</p>
-                        <p>起点位置: ${order.startLocation || '无'}</p>
-                        <p>终点位置: ${order.endLocation || '无'}</p>
-                        <p>费用: ¥${order.fee || '无'}</p>
-                        <p>描述: ${order.description || '无'}</p>
-                    `;
+                            <h4>标题: ${order.title || '无标题'}</h4>
+                            <p>最晚送达时间: ${order.latestArrivalTime || '无'}</p>
+                            <p>起点位置: ${order.startLocation || '无'}</p>
+                            <p>终点位置: ${order.endLocation || '无'}</p>
+                            <p>费用: ¥${order.fee || '无'}</p>
+                            <p>描述: ${order.description || '无'}</p>
+                        `;
                     ordersList.appendChild(orderItem);
                 });
             })
@@ -246,13 +239,13 @@
     }
 
     // 页面加载时获取订单
-    window.onload = function() {
+    window.onload = function () {
         fetchOrders();
     };
 </script>
 </body>
-</html>
 
+</html>
 
 
 

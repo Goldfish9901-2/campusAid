@@ -55,6 +55,7 @@ public class ErrandController {
     public ResponseEntity<ApiResponse<List<ErrandOrderPreview>>> listOrders(
             @SessionAttribute(SessionKeys.LOGIN_ID) Long userId) {
         List<ErrandOrderPreview> orders = errandService.listOrders(userId);
+        System.out.println("获取到的订单数据: " + orders);  // 添加调试日志
         return ResponseEntity.ok(ApiResponse.success(orders));
     }
 
