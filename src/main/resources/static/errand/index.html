@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>跑腿请求</title>
+    <style>
+        /* 通用样式 */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f7f7f7;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* 申请跑腿请求按钮样式 */
+        .apply-btn {
+            background-color: #28a745;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .apply-btn:hover {
+            background-color: #218838;
+        }
+
+        /* 弹窗样式 */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            width: 400px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        /* 按钮样式 */
+        .buttons {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        button#cancelBtn {
+            background-color: #dc3545;
+        }
+
+        button#cancelBtn:hover {
+            background-color: #c82333;
+        }
+
+        /* 跑腿请求列表 */
+        .errand-list {
+            margin-top: 30px;
+        }
+
+        .errand-item {
+            background-color: #fff;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .errand-item p {
+            margin: 5px 0;
+        }
+
+        button.cancel-errand {
+            background-color: #ffb600;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button.cancel-errand:hover {
+            background-color: #e6a700;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <!-- 申请跑腿请求按钮 -->
+    <button class="apply-btn" id="applyBtn">申请跑腿请求</button>
+
+    <!-- 弹窗 -->
+    <div class="modal-overlay" id="modal" style="display: none;">
+        <div class="modal-content">
+            <h3>发布跑腿请求</h3>
+
+            <form id="errandForm">
+                <label for="delivery-time">最晚送达时间：</label>
+                <input type="datetime-local" id="delivery-time" required />
+
+                <label for="start-point">起点：</label>
+                <input type="text" id="start-point" placeholder="输入起点" required />
+
+                <label for="end-point">终点：</label>
+                <input type="text" id="end-point" placeholder="输入终点" required />
+
+                <label for="fee">跑腿费用：</label>
+                <input type="number" id="fee" placeholder="费用" min="1" value="3" />
+
+                <label for="description">附加说明：</label>
+                <textarea id="description" placeholder="描述任务的详细信息"></textarea>
+
+                <label for="image">上传图片：</label>
+                <input type="file" id="image" />
+
+                <div class="buttons">
+                    <button type="button" id="submitBtn">提交请求</button>
+                    <button type="button" id="cancelBtn">取消</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 跑腿请求列表 -->
+    <div class="errand-list" id="errandList">
+        <h2>我的跑腿请求</h2>
+        <!-- 跑腿请求项 -->
+        <!-- 这里会通过 JavaScript 动态生成 -->
+    </div>
+</div>
+
+<script>
+    // 获取DOM元素
+    const applyBtn = document.getElementById('applyBtn');
+    const modal = document.getElementById('modal');
+    const cancelBtn = document.getElementById('cancelBtn');
+    const submitBtn = document.getElementById('submitBtn');
+    const errandList = document.getElementById('errandList');
+    const errandForm = document.getElementById('errandForm');
+
+    // 打开弹窗
+    applyBtn.addEventListener('click', () => {
+        modal.style.display = 'flex';
+    });
+
+    // 关闭弹窗
+    cancelBtn.addEventListener('click', () => {
+        modal.style.display = 'none';
+    });
+
+    // 提交跑腿请求
+    submitBtn.addEventListener('click', () => {
+        const deliveryTime = document.getElementById('delivery-time').value;
+        const startPoint = document.getElementById('start-point').value;
+        const endPoint = document.getElementById('end-point').value;
+        const fee = document.getElementById('fee').value;
+        const description = document.getElementById('description').value;
+
+        if (!deliveryTime || !startPoint || !endPoint) {
+            alert('请填写所有必填项');
+            return;
+        }
+
+        // 动态生成跑腿请求列表项
+        const errandItem = document.createElement('div');
+        errandItem.classList.add('errand-item');
+
+        errandItem.innerHTML = `
+                <p>起点: ${startPoint} ➡ 终点: ${endPoint}</p>
+                <p>最晚送达时间: ${deliveryTime} | 费用: ¥${fee}</p>
+                <p>附加说明: ${description}</p>
+                <button class="cancel-errand" onclick="cancelErrand(this)">取消请求</button>
+            `;
+
+        errandList.appendChild(errandItem);
+        modal.style.display = 'none'; // 关闭弹窗
+    });
+
+    // 取消跑腿请求
+    function cancelErrand(button) {
+        const errandItem = button.parentElement;
+        errandItem.remove(); // 删除请求项
+    }
+</script>
+</body>
+</html>

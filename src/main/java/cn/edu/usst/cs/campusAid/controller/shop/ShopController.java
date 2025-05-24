@@ -32,7 +32,11 @@ public class ShopController {
      * @param shopNameStored 10位是学生，5位是教师（工号），其他查商户数据库
      * @param shopName       商户名 如果商户数据库有记录，则视为商户查看自己信息
      * @return 商户信息
+
      */
+
+
+
 
     @GetMapping("/info/{shopName}")
     public ResponseEntity<ShopInfo> getShopInfo(
@@ -40,6 +44,12 @@ public class ShopController {
             @PathVariable String shopName
     ) {
         return ResponseEntity.ok(shopService.getShopInfo(shopName, shopNameStored));
+    }
+
+
+    @GetMapping("/products/{shopName}")
+    public List<ProductTransaction> getProducts(@PathVariable String shopName) {
+        return shopService.getShopInfo(shopName, null).getProducts();
     }
 
 
