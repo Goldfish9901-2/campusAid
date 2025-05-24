@@ -41,10 +41,6 @@ public class ShopController {
     ) {
         return ResponseEntity.ok(shopService.getShopInfo(shopName, shopNameStored));
     }
-    @GetMapping("/products/{shopName}")
-    public List<ProductTransaction> getProducts(@PathVariable String shopName) {
-        return shopService.getShopInfo(shopName, null).getProducts();
-    }
 
 
     /**
