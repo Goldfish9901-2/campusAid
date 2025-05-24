@@ -151,7 +151,6 @@
             display: flex;
             flex-direction: column;
             overflow: hidden;
-
         }
 
         .search-wrapper {
@@ -402,7 +401,7 @@
             当前板块：<br>
             <span>论坛</span>
         </div>
-        <button onclick="window.location.href='/errand/errand-list.html'">跑腿</button>
+        <button onclick="window.location.href='/errand/index.html'">跑腿</button>
         <button onclick="window.location.href='/shop/shop.html?name=教育超市'">商家</button>
         <div class="future-section">
             更多功能<br>
@@ -699,6 +698,7 @@
                 button.disabled = false;
             });
     }
+
     function updatePaginationUI() {
         const currentPageElement = document.getElementById('current-page');
         const pageInput = document.getElementById('page-input');
@@ -709,12 +709,15 @@
         document.getElementById('prev-page').disabled = pagination.currentPage === 0;
         document.getElementById('next-page').disabled = !pagination.hasMore;
     }
+
     function truncateText(text, maxLength) {
         return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
     }
+
     function formatTime(timeStr) {
         return timeStr.replace("T", " ").substring(0, 16);
     }
+
     function getRandomPastelGradient() {
         const hue = Math.floor(Math.random() * 360); // 0 - 360
         return `linear-gradient(to right bottom, hsl(${hue}, 35%, 92%), hsl(${hue}, 25%, 88%))`;

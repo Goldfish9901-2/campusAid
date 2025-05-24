@@ -20,7 +20,6 @@
             padding: 20px;
         }
 
-        /* 申请跑腿请求按钮样式 */
         .apply-btn {
             background-color: #28a745;
             color: white;
@@ -42,7 +41,7 @@
             width: 100%;
             height: 100%;
             background: rgba(0, 0, 0, 0.5);
-            display: flex;
+            display: none;
             justify-content: center;
             align-items: center;
         }
@@ -63,12 +62,6 @@
             border-radius: 5px;
         }
 
-        textarea {
-            resize: vertical;
-            min-height: 80px;
-        }
-
-        /* 按钮样式 */
         .buttons {
             display: flex;
             justify-content: space-between;
@@ -95,33 +88,17 @@
             background-color: #c82333;
         }
 
-        /* 跑腿请求列表 */
-        .errand-list {
-            margin-top: 30px;
-        }
-
-        .errand-item {
-            background-color: #fff;
-            padding: 15px;
-            margin-bottom: 10px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        .errand-item p {
-            margin: 5px 0;
-        }
-
-        button.cancel-errand {
-            background-color: #ffb600;
-            padding: 5px 10px;
-            border: none;
+        /* 订单项样式 */
+        .order-item {
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin: 10px;
             border-radius: 5px;
-            cursor: pointer;
+            background-color: #f9f9f9;
         }
 
-        button.cancel-errand:hover {
-            background-color: #e6a700;
+        .order-item h4 {
+            margin-top: 0;
         }
     </style>
 </head>
@@ -130,43 +107,44 @@
     <!-- 申请跑腿请求按钮 -->
     <button class="apply-btn" id="applyBtn">申请跑腿请求</button>
 
-    <!-- 弹窗 -->
-    <div class="modal-overlay" id="modal" style="display: none;">
-        <div class="modal-content">
-            <h3>发布跑腿请求</h3>
+    <!-- 显示订单列表 -->
+    <div id="ordersList"></div>
+</div>
 
-            <form id="errandForm">
-                <label for="delivery-time">最晚送达时间：</label>
-                <input type="datetime-local" id="delivery-time" required />
+<!-- 弹窗内容 -->
+<div class="modal-overlay" id="modal">
+    <div class="modal-content">
+        <h3>发布跑腿请求</h3>
+        <form id="errandForm">
+            <label for="title">标题：</label>
+            <input type="text" id="title" placeholder="请输入跑腿请求的标题" required />
 
-                <label for="start-point">起点：</label>
-                <input type="text" id="start-point" placeholder="输入起点" required />
+            <label for="latest-arrival-time">最晚送达时间：</label>
+            <input type="datetime-local" id="latest-arrival-time" required />
 
-                <label for="end-point">终点：</label>
-                <input type="text" id="end-point" placeholder="输入终点" required />
+            <label for="start-location">起点位置：</label>
+            <input type="text" id="start-location" placeholder="请输入起点位置" required />
 
-                <label for="fee">跑腿费用：</label>
-                <input type="number" id="fee" placeholder="费用" min="1" value="3" />
+            <label for="start-point">起点：</label>
+            <input type="text" id="start-point" placeholder="输入起点" required />
 
-                <label for="description">附加说明：</label>
-                <textarea id="description" placeholder="描述任务的详细信息"></textarea>
+            <label for="end-location">终点位置：</label>
+            <input type="text" id="end-location" placeholder="请输入终点位置" required />
 
-                <label for="image">上传图片：</label>
-                <input type="file" id="image" />
+            <label for="end-point">终点：</label>
+            <input type="text" id="end-point" placeholder="输入终点" required />
 
-                <div class="buttons">
-                    <button type="button" id="submitBtn">提交请求</button>
-                    <button type="button" id="cancelBtn">取消</button>
-                </div>
-            </form>
-        </div>
-    </div>
+            <label for="fee">跑腿费用：</label>
+            <input type="number" id="fee" placeholder="费用" min="1" value="3" />
 
-    <!-- 跑腿请求列表 -->
-    <div class="errand-list" id="errandList">
-        <h2>我的跑腿请求</h2>
-        <!-- 跑腿请求项 -->
-        <!-- 这里会通过 JavaScript 动态生成 -->
+            <label for="description">附加说明：</label>
+            <textarea id="description" placeholder="描述任务的详细信息"></textarea>
+
+            <div class="buttons">
+                <button type="button" id="submitBtn">提交请求</button>
+                <button type="button" id="cancelBtn">取消</button>
+            </div>
+        </form>
     </div>
 </div>
 
@@ -176,8 +154,8 @@
     const modal = document.getElementById('modal');
     const cancelBtn = document.getElementById('cancelBtn');
     const submitBtn = document.getElementById('submitBtn');
-    const errandList = document.getElementById('errandList');
     const errandForm = document.getElementById('errandForm');
+    const ordersList = document.getElementById('ordersList');
 
     // 打开弹窗
     applyBtn.addEventListener('click', () => {
@@ -191,37 +169,93 @@
 
     // 提交跑腿请求
     submitBtn.addEventListener('click', () => {
-        const deliveryTime = document.getElementById('delivery-time').value;
+        const title = document.getElementById('title').value;
+        const latestArrivalTime = document.getElementById('latest-arrival-time').value;
+        const startLocation = document.getElementById('start-location').value;
         const startPoint = document.getElementById('start-point').value;
+        const endLocation = document.getElementById('end-location').value;
         const endPoint = document.getElementById('end-point').value;
         const fee = document.getElementById('fee').value;
         const description = document.getElementById('description').value;
 
-        if (!deliveryTime || !startPoint || !endPoint) {
+        if (!title || !latestArrivalTime || !startLocation || !startPoint || !endLocation || !endPoint) {
             alert('请填写所有必填项');
             return;
         }
 
-        // 动态生成跑腿请求列表项
-        const errandItem = document.createElement('div');
-        errandItem.classList.add('errand-item');
+        // 构建请求数据
+        const requestData = {
+            title,
+            latestArrivalTime,
+            startLocation,
+            startPoint,
+            endLocation,
+            endPoint,
+            fee,
+            description
+        };
 
-        errandItem.innerHTML = `
-                <p>起点: ${startPoint} ➡ 终点: ${endPoint}</p>
-                <p>最晚送达时间: ${deliveryTime} | 费用: ¥${fee}</p>
-                <p>附加说明: ${description}</p>
-                <button class="cancel-errand" onclick="cancelErrand(this)">取消请求</button>
-            `;
-
-        errandList.appendChild(errandItem);
-        modal.style.display = 'none'; // 关闭弹窗
+        // 发送请求到后端
+        fetch('/api/errand/order', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(requestData)
+        })
+            .then(response => response.json())
+            .then(data => {
+                console.log('请求成功:', data);
+                modal.style.display = 'none';  // 关闭弹窗
+                errandForm.reset();  // 重置表单
+                fetchOrders();  // 刷新订单列表
+            })
+            .catch(error => {
+                console.error('请求失败:', error);
+                alert('提交失败，请稍后再试');
+            });
     });
 
-    // 取消跑腿请求
-    function cancelErrand(button) {
-        const errandItem = button.parentElement;
-        errandItem.remove(); // 删除请求项
+    // 获取并显示所有订单
+    function fetchOrders() {
+        fetch('/api/errand/orders', { method: 'GET' })
+            .then(response => response.json())
+            .then(data => {
+                const orders = data.data || [];  // 获取返回的订单数据
+                ordersList.innerHTML = '';  // 清空订单列表
+
+                // 遍历订单数据并展示
+                orders.forEach(order => {
+                    const orderItem = document.createElement('div');
+                    orderItem.classList.add('order-item');
+                    orderItem.innerHTML = `
+                        <h4>标题: ${order.title || '无标题'}</h4>
+                        <p>最晚送达时间: ${order.latestArrivalTime || '无'}</p>
+                        <p>起点位置: ${order.startLocation || '无'}</p>
+                        <p>终点位置: ${order.endLocation || '无'}</p>
+                        <p>费用: ¥${order.fee || '无'}</p>
+                        <p>描述: ${order.description || '无'}</p>
+                    `;
+                    ordersList.appendChild(orderItem);
+                });
+            })
+            .catch(error => {
+                console.error('获取订单失败:', error);
+                alert('获取订单失败，请稍后再试');
+            });
     }
+
+    // 页面加载时获取订单
+    window.onload = function() {
+        fetchOrders();
+    };
 </script>
 </body>
 </html>
+
+
+
+
+
+
+
