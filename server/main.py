@@ -14,6 +14,6 @@ if __name__ == '__main__':
     
     for path in (resource_dir/"static").rglob("*.html"):
         # 替换图像为镜像源
-        # replace(path,"/background2.jpg","http://101.37.75.201:8000/background2.jpg")
+        replace(path,"/background2.jpg","http://101.37.75.201/static/extras/background2.jpg")
         pass
     
