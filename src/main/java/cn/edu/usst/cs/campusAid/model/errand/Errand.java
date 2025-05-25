@@ -7,12 +7,11 @@ import lombok.Data;
 import lombok.NonNull;
 
 import java.time.LocalDateTime;
-
-@Data
-@Builder
 /**
  * 代表一个跑腿订单的类，包含了订单的相关信息和状态
  */
+@Data
+@Builder
 public class Errand {
     /**
      * 订单ID
@@ -66,4 +65,6 @@ public class Errand {
      */
     @NonNull
     private ErrandOrderStatus status;
+
+    private LocalDateTime confirmTime;
 }

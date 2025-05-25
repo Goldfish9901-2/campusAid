@@ -128,6 +128,7 @@ public class ErrandServiceImpl implements ErrandService {
 
     @Override
     public String confirmOrder(Long id, Long userId) {
+        LocalDateTime now = LocalDateTime.now();
         Errand errand = getErrand(id, userId);
         ErrandOrderStatus status;
         if (Objects.equals(errand.getAcceptorId(), userId)) {
@@ -137,7 +138,9 @@ public class ErrandServiceImpl implements ErrandService {
         } else {
             throw new CampusAidException("无此权限");
         }
-        errandMapper.updateErrand(id, status);
+        errand.setConfirmTime(now);
+        errandMapper.setConfirmTime(id, now);
+//        errandMapper.updateErrand(id, status);
 
         // 提交一个延迟30分钟执行的任务
         executorService.schedule(() -> {

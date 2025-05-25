@@ -82,5 +82,10 @@
         SET acceptor_id = #{runnerId}
         WHERE id = #{id}
     </update>
+    <update id="setConfirmTime">
+        UPDATE errand
+        SET confirm_time = #{confirmTime}
+        WHERE id = #{id};
+    </update>
 
 </mapper>

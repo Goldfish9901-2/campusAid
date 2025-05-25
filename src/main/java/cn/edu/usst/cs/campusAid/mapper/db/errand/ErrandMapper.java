@@ -6,6 +6,7 @@ import cn.edu.usst.cs.campusAid.mapper.mapstruct.ErrandViewsMapper;
 import cn.edu.usst.cs.campusAid.model.errand.Errand;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Mapper
@@ -68,4 +69,6 @@ public interface ErrandMapper {
      * 更新订单的接受者ID（即接单操作）
      */
     void updateAcceptorId(Long id, Long runnerId);
+
+    void setConfirmTime(Long id, LocalDateTime now);
 }
