@@ -1,18 +1,27 @@
 package cn.edu.usst.cs.campusAid.service.impl.auth;
 
-import cn.edu.usst.cs.campusAid.service.CampusAidException;
 import cn.edu.usst.cs.campusAid.mapper.db.UserMapper;
 import cn.edu.usst.cs.campusAid.model.User;
+import cn.edu.usst.cs.campusAid.service.CampusAidException;
+import cn.edu.usst.cs.campusAid.service.ExceptionService;
+import cn.edu.usst.cs.campusAid.service.auth.MailService;
 import cn.edu.usst.cs.campusAid.service.auth.RegisterService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class RegisterServiceImpl extends BaseAuthService
         implements RegisterService {
 
-    @Autowired
-    private UserMapper userMapper;
+    private final UserMapper userMapper;
+
+    public RegisterServiceImpl(
+            UserMapper userMapper,
+            MailService mailService,
+            ExceptionService exceptionService
+    ) {
+        super(mailService,exceptionService);
+        this.userMapper = userMapper;
+    }
 
     /**
      * 注册新用户

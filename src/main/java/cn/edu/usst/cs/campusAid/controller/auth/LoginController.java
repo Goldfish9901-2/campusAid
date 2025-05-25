@@ -18,10 +18,18 @@ import java.time.LocalTime;
 @RequestMapping("/api/login")
 public class LoginController {
 
+    private final LoginService loginService;
+    private final AdminConfig adminConfig;
+
+
     @Autowired
-    private LoginService loginService;
-    @Autowired
-    private AdminConfig adminConfig;
+    public LoginController(
+            LoginService loginService,
+            AdminConfig adminConfig
+    ) {
+        this.loginService = loginService;
+        this.adminConfig = adminConfig;
+    }
 
     @PostMapping
     public ApiResponse<String> sendLoginCode(

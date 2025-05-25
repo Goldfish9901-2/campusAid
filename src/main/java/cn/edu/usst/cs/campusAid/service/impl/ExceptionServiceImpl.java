@@ -10,10 +10,14 @@ import java.io.*;
 
 @Service
 public class ExceptionServiceImpl implements ExceptionService {
-    @Autowired
+    final
     ExceptionMapper exceptionMapper;
 
     private Logger logger = org.slf4j.LoggerFactory.getLogger(ExceptionServiceImpl.class);
+
+    public ExceptionServiceImpl(ExceptionMapper exceptionMapper) {
+        this.exceptionMapper = exceptionMapper;
+    }
 
     /**
      * 根据异常信息提交异常，并返回异常id

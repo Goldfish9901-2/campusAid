@@ -3,7 +3,9 @@ package cn.edu.usst.cs.campusAid.service.impl.auth;
 import cn.edu.usst.cs.campusAid.service.CampusAidException;
 import cn.edu.usst.cs.campusAid.mapper.db.UserMapper;
 import cn.edu.usst.cs.campusAid.model.User;
+import cn.edu.usst.cs.campusAid.service.ExceptionService;
 import cn.edu.usst.cs.campusAid.service.auth.LoginService;
+import cn.edu.usst.cs.campusAid.service.auth.MailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,8 +14,16 @@ public class LoginServiceImpl
         extends BaseAuthService
         implements LoginService {
 
-    @Autowired
-    private UserMapper userMapper;
+    private final UserMapper userMapper;
+
+    public LoginServiceImpl(
+            UserMapper userMapper,
+            ExceptionService exceptionService,
+            MailService mailService
+    ) {
+        super(mailService,exceptionService);
+        this.userMapper = userMapper;
+    }
 
     /**
      * 生成验证码并发送到用户邮箱

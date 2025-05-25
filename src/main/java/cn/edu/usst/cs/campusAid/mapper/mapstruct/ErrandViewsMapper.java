@@ -36,7 +36,8 @@ public interface ErrandViewsMapper {
 //            @Mapping(target = "id", ignore = true),
             @Mapping(target = "acceptorId", ignore = true),
             @Mapping(target = "status", expression =
-                    "java(cn.edu.usst.cs.campusAid.dto.errand.ErrandOrderStatus.NORMAL)")
+                    "java(cn.edu.usst.cs.campusAid.dto.errand.ErrandOrderStatus.NORMAL)"),
+            @Mapping(target = "confirmTime", expression = "java(null)"),
     })
     Errand wrapIntoErrand(ErrandOrderRequest request);
 }

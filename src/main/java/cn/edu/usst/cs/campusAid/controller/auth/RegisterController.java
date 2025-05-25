@@ -17,10 +17,18 @@ import static cn.edu.usst.cs.campusAid.controller.SessionKeys.REG_CODE;
 @RequestMapping("/api/register")
 public class RegisterController {
 
-    @Autowired
     private RegisterService registerService;
+    private final AdminConfig adminConfig;
+
+    public RegisterController(AdminConfig adminConfig) {
+        this.adminConfig = adminConfig;
+    }
+
     @Autowired
-    private AdminConfig adminConfig;
+    public RegisterController(RegisterService registerService, AdminConfig adminConfig) {
+        this.registerService = registerService;
+        this.adminConfig = adminConfig;
+    }
 
     @PostMapping("/")
     public ApiResponse<String> sendRegisterCode(

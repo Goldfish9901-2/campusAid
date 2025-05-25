@@ -35,7 +35,6 @@ public class StockServiceImpl implements StockService {
     @NonNull
     public String verify(String name, String password) {
         try {
-
             String message = shopMapper.verify(name, password);
             return Objects.requireNonNull(message);
         } catch (NullPointerException e) {
