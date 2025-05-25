@@ -63,6 +63,12 @@
         ;
     </select>
 
+    <select id="selectHistoricalOrders" resultType="cn.edu.usst.cs.campusAid.model.errand.Errand">
+        SELECT * FROM errand
+        WHERE sender_id = #{userId}
+        ORDER BY createTime DESC
+    </select>
+
     <!-- 更新跑腿订单的状态 -->
     <update id="updateErrand">
         UPDATE errand

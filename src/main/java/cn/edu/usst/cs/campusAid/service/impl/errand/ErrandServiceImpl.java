@@ -94,9 +94,17 @@ public class ErrandServiceImpl implements ErrandService {
     }
 
     @Override
+    public List<ErrandOrderPreview> listUserHistoricalOrders(Long userId) {
+        return errandMapper.selectHistoricalOrders(userId).stream()
+                .map(errand -> ErrandViewsMapper.getInstance().getPreview(errand))
+                .toList();
+    }
+
+    @Override
     public Errand getOrderDetail(Long id, Long userId) {
         Errand errand = getErrand(id, userId);
-        if (errand.getSenderId().equals(userId) || Objects.equals(errand.getAcceptorId(), userId)) return errand;
+        if (errand.getSenderId().equals(userId)) return errand;
+        if (Objects.equals(errand.getAcceptorId(), userId)) return errand;
         adminConfig.verifyIsAdmin(userId);
         return errand;
     }

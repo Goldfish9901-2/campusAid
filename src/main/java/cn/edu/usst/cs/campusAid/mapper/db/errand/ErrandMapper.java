@@ -52,6 +52,14 @@ public interface ErrandMapper {
     List<Errand> selectErrandsPublishedByUser(Long userId);
 
     /**
+     * 查询用户的历史跑腿订单（包括已完成、已取消等状态的订单）
+     *
+     * @param userId 用户 ID
+     * @return 用户的历史跑腿订单列表
+     */
+    List<Errand> selectHistoricalOrders(Long userId);
+
+    /**
      * 更新跑腿订单的状态
      */
     void updateErrand(Long id, ErrandOrderStatus status);

@@ -1,5 +1,6 @@
 package cn.edu.usst.cs.campusAid.controller.errand;
 
+import cn.edu.usst.cs.campusAid.config.AdminConfig;
 import cn.edu.usst.cs.campusAid.controller.SessionKeys;
 import cn.edu.usst.cs.campusAid.dto.ApiResponse;
 import cn.edu.usst.cs.campusAid.dto.errand.ErrandOrderPreview;
@@ -13,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * 跑腿服务控制器
@@ -24,10 +26,12 @@ public class ErrandController {
 
     private final ErrandService errandService;
     private final UploadFileSystemService uploadFileSystemService;
+    private final AdminConfig adminConfig;
 
-    public ErrandController(ErrandService errandService, UploadFileSystemService uploadFileSystemService) {
+    public ErrandController(ErrandService errandService, UploadFileSystemService uploadFileSystemService, AdminConfig adminConfig) {
         this.errandService = errandService;
         this.uploadFileSystemService = uploadFileSystemService;
+        this.adminConfig = adminConfig;
     }
 
     /**
@@ -57,6 +61,30 @@ public class ErrandController {
         List<ErrandOrderPreview> orders = errandService.listOrders(userId);
         System.out.println("获取到的订单数据: " + orders);  // 添加调试日志
         return ResponseEntity.ok(ApiResponse.success(orders));
+    }
+
+    /**
+     * 获取用户的历史跑腿订单（仅限用户自己或管理员调用）
+     *
+     * @param userId      当前登录用户 ID（用于鉴权）
+     * @param queryUserId 指定查询的用户 ID（当为 null 时默认为当前用户）
+     * @return 用户的历史订单预览列表
+     */
+    @GetMapping("/orders/history")
+    public ResponseEntity<ApiResponse<List<ErrandOrderPreview>>> listUserHistoricalOrders(
+            @SessionAttribute(SessionKeys.LOGIN_ID) Long userId,
+            @RequestParam(name = "userId", required = false) Long queryUserId) {
+        Long targetUserId = queryUserId;
+        try {
+            Objects.requireNonNull(targetUserId);
+            adminConfig.verifyIsAdmin(userId);
+        } catch (RuntimeException runtimeException) {
+            //  非有效管理员查询 回退到自己的信息
+            targetUserId = userId;
+        }
+
+        List<ErrandOrderPreview> historicalOrders = errandService.listUserHistoricalOrders(targetUserId);
+        return ResponseEntity.ok(ApiResponse.success(historicalOrders));
     }
 
     /**

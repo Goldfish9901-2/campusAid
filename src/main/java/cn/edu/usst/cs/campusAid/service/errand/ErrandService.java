@@ -23,6 +23,14 @@ public interface ErrandService {
     List<ErrandOrderPreview> listOrders(Long userId);
 
     /**
+     * 获取用户的历史跑腿订单
+     *
+     * @param userId 指定查询的用户 ID
+     * @return 用户的历史订单预览列表
+     */
+    List<ErrandOrderPreview> listUserHistoricalOrders(Long userId);
+
+    /**
      * 获取单个订单详细信息
      */
     Errand getOrderDetail(Long id, Long userId);
