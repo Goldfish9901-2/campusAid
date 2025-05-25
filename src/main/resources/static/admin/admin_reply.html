@@ -192,12 +192,7 @@
             });
     }
     loadReplies();
-    document.getElementById('send-reply-btn').addEventListener('click', sendReply);
-    document.getElementById('reply-input').addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
-            sendReply();
-        }
-    });
+
     function renderPost(post) {
         console.log('当前帖子数据:', post);
         const container = document.getElementById('post-detail');
@@ -220,15 +215,48 @@
             replyCard.className = 'reply-card';
 
             replyCard.innerHTML = `
-                <strong>${reply.senderId}：</strong>
-                <div>${reply.content}</div>
-                <small>${formatTime(reply.sendTime)}</small>
-            `;
+            <strong>${reply.senderId}：</strong>
+            <div>${reply.content}</div>
+            <small>${formatTime(reply.sendTime)}</small>
+            <a href="javascript:void(0)" class="delete-link" data-reply-id="${reply.id}"> 删除</a>
+        `;
             container.appendChild(replyCard);
+
+            const deleteLink = replyCard.querySelector('.delete-link');
+            deleteLink.addEventListener('click', function () {
+                const replyId = this.getAttribute('data-reply-id');
+                deleteReply(replyId);
+            });
         });
     }
+
     function formatTime(timeStr) {
         return timeStr ? timeStr.replace("T", " ").substring(0, 16) : "";
+    }
+
+    function deleteReply(replyId) {
+        if (!confirm('确定要删除这条回复吗？')) return;
+
+        fetch(`/api/forum/reply/${replyId}`, {
+            method: 'DELETE',
+            credentials: 'include'
+        })
+            .then(response => {
+                if (!response.ok) {
+                    return response.text().then(text => {
+                        throw new Error(`服务器响应：${text}`);
+                    });
+                }
+                return response.text();
+            })
+            .then(() => {
+                alert('回复已删除');
+                loadReplies(); // 刷新回复列表
+            })
+            .catch(error => {
+                console.error('删除时发生错误:', error);
+                alert('删除失败：' + error.message);
+            });
     }
 </script>
 </body>
