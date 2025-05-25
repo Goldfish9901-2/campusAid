@@ -81,6 +81,7 @@ mybatis:
 
 campus_aid:
   admin: 2235062121
+  test: true
   delay_threads: 10
 app:
   upload-dir: uploads

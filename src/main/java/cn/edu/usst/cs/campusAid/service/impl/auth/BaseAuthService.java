@@ -6,14 +6,19 @@ import cn.edu.usst.cs.campusAid.service.auth.MailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-@Service
+
 public abstract class BaseAuthService {
 
-    @Autowired
     protected MailService mailService;
 
+    protected final ExceptionService exceptionService;
+
+
     @Autowired
-    protected ExceptionService exceptionService;
+    public BaseAuthService(MailService mailService,ExceptionService exceptionService) {
+        this.mailService = mailService;
+        this.exceptionService = exceptionService;
+    }
 
     /**
      * 生成验证码

@@ -1,5 +1,6 @@
 package cn.edu.usst.cs.campusAid.interceptor.api;
 
+import cn.edu.usst.cs.campusAid.config.AdminConfig;
 import cn.edu.usst.cs.campusAid.controller.SessionKeys;
 import cn.edu.usst.cs.campusAid.mapper.db.complaint.BanMapper;
 import cn.edu.usst.cs.campusAid.model.complaint.Ban;
@@ -20,10 +21,19 @@ import static jakarta.servlet.http.HttpServletResponse.SC_UNAUTHORIZED;
 @Component
 public class BanApiInterceptor extends ApiInterceptor {
     private final BanMapper banMapper;
+    private final AdminConfig adminConfig;
 
-    public BanApiInterceptor(BanMapper banMapper) {
+    @Override
+    protected AdminConfig getAdminConfig() {
+        return adminConfig;
+    }
+
+    public BanApiInterceptor(
+            BanMapper banMapper,
+            AdminConfig adminConfig) {
         super();
         this.banMapper = banMapper;
+        this.adminConfig = adminConfig;
     }
 
     @Override
@@ -47,6 +57,7 @@ public class BanApiInterceptor extends ApiInterceptor {
             processResponse(response, SC_UNAUTHORIZED, message);
             return false;
         }
+
         return true;
     }
 

@@ -1,5 +1,6 @@
 package cn.edu.usst.cs.campusAid.interceptor.api;
 
+import cn.edu.usst.cs.campusAid.config.AdminConfig;
 import cn.edu.usst.cs.campusAid.controller.SessionKeys;
 import cn.edu.usst.cs.campusAid.service.auth.LoginService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -17,10 +18,17 @@ import java.time.LocalDateTime;
 @Component
 public class AuthInterceptor extends ApiInterceptor {
 
-    public AuthInterceptor() {
+    private final AdminConfig adminConfig;
+
+    public AuthInterceptor(AdminConfig adminConfig) {
         super();
+        this.adminConfig = adminConfig;
     }
 
+    @Override
+    protected AdminConfig getAdminConfig() {
+        return adminConfig;
+    }
 
     @Override
     public boolean preHandle(
@@ -35,6 +43,8 @@ public class AuthInterceptor extends ApiInterceptor {
         LocalDateTime now = LocalDateTime.now();
         response.setContentType("application/json;charset=UTF-8");
 
+        if(adminConfig.isInTestMode())
+            return true;
 
         if (session == null) {
             processResponse(response, HttpServletResponse.SC_UNAUTHORIZED, "未登录，请登录");
