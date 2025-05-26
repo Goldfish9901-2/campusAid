@@ -4,93 +4,143 @@
     <meta charset="UTF-8">
     <title>CampusAid-帖子管理</title>
     <style>
+        /* 基础设置 */
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #f4f4f9;
-            height: 100vh;
+            background-color: #f9f9fb;
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
             animation: fadein 1.5s ease-in-out forwards;
         }
 
         @keyframes fadein {
-            from {
-                opacity: 0.2;
-            }
-            to {
-                opacity: 1;
-            }
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
 
+        /* 内容容器 */
         .content-wrapper {
             flex: 1;
             overflow-y: auto;
-            padding: 20px;
+            padding: 30px 20px;
+            background: linear-gradient(to bottom right, #ffffff, #f4f6fa);
         }
 
+        /* 主体帖子区域 */
         .post-container {
-            max-width: 700px;
+            max-width: 720px;
             margin: 0 auto;
             background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+            padding: 30px;
+            position: relative;
         }
 
         .post-title {
-            font-size: 22px;
+            font-size: 24px;
             font-weight: bold;
-            margin-bottom: 10px;
+            color: #2c3e50;
+            margin-bottom: 12px;
         }
 
         .post-meta {
             font-size: 14px;
-            color: #666;
+            color: #888;
             margin-bottom: 20px;
         }
 
         .post-content {
             font-size: 15px;
             color: #333;
-            line-height: 1.6;
+            line-height: 1.7;
             padding-bottom: 20px;
             border-bottom: 1px solid #eee;
         }
 
+        /* 回复列表标题 */
         .replies-title {
-            font-size: 18px;
-            margin: 25px 0 15px;
+            font-size: 20px;
+            margin: 30px 0 15px;
             color: #333;
+            font-weight: 600;
         }
 
+        /* 回复滚动容器 */
         .replies-container {
-            max-height: 450px;
+            max-height: 500px;
             overflow-y: auto;
             margin-bottom: 15px;
+            border-radius: 8px;
+            background: #fff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            padding: 10px;
         }
 
+        /* 单个回复卡片 */
         .reply-card {
-            padding: 15px;
-            border: 1px solid #eee;
-            border-radius: 6px;
-            background-color: #f9f9f9;
-            margin-bottom: 12px;
+            padding: 18px 20px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            background-color: #fbfcfd;
+            margin-bottom: 16px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .reply-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
         }
 
         .reply-card strong {
             font-size: 15px;
-            color: #333;
+            color: #2c3e50;
+            font-weight: 600;
         }
 
         .reply-card small {
-            font-size: 13px;
-            color: #999;
+            font-size: 12px;
+            color: #aaa;
             display: block;
-            margin-top: 5px;
+            margin-top: 6px;
         }
 
+        .reply-card .delete-link {
+            margin-left: auto;
+            font-size: 13px;
+            color: #e74c3c;
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        .reply-card .delete-link:hover {
+            color: #c0392b;
+        }
+
+        .reply-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .reply-header small {
+            font-size: 12px;
+            color: #aaa;
+            margin: 0 8px;
+        }
+
+        .reply-content {
+            margin-left: 28px;
+            font-size: 15px;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        /* 返回按钮 */
         .back-button {
             border: none;
             position: fixed;
@@ -100,23 +150,26 @@
             background-color: #007bff;
             color: white;
             text-decoration: none;
-            border-radius: 4px;
+            border-radius: 6px;
             font-size: 14px;
             z-index: 1000;
-            transition: background-color 0.3s ease;
             display: inline-flex;
             align-items: center;
             gap: 8px;
+            box-shadow: 0 4px 10px rgba(0, 123, 255, 0.2);
+            transition: all 0.3s ease;
         }
 
         .back-button:hover {
             background-color: #0056b3;
+            transform: translateY(-2px);
         }
 
         .no-replies {
-            color: #999;
+            color: #bbb;
             text-align: center;
-            padding: 20px;
+            padding: 30px;
+            font-style: italic;
         }
     </style>
 </head>
@@ -215,11 +268,14 @@
             replyCard.className = 'reply-card';
 
             replyCard.innerHTML = `
-            <strong>${reply.senderId}：</strong>
-            <div>${reply.content}</div>
-            <small>${formatTime(reply.sendTime)}</small>
-            <a href="javascript:void(0)" class="delete-link" data-reply-id="${reply.id}"> 删除</a>
-        `;
+    <div style="display: flex; align-items: center; justify-content: space-between;">
+        <div style="flex: 1;">
+            <strong>${reply.senderId}</strong>：<span>${reply.content}</span>
+            <small style="margin-left: 10px;">${formatTime(reply.sendTime)}</small>
+        </div>
+        <a href="javascript:void(0)" class="delete-link" data-reply-id="${reply.id}">删除</a>
+    </div>
+`;
             container.appendChild(replyCard);
 
             const deleteLink = replyCard.querySelector('.delete-link');
@@ -251,7 +307,7 @@
             })
             .then(() => {
                 alert('回复已删除');
-                loadReplies(); // 刷新回复列表
+                loadReplies();
             })
             .catch(error => {
                 console.error('删除时发生错误:', error);
