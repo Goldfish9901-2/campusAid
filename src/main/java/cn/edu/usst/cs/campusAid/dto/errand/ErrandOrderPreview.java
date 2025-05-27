@@ -8,9 +8,9 @@ import java.time.LocalDateTime;
 @Data
 @Builder
 public class ErrandOrderPreview {
-    /**{@link Errand#getId()}
+    /**{@link Errand#getTitle()} ()}
      */
-    private Long id;
+    private String title;
     /**
      * {@link Errand#getStartLocation()}
      */
@@ -27,8 +27,4 @@ public class ErrandOrderPreview {
      * {@link Errand#getLatestArrivalTime()}
      */
     private LocalDateTime latestArrivalTime;
-    /**
-     * {@link Errand#getStatus()}
-     */
-    private ErrandOrderStatus status;
 }

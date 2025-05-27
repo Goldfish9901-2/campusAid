@@ -75,12 +75,12 @@ class ErrandControllerTest {
 
         testPreviews = new ArrayList<>();
         testPreviews.add(ErrandOrderPreview.builder()
-                .id(TEST_ORDER_ID)
+//                .id(TEST_ORDER_ID)
                 .startLocation("Start")
                 .endLocation("End")
                 .fee(10.0)
 //                .publishTime(LocalDateTime.now())
-                .status(ErrandOrderStatus.NORMAL)
+//                .status(ErrandOrderStatus.NORMAL)
                 .build());
     }
 
