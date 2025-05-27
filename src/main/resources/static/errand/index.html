@@ -12,6 +12,9 @@
             margin: 0;
             padding: 0;
             background-color: #f7f7f7;
+            background-image: url("/background2.jpg");
+            background-size: cover;
+            background-position: center center;
         }
 
         .container {
@@ -19,6 +22,8 @@
             max-width: 800px;
             margin: 0 auto;
             padding: 20px;
+            background-color: rgba(255, 255, 255, 0.8); /* 背景半透明 */
+            border-radius: 10px; /* 使容器有圆角 */
         }
 
         .apply-btn {
@@ -101,6 +106,19 @@
 
         .order-item h4 {
             margin-top: 0;
+        }
+
+        .confirm-btn {
+            background-color: #007bff;
+            color: white;
+            padding: 5px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .confirm-btn:hover {
+            background-color: #0056b3;
         }
     </style>
 </head>
@@ -214,6 +232,7 @@
         fetch('/api/errand/orders', { method: 'GET' })
             .then(response => response.json())
             .then(data => {
+                console.log('获取到的订单数据:', data);  // 确认是否收到数据
                 const orders = data.data || [];  // 获取返回的订单数据
                 ordersList.innerHTML = '';  // 清空订单列表
 
@@ -222,19 +241,43 @@
                     const orderItem = document.createElement('div');
                     orderItem.classList.add('order-item');
                     orderItem.innerHTML = `
-                            <h4>标题: ${order.title || '无标题'}</h4>
-                            <p>最晚送达时间: ${order.latestArrivalTime || '无'}</p>
-                            <p>起点位置: ${order.startLocation || '无'}</p>
-                            <p>终点位置: ${order.endLocation || '无'}</p>
-                            <p>费用: ¥${order.fee || '无'}</p>
-                            <p>描述: ${order.description || '无'}</p>
-                        `;
+                        <h4>标题: ${order.title || '无标题'}</h4>
+                        <p>最晚送达时间: ${order.latestArrivalTime || '无'}</p>
+                        <p>起点位置: ${order.startLocation || '无'}</p>
+                        <p>终点位置: ${order.endLocation || '无'}</p>
+                        <p>费用: ¥${order.fee || '无'}</p>
+                        <p>描述: ${order.description || '无'}</p>
+                        <button class="confirm-btn" data-id="${order.id}">接单</button>
+                    `;
                     ordersList.appendChild(orderItem);
+                });
+
+                // 绑定“接单”按钮点击事件
+                const confirmBtns = document.querySelectorAll('.confirm-btn');
+                confirmBtns.forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const orderId = btn.getAttribute('data-id');
+                        acceptOrder(orderId);
+                    });
                 });
             })
             .catch(error => {
                 console.error('获取订单失败:', error);
                 alert('获取订单失败，请稍后再试');
+            });
+    }
+
+    // 接单的函数
+    function acceptOrder(orderId) {
+        fetch(`/api/errand/order/${orderId}/accept`, { method: 'POST' })
+            .then(response => response.json())
+            .then(data => {
+                alert('接单成功');
+                fetchOrders();  // 刷新订单列表
+            })
+            .catch(error => {
+                console.error('接单失败:', error);
+                alert('接单失败，请稍后再试');
             });
     }
 
@@ -246,6 +289,7 @@
 </body>
 
 </html>
+
 
 
 
