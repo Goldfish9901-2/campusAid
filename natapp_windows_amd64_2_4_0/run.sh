@@ -7,5 +7,6 @@ EXEC=""
 [ "$OSTYPE" == "linux" ] && EXEC="./natapp"
 [ "$EXEC" == "" ] && (echo "$OSTYPE is neither linux nor windows and we don't know how to run natapp.exe";false)
 [ -f "./auth.txt" ] || (echo "auth.txt not found";false)
+echo choose to execute $EXEC
 ${EXEC} "-authtoken=$(cat ./auth.txt)"
 # gradle bootRun

@@ -19,7 +19,7 @@ public class AdminConfig {
      * 测试模式
      */
     @Value("${campus_aid.test}")
-    String test;
+    private String test;
 
     /**
      * 验证用户是否为管理员

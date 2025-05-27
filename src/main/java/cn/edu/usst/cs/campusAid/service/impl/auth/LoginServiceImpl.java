@@ -6,9 +6,11 @@ import cn.edu.usst.cs.campusAid.model.User;
 import cn.edu.usst.cs.campusAid.service.ExceptionService;
 import cn.edu.usst.cs.campusAid.service.auth.LoginService;
 import cn.edu.usst.cs.campusAid.service.auth.MailService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 public class LoginServiceImpl
         extends BaseAuthService
@@ -61,6 +63,7 @@ public class LoginServiceImpl
     @Override
     public boolean isUserRegistered(Long id) throws CampusAidException {
         User user = userMapper.getUserById(id);
+        log.info("user:{}",user);
         return user != null;
     }
 }
