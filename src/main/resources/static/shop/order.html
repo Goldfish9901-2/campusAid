@@ -2,62 +2,263 @@
 <html lang="zh">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>订单详情 - CampusAid</title>
     <style>
+        :root {
+            --primary-color: #2C3E50;
+            --secondary-color: #3498DB;
+            --accent-color: #E74C3C;
+            --success-color: #2ECC71;
+            --background-color: #F5F6FA;
+            --card-background: #FFFFFF;
+            --text-color: #2C3E50;
+            --text-secondary: #7F8C8D;
+            --border-color: #ECF0F1;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f5f5f5;
-            background-image: url("/background2.jpg"); /* 添加背景图片 */
-            background-size: cover;
-            background-position: center;
-            padding: 30px;
+            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 40px 20px;
         }
 
         .container {
-            background: rgba(255, 255, 255, 0.9); /* 添加透明度，便于背景图透过 */
-            padding: 25px;
-            border-radius: 8px;
             max-width: 600px;
-            margin: auto;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            margin: 0 auto;
+            background: var(--card-background);
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
         }
 
-        h2 {
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(to right, var(--secondary-color), var(--primary-color));
+        }
+
+        .header {
             text-align: center;
-            color: #0A2540;
+            margin-bottom: 30px;
+            position: relative;
         }
 
-        p {
+        .header h2 {
+            color: var(--primary-color);
+            font-size: 28px;
+            margin-bottom: 10px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .header h2::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50px;
+            height: 3px;
+            background-color: var(--secondary-color);
+            border-radius: 2px;
+        }
+
+        .success-icon {
+            text-align: center;
+            font-size: 64px;
+            margin-bottom: 20px;
+            color: var(--success-color);
+            animation: scaleIn 0.5s ease-out;
+        }
+
+        @keyframes scaleIn {
+            from {
+                transform: scale(0);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .order-info {
+            background: var(--background-color);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            padding: 10px;
+            background: var(--card-background);
+            border-radius: 8px;
+            transition: var(--transition);
+        }
+
+        .info-item:hover {
+            transform: translateX(5px);
+            box-shadow: var(--shadow);
+        }
+
+        .info-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .info-label {
+            color: var(--text-secondary);
+            font-size: 14px;
+            min-width: 100px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .info-label::before {
             font-size: 16px;
-            margin: 8px 0;
         }
 
-        .highlight {
+        .order-id .info-label::before { content: '📦'; }
+        .total-price .info-label::before { content: '💰'; }
+        .order-time .info-label::before { content: '⏰'; }
+        .order-status .info-label::before { content: '✅'; }
+
+        .info-value {
+            color: var(--text-color);
+            font-size: 16px;
+            font-weight: 500;
+            flex: 1;
+        }
+
+        .total-price .info-value {
+            color: var(--accent-color);
+            font-size: 20px;
             font-weight: bold;
-            color: #0A2540;
         }
 
-        button {
-            margin-top: 20px;
-            padding: 10px 20px;
-            background-color: #0A2540;
-            color: white;
+        .buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 12px 24px;
             border: none;
-            border-radius: 6px;
+            border-radius: 8px;
             cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
 
-        button:hover {
-            background-color: #16365f;
+        .btn-primary {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn-secondary {
+            background-color: var(--background-color);
+            color: var(--text-color);
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--border-color);
+            transform: translateY(-2px);
+        }
+
+        .btn::before {
+            font-size: 18px;
+        }
+
+        .btn-primary::before { content: '🏪'; }
+        .btn-secondary::before { content: '📋'; }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 20px 15px;
+            }
+
+            .container {
+                padding: 20px;
+            }
+
+            .buttons {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
         }
     </style>
 </head>
 <body>
 <div class="container">
-    <h2>订单提交成功</h2>
-    <p>订单编号：<span class="highlight" id="order-id">加载中...</span></p>
-    <p>支付金额：<span class="highlight" id="total-price">加载中...</span></p>
-    <button onclick="goBack()">返回商店</button>
+    <div class="header">
+        <h2>订单提交成功</h2>
+    </div>
+
+    <div class="success-icon">✨</div>
+
+    <div class="order-info">
+        <div class="info-item order-id">
+            <div class="info-label">订单编号</div>
+            <div class="info-value" id="order-id">加载中...</div>
+        </div>
+
+        <div class="info-item total-price">
+            <div class="info-label">支付金额</div>
+            <div class="info-value" id="total-price">加载中...</div>
+        </div>
+
+        <div class="info-item order-time">
+            <div class="info-label">下单时间</div>
+            <div class="info-value" id="order-time">加载中...</div>
+        </div>
+
+        <div class="info-item order-status">
+            <div class="info-label">订单状态</div>
+            <div class="info-value">已支付</div>
+        </div>
+    </div>
+
+    <div class="buttons">
+        <button class="btn btn-primary" onclick="goToShop()">返回商店</button>
+        <button class="btn btn-secondary" onclick="viewOrders()">查看订单</button>
+    </div>
 </div>
 
 <script>
@@ -65,11 +266,17 @@
     const orderId = params.get("orderId");
     const price = params.get("price");
 
+    // 更新订单信息
     document.getElementById("order-id").textContent = orderId || "未知";
     document.getElementById("total-price").textContent = price ? `¥${price}` : "未知";
+    document.getElementById("order-time").textContent = new Date().toLocaleString();
 
-    function goBack() {
-        history.back();
+    function goToShop() {
+        window.location.href = '/shop/shop.html';
+    }
+
+    function viewOrders() {
+        window.location.href = '/shop/orders.html';
     }
 </script>
 </body>

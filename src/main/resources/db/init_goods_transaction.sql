@@ -44,4 +44,16 @@ INSERT INTO good_transaction (id, good_id, amount, order_id, time) VALUES
 (47, 47, 30, NULL, NOW()), -- 得力笔记本
 (48, 48, 30, NULL, NOW()), -- 真彩修正带
 (49, 49, 30, NULL, NOW()), -- 国誉文件夹
-(50, 50, 30, NULL, NOW()); -- 斑马荧光笔 
+(50, 50, 30, NULL, NOW()), -- 斑马荧光笔
+
+-- 暖屋商品库存
+(51, 51, 30, NULL, NOW()), -- 奶茶
+(52, 52, 30, NULL, NOW()), -- 咖啡
+(53, 53, 10, NULL, NOW()), -- 蛋糕
+(54, 54, 20, NULL, NOW()), -- 三明治
+(55, 55, 15, NULL, NOW()), -- 沙拉
+(56, 56, 20, NULL, NOW()), -- 果汁
+(57, 57, 15, NULL, NOW()), -- 甜点
+(58, 58, 30, NULL, NOW()), -- 面包
+(59, 59, 25, NULL, NOW()), -- 饼干
+(60, 60, 20, NULL, NOW()); -- 冰淇淋 
