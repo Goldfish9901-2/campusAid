@@ -33,6 +33,7 @@
             border: none;
             border-radius: 5px;
             cursor: pointer;
+            margin: 10px;
         }
 
         .apply-btn:hover {
@@ -172,7 +173,7 @@
     const errandForm = document.getElementById('errandForm');
     const ordersList = document.getElementById('ordersList');
 
-    // 打开弹窗
+    // 打开申请跑腿请求的弹窗
     applyBtn.addEventListener('click', () => {
         modal.style.display = 'flex';
     });
@@ -232,7 +233,7 @@
         fetch('/api/errand/orders', { method: 'GET' })
             .then(response => response.json())
             .then(data => {
-                console.log('获取到的订单数据:', data);  // 确认是否收到数据
+                console.log('获取到的订单数据:', data);
                 const orders = data.data || [];  // 获取返回的订单数据
                 ordersList.innerHTML = '';  // 清空订单列表
 
@@ -241,14 +242,14 @@
                     const orderItem = document.createElement('div');
                     orderItem.classList.add('order-item');
                     orderItem.innerHTML = `
-                        <h4>标题: ${order.title || '无标题'}</h4>
-                        <p>最晚送达时间: ${order.latestArrivalTime || '无'}</p>
-                        <p>起点位置: ${order.startLocation || '无'}</p>
-                        <p>终点位置: ${order.endLocation || '无'}</p>
-                        <p>费用: ¥${order.fee || '无'}</p>
-                        <p>描述: ${order.description || '无'}</p>
-                        <button class="confirm-btn" data-id="${order.id}">接单</button>
-                    `;
+                            <h4>标题: ${order.title || '无标题'}</h4>
+                            <p>最晚送达时间: ${order.latestArrivalTime || '无'}</p>
+                            <p>起点位置: ${order.startLocation || '无'}</p>
+                            <p>终点位置: ${order.endLocation || '无'}</p>
+                            <p>费用: ¥${order.fee || '无'}</p>
+                            <p>描述: ${order.description || '无'}</p>
+                            <button class="confirm-btn" data-id="${order.id}">接单</button>
+                        `;
                     ordersList.appendChild(orderItem);
                 });
 
@@ -289,6 +290,7 @@
 </body>
 
 </html>
+
 
 
 

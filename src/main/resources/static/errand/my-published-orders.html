@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的跑腿申请</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f7f7f7;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.8); /* 背景半透明 */
+            border-radius: 10px;
+        }
+
+        .order-item {
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin: 10px;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+
+        .confirm-btn {
+            background-color: #007bff;
+            color: white;
+            padding: 5px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .confirm-btn:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h3>我的跑腿申请</h3>
+    <div id="ordersList"></div>
+</div>
+
+<script>
+    const ordersList = document.getElementById('ordersList');
+
+    // 获取并显示当前用户的所有未接单跑腿请求
+    function fetchOrders() {
+        fetch('/api/errand/orders/history', { method: 'GET' })
+            .then(response => response.json())
+            .then(data => {
+                const orders = data.data || [];
+                ordersList.innerHTML = '';
+                orders.forEach(order => {
+                    const orderItem = document.createElement('div');
+                    orderItem.classList.add('order-item');
+                    orderItem.innerHTML = `
+                            <h4>标题: ${order.title}</h4>
+                            <p>最晚送达时间: ${order.latestArrivalTime}</p>
+                            <p>起点位置: ${order.startLocation}</p>
+                            <p>终点位置: ${order.endLocation}</p>
+                            <p>费用: ¥${order.fee}</p>
+                            <button class="confirm-btn" data-id="${order.id}">查看详情</button>
+                        `;
+                    ordersList.appendChild(orderItem);
+                });
+            })
+            .catch(error => {
+                console.error('获取订单失败:', error);
+                alert('获取订单失败，请稍后再试');
+            });
+    }
+
+    window.onload = function () {
+        fetchOrders();
+    };
+</script>
+</body>
+</html>
+
+
+

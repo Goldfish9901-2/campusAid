@@ -95,7 +95,9 @@ public class ErrandServiceImpl implements ErrandService {
 
     @Override
     public List<ErrandOrderPreview> listUserHistoricalOrders(Long userId) {
-        return errandMapper.selectHistoricalOrders(userId).stream()
+        List<Errand> errands = errandMapper.selectHistoricalOrders(userId);
+        System.out.println("Fetched historical orders: " + errands);  // 打印调试信息
+        return errands.stream()
                 .map(errand -> ErrandViewsMapper.getInstance().getPreview(errand))
                 .toList();
     }
