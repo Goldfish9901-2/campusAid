@@ -26,16 +26,19 @@
             border-radius: 10px; /* 使容器有圆角 */
         }
 
-        .apply-btn {
+        .apply-btn,
+        .my-orders-btn {
             background-color: #28a745;
             color: white;
             padding: 10px 20px;
             border: none;
             border-radius: 5px;
             cursor: pointer;
+            margin: 10px;
         }
 
-        .apply-btn:hover {
+        .apply-btn:hover,
+        .my-orders-btn:hover {
             background-color: #218838;
         }
 
@@ -128,6 +131,9 @@
     <!-- 申请跑腿请求按钮 -->
     <button class="apply-btn" id="applyBtn">申请跑腿请求</button>
 
+    <!-- 我的跑腿申请按钮 -->
+    <button class="my-orders-btn" id="myOrdersBtn">我的跑腿申请</button>
+
     <!-- 显示订单列表 -->
     <div id="ordersList"></div>
 </div>
@@ -166,15 +172,21 @@
 <script>
     // 获取DOM元素
     const applyBtn = document.getElementById('applyBtn');
+    const myOrdersBtn = document.getElementById('myOrdersBtn');
     const modal = document.getElementById('modal');
     const cancelBtn = document.getElementById('cancelBtn');
     const submitBtn = document.getElementById('submitBtn');
     const errandForm = document.getElementById('errandForm');
     const ordersList = document.getElementById('ordersList');
 
-    // 打开弹窗
+    // 打开申请跑腿请求的弹窗
     applyBtn.addEventListener('click', () => {
         modal.style.display = 'flex';
+    });
+
+    // 跳转到“我的跑腿申请”页面
+    myOrdersBtn.addEventListener('click', () => {
+        window.location.href = '/my-published-orders.html';
     });
 
     // 关闭弹窗
@@ -289,6 +301,7 @@
 </body>
 
 </html>
+
 
 
 

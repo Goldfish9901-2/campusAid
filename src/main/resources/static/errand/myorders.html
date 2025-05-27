@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>我的接单任务</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #eef2f3;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: auto;
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+
+        .order {
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+            background-color: #f9f9f9;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .order:hover {
+            background-color: #e6f0ff;
+        }
+
+        .order p {
+            margin: 6px 0;
+        }
+
+        .status {
+            font-weight: bold;
+            color: #007bff;
+        }
+
+        .completed {
+            color: green;
+        }
+
+        .pending {
+            color: orange;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>我接的跑腿任务</h2>
+    <div id="ordersContainer">加载中...</div>
+</div>
+
+<script>
+    function fetchMyOrders() {
+        fetch('/api/errand/orders/history')
+            .then(response => response.json())
+            .then(data => {
+                const container = document.getElementById('ordersContainer');
+                container.innerHTML = '';
+
+                const orders = data.data || [];
+                if (orders.length === 0) {
+                    container.innerHTML = '<p>暂无已接单任务。</p>';
+                    return;
+                }
+
+                orders.forEach(order => {
+                    const orderDiv = document.createElement('div');
+                    orderDiv.classList.add('order');
+                    orderDiv.innerHTML = `
+            <p><strong>起点 → 终点：</strong> ${order.startLocation} → ${order.endLocation}</p>
+            <p><strong>费用：</strong> ¥${order.fee?.toFixed(2) || '0.00'}</p>
+            <p><strong>最晚送达时间：</strong> ${new Date(order.latestArrivalTime).toLocaleString()}</p>
+            <p><strong>说明：</strong> ${order.description || '无'}</p>
+            <p><strong>状态：</strong> <span class="status ${order.status === '已完成' ? 'completed' : 'pending'}">${order.status}</span></p>
+          `;
+
+                    orderDiv.addEventListener('click', () => {
+                        window.location.href = `/order.html?id=${order.id}`;
+                    });
+
+                    container.appendChild(orderDiv);
+                });
+            })
+            .catch(error => {
+                console.error('获取接单任务失败:', error);
+                document.getElementById('ordersContainer').innerHTML = '<p>获取失败，请稍后再试。</p>';
+            });
+    }
+
+    window.onload = fetchMyOrders;
+</script>
+</body>
+</html>

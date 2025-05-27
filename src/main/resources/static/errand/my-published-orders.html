@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我发布的跑腿请求</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f2f5;
+            background-image: url("/background2.jpg");
+            background-size: cover;
+            background-position: center center;
+            background-attachment: fixed;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .order {
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            background-color: #f9f9f9;
+        }
+        .order p {
+            margin: 6px 0;
+        }
+        .status {
+            font-weight: bold;
+        }
+        .status.待接单 { color: orange; }
+        .status.已接单 { color: blue; }
+        .status.已完成 { color: green; }
+        .details-btn {
+            margin-top: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .details-btn:hover {
+            background-color: #0056b3;
+        }
+        button {
+            background-color: #28a745;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>我发布的跑腿请求</h2>
+
+    <!-- 按钮用于切换查看“我的跑腿请求” -->
+    <button onclick="fetchMyPublishedOrders()">我的跑腿请求</button>
+
+    <!-- 显示其他人发布的跑腿请求 -->
+    <div id="ordersContainer">加载中...</div>
+</div>
+
+<script>
+    // 加载其他人发布的跑腿请求（默认显示）
+    function fetchOthersErrands() {
+        fetch('/api/errand/orders')  // 获取其他人的请求，尚未接单的
+            .then(async res => {
+                if (!res.ok) {
+                    const text = await res.text();
+                    throw new Error(text);
+                }
+                return res.json();
+            })
+            .then(data => {
+                const orders = data.data || [];
+                const container = document.getElementById('ordersContainer');
+                container.innerHTML = '';
+
+                if (orders.length === 0) {
+                    container.innerHTML = '<p>当前没有其他人发布的跑腿请求。</p>';
+                    return;
+                }
+
+                orders.forEach(order => {
+                    const div = document.createElement('div');
+                    div.className = 'order';
+
+                    const formattedTime = order.latestArrivalTime
+                        ? new Date(order.latestArrivalTime).toLocaleString()
+                        : '无';
+
+                    div.innerHTML = `
+                        <p><strong>任务标题：</strong> ${order.title || '无标题'}</p>
+                        <p><strong>路线：</strong> ${order.startLocation} → ${order.endLocation}</p>
+                        <p><strong>费用：</strong> ¥${order.fee?.toFixed(2)}</p>
+                        <p><strong>最晚送达时间：</strong> ${formattedTime}</p>
+                        <p><strong>状态：</strong> <span class="status ${order.status}">${order.status}</span></p>
+                        <button class="details-btn" onclick="viewDetail(${order.id})">查看详情</button>
+                    `;
+                    container.appendChild(div);
+                });
+            })
+            .catch(err => {
+                console.error('获取失败：', err);
+                document.getElementById('ordersContainer').innerText = '加载失败，请稍后重试。';
+            });
+    }
+
+    // 加载“我的跑腿请求”历史
+    function fetchMyPublishedOrders() {
+        fetch('/api/errand/orders/history')  // 获取自己的历史请求
+            .then(async res => {
+                if (!res.ok) {
+                    const text = await res.text();
+                    throw new Error(text);
+                }
+                return res.json();
+            })
+            .then(data => {
+                const orders = data.data || [];
+                const container = document.getElementById('ordersContainer');
+                container.innerHTML = '';
+
+                if (orders.length === 0) {
+                    container.innerHTML = '<p>你还没有发布过跑腿请求。</p>';
+                    return;
+                }
+
+                orders.forEach(order => {
+                    const div = document.createElement('div');
+                    div.className = 'order';
+
+                    const formattedTime = order.latestArrivalTime
+                        ? new Date(order.latestArrivalTime).toLocaleString()
+                        : '无';
+
+                    div.innerHTML = `
+                        <p><strong>任务标题：</strong> ${order.title || '无标题'}</p>
+                        <p><strong>路线：</strong> ${order.startLocation} → ${order.endLocation}</p>
+                        <p><strong>费用：</strong> ¥${order.fee?.toFixed(2)}</p>
+                        <p><strong>最晚送达时间：</strong> ${formattedTime}</p>
+                        <p><strong>状态：</strong> <span class="status ${order.status}">${order.status}</span></p>
+                        <button class="details-btn" onclick="viewDetail(${order.id})">查看详情</button>
+                    `;
+                    container.appendChild(div);
+                });
+            })
+            .catch(err => {
+                console.error('获取失败：', err);
+                document.getElementById('ordersContainer').innerText = '加载失败，请稍后重试。';
+            });
+    }
+
+    // 查看订单详情
+    function viewDetail(orderId) {
+        window.location.href = `/order.html?id=${orderId}`;  // 跳转到订单详情页
+    }
+
+    // 默认加载其他人发布的请求
+    window.onload = fetchOthersErrands;
+</script>
+
+</body>
+</html>
+
