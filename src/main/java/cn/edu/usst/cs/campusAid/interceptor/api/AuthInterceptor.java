@@ -53,11 +53,12 @@ public class AuthInterceptor extends ApiInterceptor {
 
 
         Object obj = session.getAttribute(SessionKeys.LOGIN_TIME);
-        if (!(obj instanceof LocalDateTime time)) {
+        if ( !adminConfig.isInTestMode()&&(!(obj instanceof LocalDateTime time)) ) {
             processResponse(response, HttpServletResponse.SC_UNAUTHORIZED, "会话状态异常，请重新登录");
             return false;
         }
 
+        LocalDateTime time = (LocalDateTime) obj;
         if (time.plusMinutes(active).isBefore(now)) {
             processResponse(response, HttpServletResponse.SC_UNAUTHORIZED, "会话已过期，请重新登录");
             return false;

@@ -63,7 +63,7 @@ public class AlipayController {
         context.setVariable("timestamp", timestamp);
         context.setVariable("total_amount", total_amount);
         String httpContent = templateEngine.process("alipay", context);
-        log.info(httpContent);
+        log.info(httpContent.replace('\n','\t'));
         return httpContent;
 
     }
@@ -121,12 +121,12 @@ public class AlipayController {
             log.warn("=========异步回调========");
 
             if (!"TRADE_SUCCESS".equals(tradeStatus))
-                throw new CampusAidException("支付失败");
+                CampusAidException.build("支付失败");
 
             log.info("=========支付宝异步回调========");
             // 支付宝验签
             if (!Factory.Payment.Common().verifyNotify(params)) {
-                throw new CampusAidException("验签失败");
+                CampusAidException.build("验签失败");
             } else {
                 // 验签通过
                 params.forEach((key, value) ->
