@@ -26,7 +26,7 @@ public class ErrandOrderPreview {
     /**
      * {@link Errand#getLatestArrivalTime()}
      */
-    private LocalDateTime publishTime;
+    private LocalDateTime latestArrivalTime;
     /**
      * {@link Errand#getStatus()}
      */

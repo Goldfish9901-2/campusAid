@@ -79,7 +79,7 @@ class ErrandControllerTest {
                 .startLocation("Start")
                 .endLocation("End")
                 .fee(10.0)
-                .publishTime(LocalDateTime.now())
+//                .publishTime(LocalDateTime.now())
                 .status(ErrandOrderStatus.NORMAL)
                 .build());
     }

@@ -17,7 +17,7 @@ public interface ErrandViewsMapper {
     }
 
     @Mappings({
-            @Mapping(target = "publishTime", expression = "java(java.time.LocalDateTime.now())")
+//            @Mapping(target = "publishTime", expression = "java(java.time.LocalDateTime.now())")
     })
     ErrandOrderPreview getPreview(Errand view);
 
