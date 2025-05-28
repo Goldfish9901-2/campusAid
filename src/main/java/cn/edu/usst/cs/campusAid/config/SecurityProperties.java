@@ -9,6 +9,6 @@ import java.time.Duration;
 @Data
 @ConfigurationProperties(prefix = "campusaid.security")
 public class SecurityProperties {
-    private Duration codeTtl = Duration.ofMinutes(5);
+    private Duration codeTtl = Duration.ofMinutes(10);
     private Duration resendInterval = Duration.ofMinutes(1);
 }

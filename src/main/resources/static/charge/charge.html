@@ -107,7 +107,7 @@
       return;
     }
 
-    const redirectUrl = "http://misaka52065.w1.luyouxia.net/api/alipay/pay?price=" + encodeURIComponent(amount);
+    const redirectUrl = "http://localhost:8090/api/alipay/pay?price=" + encodeURIComponent(amount);
 
     window.location.href = redirectUrl;
   }
