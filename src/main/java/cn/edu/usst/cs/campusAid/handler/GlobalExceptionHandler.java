@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import cn.edu.usst.cs.campusAid.service.CampusAidException;
 import org.springframework.web.bind.MissingRequestValueException;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.sql.SQLException;
 @Slf4j
@@ -35,10 +37,15 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body("是不是没有登陆（会话参数错误）\n" + e.getMessage());
     }
 
-    @ExceptionHandler({HttpMessageConversionException.class, MissingRequestValueException.class})
+    @ExceptionHandler({HttpMessageConversionException.class, MissingRequestValueException.class, MethodArgumentTypeMismatchException.class})
     public ResponseEntity<?> handleHttpMessageConversionException(HttpMessageConversionException e) {
         log.error("HttpMessageConversionException: {}", e.getMessage());
         return ResponseEntity.badRequest().body("参数错误\n" + e.getMessage());
+    }
+    @ExceptionHandler({NoResourceFoundException.class})
+    public ResponseEntity<?> handleNoResourceFoundException(NoResourceFoundException e) {
+        log.error("NoResourceFoundException: {}", e.getMessage());
+        return ResponseEntity.badRequest().body("找不到资源\n" + e.getMessage());
     }
 
     @ExceptionHandler({Exception.class})
