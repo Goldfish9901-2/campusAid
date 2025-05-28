@@ -1,15 +1,24 @@
 package cn.edu.usst.cs.campusAid.dto.errand;
 
-import lombok.Data;
-import lombok.Builder;
 import cn.edu.usst.cs.campusAid.model.errand.Errand;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NonNull;
+
 import java.time.LocalDateTime;
 
 @Data
 @Builder
 public class ErrandOrderPreview {
-    /**{@link Errand#getTitle()} ()}
+    /**
+     * {@link Errand#getId()}
      */
+    @NonNull
+    private Long id;
+    /**
+     * {@link Errand#getTitle()} ()}
+     */
+    @NonNull
     private String title;
     /**
      * {@link Errand#getErrandDescription()} ()}
@@ -18,17 +27,21 @@ public class ErrandOrderPreview {
     /**
      * {@link Errand#getStartLocation()}
      */
+    @NonNull
     private String startLocation;
     /**
      * {@link Errand#getEndLocation()}
      */
+    @NonNull
     private String endLocation;
     /**
      * {@link Errand#getFee()}
      */
+    @NonNull
     private Double fee;
     /**
      * {@link Errand#getLatestArrivalTime()}
      */
+    @NonNull
     private LocalDateTime latestArrivalTime;
 }
