@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>CampusAid-跑腿管理</title>
+  <link rel="icon" href="/favicon.jpg" />
+  <style>
+    :root {
+      --primary-color: #2C3E50;
+      --secondary-color: #3498DB;
+      --accent-color: #E74C3C;
+      --success-color: #2ECC71;
+      --background-color: #F5F6FA;
+      --card-background: #FFFFFF;
+      --text-color: #2C3E50;
+      --text-secondary: #7F8C8D;
+      --border-color: #ECF0F1;
+      --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      --transition: all 0.3s ease;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+      background-color: var(--background-color);
+      color: var(--text-color);
+      line-height: 1.6;
+      min-height: 100vh;
+      animation: fadein 1.5s ease-in-out forwards;
+    }
+
+    @keyframes fadein {
+      from { opacity: 0.2; }
+      to { opacity: 1; }
+    }
+
+    .nav-bar {
+      background: var(--card-background);
+      padding: 12px 30px;
+      box-shadow: var(--shadow);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      border-bottom: 2px solid var(--border-color);
+      height: 60px;
+    }
+
+    .current-section {
+      font-size: 14px;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      line-height: 1.2;
+    }
+
+    .current-section::before {
+      content: '🚶';
+      font-size: 20px;
+    }
+
+    .current-section span {
+      font-size: 18px;
+      color: var(--primary-color);
+      font-weight: bold;
+    }
+
+    .nav-buttons {
+      display: flex;
+      gap: 12px;
+    }
+
+    .nav-bar button {
+      background: var(--secondary-color);
+      color: white;
+      border: none;
+      padding: 8px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: var(--transition);
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      height: 36px;
+    }
+
+    .nav-bar button:hover {
+      background: var(--primary-color);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .content-section {
+      background: var(--card-background);
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: var(--shadow);
+      margin-bottom: 20px;
+    }
+
+    .content-section h2 {
+      color: var(--primary-color);
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .table-container {
+      overflow-x: auto;
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+
+    .data-table th,
+    .data-table td {
+      padding: 12px;
+      text-align: left;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .data-table th {
+      background-color: var(--background-color);
+      font-weight: 600;
+      color: var(--primary-color);
+    }
+
+    .data-table tr:hover {
+      background-color: var(--background-color);
+    }
+
+    .action-link {
+      color: var(--secondary-color);
+      text-decoration: none;
+      font-weight: 500;
+      margin-right: 10px;
+    }
+
+    .action-link:hover {
+      color: var(--primary-color);
+      text-decoration: underline;
+    }
+
+    .action-link.delete {
+      color: var(--accent-color);
+    }
+
+    .action-link.delete:hover {
+      color: #c0392b;
+    }
+
+    .status-badge {
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .status-badge.pending {
+      background-color: #f1c40f;
+      color: #fff;
+    }
+
+    .status-badge.completed {
+      background-color: var(--success-color);
+      color: #fff;
+    }
+
+    .status-badge.cancelled {
+      background-color: var(--accent-color);
+      color: #fff;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        padding: 15px;
+      }
+
+      .nav-bar {
+        padding: 10px 15px;
+      }
+
+      .nav-buttons {
+        gap: 8px;
+      }
+
+      .nav-bar button {
+        padding: 6px 12px;
+        font-size: 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="nav-bar">
+    <div class="current-section">
+      当前板块：<span>跑腿管理</span>
+    </div>
+    <div class="nav-buttons">
+      <button onclick="window.location.href='/admin/admin.html'">返回管理控制台</button>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="content-section">
+      <h2>跑腿订单列表</h2>
+      <div class="table-container">
+        <table class="data-table" id="order-table">
+          <thead>
+            <tr>
+              <th>订单ID</th>
+              <th>发布者ID</th>
+              <th>接单者ID</th>
+              <th>标题</th>
+              <th>描述</th>
+              <th>赏金</th>
+              <th>状态</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody id="order-table-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="content-section">
+      <h2>跑腿用户列表</h2>
+      <div class="table-container">
+        <table class="data-table" id="user-table">
+          <thead>
+            <tr>
+              <th>用户ID</th>
+              <th>用户名</th>
+              <th>发布订单数</th>
+              <th>接单数</th>
+              <th>完成率</th>
+              <th>状态</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody id="user-table-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      // 加载订单列表
+      fetch('/api/errand/order', {
+        method: 'GET',
+        credentials: 'include'
+      })
+        .then(response => response.json())
+        .then(data => {
+          const tbody = document.getElementById('order-table-body');
+          tbody.innerHTML = '';
+          data.forEach(order => {
+            const tr = document.createElement('tr');
+            const statusClass = getStatusClass(order.status);
+            tr.innerHTML = `
+              <td>${order.id}</td>
+              <td>${order.publisherId}</td>
+              <td>${order.accepterId || '--'}</td>
+              <td>${order.title}</td>
+              <td>${order.description || '--'}</td>
+              <td>￥${order.reward}</td>
+              <td><span class="status-badge ${statusClass}">${order.status}</span></td>
+              <td>
+                <a href="#" class="action-link" onclick="viewOrder(${order.id})">查看</a>
+                <a href="#" class="action-link delete" onclick="deleteOrder(${order.id})">删除</a>
+              </td>
+            `;
+            tbody.appendChild(tr);
+          });
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          alert('加载订单列表失败');
+        });
+
+      // 加载用户列表
+      fetch('/api/errand/user', {
+        method: 'GET',
+        credentials: 'include'
+      })
+        .then(response => response.json())
+        .then(data => {
+          const tbody = document.getElementById('user-table-body');
+          tbody.innerHTML = '';
+          data.forEach(user => {
+            const tr = document.createElement('tr');
+            const completionRate = user.completedOrders / (user.totalOrders || 1) * 100;
+            tr.innerHTML = `
+              <td>${user.id}</td>
+              <td>${user.username}</td>
+              <td>${user.publishedOrders || 0}</td>
+              <td>${user.acceptedOrders || 0}</td>
+              <td>${completionRate.toFixed(1)}%</td>
+              <td><span class="status-badge ${user.status === '正常' ? 'completed' : 'cancelled'}">${user.status}</span></td>
+              <td>
+                <a href="#" class="action-link" onclick="viewUser(${user.id})">查看</a>
+                <a href="#" class="action-link" onclick="toggleUserStatus(${user.id})">${user.status === '正常' ? '禁用' : '启用'}</a>
+              </td>
+            `;
+            tbody.appendChild(tr);
+          });
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          alert('加载用户列表失败');
+        });
+    });
+
+    function getStatusClass(status) {
+      switch (status) {
+        case '待接单':
+          return 'pending';
+        case '已完成':
+          return 'completed';
+        case '已取消':
+          return 'cancelled';
+        default:
+          return '';
+      }
+    }
+
+    function viewOrder(id) {
+      // 实现查看订单详情的功能
+      alert('查看订单详情功能开发中...');
+    }
+
+    function deleteOrder(id) {
+      if (!confirm('确定要删除这个订单吗？')) return;
+
+      fetch(`/api/errand/order/${id}`, {
+        method: 'DELETE',
+        credentials: 'include'
+      })
+        .then(response => response.text())
+        .then(result => {
+          alert(result);
+          location.reload();
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          alert('删除订单失败');
+        });
+    }
+
+    function viewUser(id) {
+      // 实现查看用户详情的功能
+      alert('查看用户详情功能开发中...');
+    }
+
+    function toggleUserStatus(id) {
+      if (!confirm('确定要更改该用户的状态吗？')) return;
+
+      fetch(`/api/errand/user/${id}/toggle-status`, {
+        method: 'POST',
+        credentials: 'include'
+      })
+        .then(response => response.text())
+        .then(result => {
+          alert(result);
+          location.reload();
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          alert('更改用户状态失败');
+        });
+    }
+  </script>
+</body>
+</html> 

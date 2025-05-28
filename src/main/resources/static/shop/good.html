@@ -2,155 +2,333 @@
 <html lang="zh">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>商品详情 - CampusAid</title>
     <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f4f7fb;
-            color: #1a1a1a;
+        :root {
+            --primary-color: #2C3E50;
+            --secondary-color: #3498DB;
+            --accent-color: #E74C3C;
+            --success-color: #2ECC71;
+            --background-color: #F5F6FA;
+            --card-background: #FFFFFF;
+            --text-color: #2C3E50;
+            --text-secondary: #7F8C8D;
+            --border-color: #ECF0F1;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
             margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            min-height: 100vh;
             padding: 40px 20px;
         }
 
-        .logo {
-            text-align: center;
-            margin-bottom: 16px;
-        }
-
-        .logo img {
-            width: 100px;
-            height: 100px;
-        }
-
         .container {
-            max-width: 600px;
+            max-width: 800px;
             margin: 0 auto;
-            background-color: #ffffff;
-            padding: 24px;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+            background: var(--card-background);
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
         }
 
-        h2 {
-            color: #0A2540;
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(to right, var(--secondary-color), var(--primary-color));
+        }
+
+        .header {
             text-align: center;
-            margin-bottom: 16px;
+            margin-bottom: 30px;
+            position: relative;
         }
 
-        .section {
-            margin: 10px 0;
+        .header h2 {
+            color: var(--primary-color);
+            font-size: 28px;
+            margin-bottom: 10px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .header h2::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50px;
+            height: 3px;
+            background-color: var(--secondary-color);
+            border-radius: 2px;
+        }
+
+        .product-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .product-image {
+            width: 100%;
+            height: 300px;
+            background-color: var(--background-color);
+            border-radius: 12px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .product-image img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: cover;
+        }
+
+        .product-details {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .info-section {
+            background: var(--background-color);
+            padding: 20px;
+            border-radius: 12px;
+            transition: var(--transition);
+        }
+
+        .info-section:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
         }
 
         .label {
-            font-weight: bold;
-            color: #0A2540;
+            color: var(--text-secondary);
+            font-size: 14px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
-        .price, .highlight-balance {
+        .label::before {
+            font-size: 16px;
+        }
+
+        .name .label::before { content: '📦'; }
+        .description .label::before { content: '📝'; }
+        .price .label::before { content: '💰'; }
+        .balance .label::before { content: '💳'; }
+
+        .value {
+            color: var(--text-color);
+            font-size: 18px;
+            font-weight: 500;
+        }
+
+        .price .value {
+            color: var(--accent-color);
             font-size: 24px;
             font-weight: bold;
-            margin-top: 5px;
         }
 
-        .price {
-            color: #4C9AFF;
+        .balance .value {
+            color: var(--success-color);
+            font-size: 24px;
+            font-weight: bold;
         }
 
-        .highlight-balance {
-            color: #E53935;
-        }
-
-        button {
-            margin-top: 30px;
-            width: 100%;
-            padding: 12px;
-            font-size: 16px;
-            background-color: #0A2540;
+        .buy-button {
+            background-color: var(--success-color);
             color: white;
+            padding: 16px 32px;
             border: none;
-            border-radius: 6px;
+            border-radius: 8px;
             cursor: pointer;
+            font-size: 18px;
+            font-weight: 500;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            margin-top: 20px;
         }
 
-        button:hover {
-            background-color: #16365f;
+        .buy-button::before {
+            content: '🛒';
+            font-size: 20px;
+        }
+
+        .buy-button:hover {
+            background-color: #27ae60;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
         }
 
         .footer {
             margin-top: 40px;
-            font-size: 13px;
-            color: #666;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
             text-align: center;
-            border-top: 1px solid #e0e0e0;
-            padding-top: 16px;
-            line-height: 1.6;
+            color: var(--text-secondary);
+            font-size: 14px;
+            line-height: 1.8;
+        }
+
+        .footer p {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin: 8px 0;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 20px 15px;
+            }
+
+            .container {
+                padding: 20px;
+            }
+
+            .product-info {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .product-image {
+                height: 250px;
+            }
         }
     </style>
 </head>
 <body>
-
-<div class="logo">
-    <img src="../../favicon.jpg" alt="CampusAid Logo">
-</div>
-
 <div class="container">
-    <h2>商品详情</h2>
+    <div class="header">
+        <h2>商品详情</h2>
+    </div>
 
-    <div id="product-info"></div>
+    <div class="product-info">
+        <div class="product-image">
+            <img src="../../favicon.jpg" alt="商品图片">
+        </div>
 
-    <button id="buyButton">立即购买</button>
+        <div class="product-details">
+            <div class="info-section name">
+                <div class="label">商品名称</div>
+                <div class="value" id="productName">加载中...</div>
+            </div>
+
+            <div class="info-section description">
+                <div class="label">商品描述</div>
+                <div class="value" id="productDescription">加载中...</div>
+            </div>
+
+            <div class="info-section price">
+                <div class="label">商品价格</div>
+                <div class="value" id="productPrice">加载中...</div>
+            </div>
+
+            <div class="info-section balance">
+                <div class="label">当前余额</div>
+                <div class="value" id="userBalance">加载中...</div>
+            </div>
+        </div>
+    </div>
+
+    <button class="buy-button" id="buyButton">立即购买</button>
 
     <div class="footer">
-        如果您在使用过程中遇到任何问题，请联系管理员：<br>
-        📧 邮箱：admin@campusaid.edu.cn<br>
-        ☎️ 电话：010-12345678
+        <p>📧 客服邮箱：admin@campusaid.edu.cn</p>
+        <p>☎️ 客服电话：010-12345678</p>
+        <p>⏰ 服务时间：周一至周五 9:00-18:00</p>
     </div>
 </div>
 
 <script>
-    // 模拟商品ID（在实际项目中应该从URL中获取商品ID）
-    const productId = 1;
+    // 从URL获取商品ID
+    const urlParams = new URLSearchParams(window.location.search);
+    const productId = urlParams.get('id');
+
+    if (!productId) {
+        alert('商品ID不存在');
+        window.location.href = '/shop/shop.html';
+    }
 
     // 请求商品数据
     fetch(`/api/products/${productId}`)
         .then(response => response.json())
-        .then(product => {
-            // 渲染商品详情
-            const productInfo = document.getElementById('product-info');
-            productInfo.innerHTML = `
-                <div class="section">
-                    <div class="label">商品名称：</div>
-                    <div>${product.name}</div>
-                </div>
+        .then(data => {
+            const product = data.data;
+            if (!product) {
+                throw new Error('商品不存在');
+            }
 
-                <div class="section">
-                    <div class="label">商品描述：</div>
-                    <div>${product.description}</div>
-                </div>
+            // 更新商品信息
+            document.getElementById('productName').textContent = product.name || '无名称';
+            document.getElementById('productDescription').textContent = product.description || '暂无描述';
+            document.getElementById('productPrice').textContent = `¥${product.price?.toFixed(2) || '0.00'}`;
+            document.getElementById('userBalance').textContent = `¥${product.balance?.toFixed(2) || '0.00'}`;
 
-                <div class="section">
-                    <div class="label">价格：</div>
-                    <div class="price">¥${product.price}</div>
-                </div>
-
-                <div class="section">
-                    <div class="label">当前余额：</div>
-                    <div class="highlight-balance">¥100.00</div>
-                </div>
-            `;
+            // 更新页面标题
+            document.title = `${product.name} - CampusAid`;
         })
         .catch(error => {
             console.error('商品数据加载失败:', error);
+            alert('商品数据加载失败，请稍后重试');
+            window.location.href = '/shop/shop.html';
         });
 
     // 立即购买按钮点击事件
     document.getElementById('buyButton').addEventListener('click', () => {
-        alert('跳转至支付页面');
-        // 实际中可以在这里跳转到支付页面或执行其他操作
-        // location.href = '/payment.html';
+        // 这里可以添加购买前的验证逻辑
+        if (confirm('确认购买该商品吗？')) {
+            fetch(`/api/products/${productId}/buy`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('购买成功！');
+                    window.location.href = '/shop/order.html';
+                } else {
+                    alert(data.message || '购买失败，请稍后重试');
+                }
+            })
+            .catch(error => {
+                console.error('购买失败:', error);
+                alert('购买失败，请稍后重试');
+            });
+        }
     });
 </script>
-
 </body>
 </html>
 
